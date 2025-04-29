@@ -1,0 +1,8 @@
+.godot/
+/android/
+.gradle
+.kotlin
+.idea
+.vscode
+build
+jvm
