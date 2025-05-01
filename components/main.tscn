@@ -1,6 +1,118 @@
-[gd_scene load_steps=2 format=3 uid="uid://bktut2nbxim2r"]
+[gd_scene load_steps=8 format=3 uid="uid://bktut2nbxim2r"]
 
 [ext_resource type="Script" uid="uid://b32np3npdvqpy" path="res://gdj/main/Game.gdj" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="2_a7n1r"]
+[ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/seaweed.glb" id="3_eeoh7"]
+[ext_resource type="ArrayMesh" uid="uid://b4ewbdo6lkb24" path="res://assets/rock.res" id="4_kl7gn"]
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_eeoh7"]
+
+[sub_resource type="Sky" id="Sky_kl7gn"]
+sky_material = SubResource("ProceduralSkyMaterial_eeoh7")
+
+[sub_resource type="Environment" id="Environment_0bthb"]
+background_mode = 2
+sky = SubResource("Sky_kl7gn")
+ambient_light_source = 3
+tonemap_mode = 2
+tonemap_exposure = 0.73
+ssao_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
+volumetric_fog_emission = Color(0.38087, 0.38087, 0.38087, 1)
+
+[node name="Game" type="Node3D"]
 script = ExtResource("1_ig7tw")
+
+[node name="Ocean" parent="." instance=ExtResource("2_a7n1r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.0164, 0, -8.98212)
+tile_x = 1
+tile_y = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_0bthb")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(-0.211398, 0.765295, -0.607976, -0.116854, 0.597783, 0.793096, 0.97039, 0.238702, -0.0369418, 0, 0, 0)
+light_energy = 0.7
+light_angular_distance = 2.0
+light_specular = 0.0
+shadow_enabled = true
+shadow_blur = 2.771
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.0487102, 0.661233, -0.748598, 1.16415e-10, 0.749487, 0.662019, 0.998813, -0.0322471, 0.0365077, -8.49089, 9.0537, -3.64071)
+fov = 25.7
+size = 6.696
+near = 0.021
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+
+[node name="seaweed" parent="." instance=ExtResource("3_eeoh7")]
+transform = Transform3D(-0.025004, 0, 0.3769, 0, 0.303, 0, -0.327046, 0, -0.0288156, 1.1537, -1.7261, -2.29594)
+
+[node name="seaweed" parent="seaweed" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.00907559, 0, -0.999959, 0, 1.335, 0, 0.999959, 0, 0.00907558, -0.252515, -1.39237, -1.62636)
+
+[node name="seaweed" parent="seaweed/seaweed" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.00907562, 0, -0.999959, 0, 1, 0, 0.999959, 0, 0.0090756, 1.17437, -0.146639, -1.59245)
+
+[node name="seaweed" parent="seaweed/seaweed/seaweed" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.00907559, 0, -0.999959, 0, 1, 0, 0.999959, 0, 0.00907559, -0.613907, 0.0251093, -4.2639)
+
+[node name="seaweed2" parent="seaweed/seaweed" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.896131, 0, 0.443791, 0, 1.335, 0, -0.443791, 0, 0.896131, -0.339845, -1.66871, -5.37399)
+
+[node name="seaweed" parent="seaweed/seaweed/seaweed2" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.00907562, 0, -0.999959, 0, 1, 0, 0.999959, 0, 0.0090756, 1.18326, -0.146639, -0.61272)
+
+[node name="seaweed" parent="seaweed/seaweed/seaweed2/seaweed" instance=ExtResource("3_eeoh7")]
+transform = Transform3D(0.00907559, 0, -0.999959, 0, 1, 0, 0.999959, 0, 0.00907559, 1.40963, 0.0251093, -0.432816)
+
+[node name="Rocks" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.628946, 0, -0.271388, 0, 0.685, 0, 0.271388, 0, 0.628946, 2.10036, 1.15448, -0.496396)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(-0.622281, 0, -0.187795, 0, 0.65, 0, 0.187795, 0, -0.622281, 0.444714, -0.884041, -2.43865)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock" type="MeshInstance3D" parent="Rocks/Rock"]
+transform = Transform3D(-0.471431, 0, 0.447496, 0, 0.65, 0, -0.447496, 0, -0.471431, 1.72516, -0.884041, -6.86521)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock"]
+transform = Transform3D(-0.622281, 0, -0.187795, 0, 0.65, 0, 0.187795, 0, -0.622281, 1.95713, -0.884041, -4.55301)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock" type="MeshInstance3D" parent="Rocks/Rock/Rock2"]
+transform = Transform3D(-0.471431, 0, 0.447496, 0, 0.65, 0, -0.447496, 0, -0.471431, 1.72516, -0.884041, -6.86521)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks"]
+transform = Transform3D(0.187559, 0, 0.658822, 0, 0.685, 0, -0.658822, 0, 0.187559, -0.837342, -1.39465, -5.86138)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2"]
+transform = Transform3D(0.671417, 0, 0.135735, 0, 0.685, 0, -0.135735, 0, 0.671417, 2.00938, -1.39465, -0.975166)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2/Rock2"]
+transform = Transform3D(-0.358666, 0, -0.583596, 0, 0.685, 0, 0.583596, 0, -0.358666, -21.8459, -0.0955549, -5.1191)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2/Rock2/Rock2"]
+transform = Transform3D(-0.358666, 0, -0.583596, 0, 0.685001, 0, 0.583596, 0, -0.358666, 26.6921, 2.37779, -16.3976)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2/Rock2/Rock2/Rock2"]
+transform = Transform3D(-0.628319, 0, -1.02236, 0, 1.2, 0, 1.02236, 0, -0.628319, 22.7875, -0.237647, 56.9337)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2/Rock2/Rock2/Rock2/Rock2"]
+transform = Transform3D(-0.755867, 0.453696, -0.472044, -0.427668, 0.203778, 0.880667, 0.495747, 0.867545, 0.0400015, 2.42282, -6.40952, 7.85068)
+mesh = ExtResource("4_kl7gn")
+
+[node name="Rock2" type="MeshInstance3D" parent="Rocks/Rock2/Rock2/Rock2/Rock2/Rock2/Rock2"]
+transform = Transform3D(-0.736725, -0.429322, -0.503008, -0.599677, 0.11626, 0.779082, -0.278786, 0.884457, -0.346572, -1.11754, -8.09875, -0.669645)
+mesh = ExtResource("4_kl7gn")
