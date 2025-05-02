@@ -50,8 +50,8 @@ shader_parameter/foam_noise_tex = SubResource("NoiseTexture2D_d1bkx")
 [sub_resource type="PlaneMesh" id="PlaneMesh_63qka"]
 material = SubResource("ShaderMaterial_63qka")
 size = Vector2(64, 64)
-subdivide_width = 128
-subdivide_depth = 128
+subdivide_width = 256
+subdivide_depth = 256
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_hsy7o"]
 material = SubResource("ShaderMaterial_63qka")

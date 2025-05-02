@@ -1,12 +1,14 @@
 // THIS FILE IS GENERATED! DO NOT EDIT OR DELETE IT. EDIT OR DELETE THE ASSOCIATED SOURCE CODE FILE INSTEAD
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
-registeredName = Game
-fqName = main.Game
-relativeSourcePath = src/main/java/main/Game.java
-baseType = Node3D
+registeredName = Frame
+fqName = main.Frame
+relativeSourcePath = src/main/java/main/Frame.java
+baseType = TextureRect
 supertypes = [
-    godot.api.Node3D,
+	godot.api.TextureRect,
+	godot.api.Control,
+	godot.api.CanvasItem,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
@@ -15,11 +17,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    
+	camera,
+	target_height
 ]
 functions = [
-    _ready
+	_process,
+	_ready
 ]
