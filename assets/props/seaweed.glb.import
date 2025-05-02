@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bj4rvngo3if0c"
-path="res://.godot/imported/seaweed.glb-0918e301c11135bc1ff5144930f999f0.scn"
+path="res://.godot/imported/seaweed.glb-37812ad1674406ba718fc163155483b4.scn"
 
 [deps]
 
-source_file="res://assets/seaweed.glb"
-dest_files=["res://.godot/imported/seaweed.glb-0918e301c11135bc1ff5144930f999f0.scn"]
+source_file="res://assets/props/seaweed.glb"
+dest_files=["res://.godot/imported/seaweed.glb-37812ad1674406ba718fc163155483b4.scn"]
 
 [params]
 

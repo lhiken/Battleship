@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://i7gv2m3tsjhe"]
+
+[ext_resource type="ArrayMesh" uid="uid://cc6vts7c7rx56" path="res://assets/props/naval_mine.res" id="1_5xnb4"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_i4x8t"]
+height = 3.0
+radius = 1.0
+
+[node name="NavalMine" type="Node3D"]
+
+[node name="NavalMine" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_5xnb4")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("CylinderShape3D_i4x8t")
