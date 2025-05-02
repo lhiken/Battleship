@@ -26,8 +26,11 @@ seamless_blend_skirt = 0.162
 noise = SubResource("FastNoiseLite_hsy7o")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_pv2xc"]
+frequency = 0.0737
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_63qka"]
+width = 1024
+height = 1024
 seamless = true
 noise = SubResource("FastNoiseLite_pv2xc")
 
@@ -39,7 +42,7 @@ shader_parameter/foam_fade_distance = 0.074
 shader_parameter/depth_noise_factor = 1.0
 shader_parameter/refraction_factor = 0.005
 shader_parameter/fresnel_factor = 1.6
-shader_parameter/ambient_wave_factor = 0.5
+shader_parameter/ambient_wave_factor = 0.05
 shader_parameter/shallow_color = Color(0.521569, 0.847059, 0.972549, 1)
 shader_parameter/deep_color = Color(0.0780001, 0.391926, 0.61123, 1)
 shader_parameter/fresnel_color = Color(0.53289, 0.92241, 0.715934, 1)

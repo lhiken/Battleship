@@ -18,7 +18,7 @@ uniform sampler2D water_noise_tex;
 uniform sampler2D foam_noise_tex;
 
 float get_water_height (vec2 position, float time) {
-	float ambient = (texture(water_noise_tex, position * 0.002 + TIME / 60.0).r - 0.5) * ambient_wave_factor;
+	float ambient = (texture(water_noise_tex, position * 0.002 + TIME / 200.0).r - 0.5) * ambient_wave_factor;
 	return ambient;
 }
 
@@ -68,5 +68,5 @@ void fragment() {
 
 	ALBEDO = final_albedo;
 	ALPHA = mix(1.0, 0.95, 1.0 - depth);
-	ROUGHNESS = 0.2;
+	ROUGHNESS = 0.1;
 }
