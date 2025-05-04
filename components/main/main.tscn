@@ -21,7 +21,6 @@ sky = SubResource("Sky_kl7gn")
 ambient_light_source = 3
 tonemap_mode = 2
 tonemap_exposure = 0.73
-sdfgi_enabled = true
 volumetric_fog_emission = Color(0.38087, 0.38087, 0.38087, 1)
 adjustment_enabled = true
 adjustment_brightness = 1.02
@@ -34,7 +33,7 @@ script = ExtResource("1_w8ifq")
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_ymw2v")]
 texture = SubResource("ViewportTexture_w8ifq")
 camera = NodePath("Camera3D")
-target_height = 340
+target_height = 320
 
 [node name="Camera3D" type="Camera3D" parent="RenderTarget"]
 transform = Transform3D(-0.191374, 0.5885, -0.785521, 1.2493e-07, 0.800313, 0.599582, 0.981517, 0.114744, -0.153159, -5.66805, 6.93176, -6.1463)
@@ -46,10 +45,10 @@ environment = SubResource("Environment_0bthb")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
 transform = Transform3D(-0.211398, 0.765295, -0.607976, -0.116854, 0.597783, 0.793096, 0.97039, 0.238702, -0.0369418, 0, 0, 0)
 light_energy = 0.8
-light_angular_distance = 4.26
+light_angular_distance = 5.91
 light_specular = 0.0
 shadow_enabled = true
-shadow_blur = 1.43
+shadow_blur = 0.0
 
 [node name="Ocean" parent="." instance=ExtResource("2_4t43m")]
 tile_x = 1

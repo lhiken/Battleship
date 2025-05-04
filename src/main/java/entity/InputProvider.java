@@ -1,19 +1,26 @@
 package entity;
 
 import godot.annotation.RegisterClass;
-import godot.api.Node;
+import godot.annotation.RegisterFunction;
+import godot.api.InputEvent;
+import godot.api.Node3D;
+import godot.global.GD;
 
-/** InputProvider
- *
- */
-public class InputProvider extends Node {
-    private InputState currentState;
+@RegisterClass
+public class InputProvider extends Node3D {
 
-    public InputProvider () {
-        currentState = new InputState();
-    }
+	private static final GD gd = GD.INSTANCE;
 
-    public InputState getState () {
-        return currentState;
-    }
+	// input state? (bot or player)
+
+	@RegisterFunction
+	@Override
+	public void _input(InputEvent event) {
+		assert event != null;
+		if (event.isActionPressed("w")) {
+
+		}
+	}
+
+
 }
