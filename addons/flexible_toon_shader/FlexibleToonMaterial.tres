@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bb43ngplsfis2"]
+
+[ext_resource type="Shader" uid="uid://b4ebg4s7e1qw2" path="res://shaders/objects/rock.gdshader" id="1_8dh6t"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d7335"]
+
+[resource]
+render_priority = -1
+next_pass = SubResource("ShaderMaterial_d7335")
+shader = ExtResource("1_8dh6t")
+shader_parameter/outline_color = Color(0.301961, 0.258824, 0.196078, 1)
+shader_parameter/edge_color = Color(0.28113, 0.233433, 0.173631, 1)
+shader_parameter/base_color = Color(0.211581, 0.191608, 0.164951, 1)
+shader_parameter/terrain_color = Color(0.35323, 0.566618, 0.291822, 1)
+shader_parameter/terrain_threshold = 0.25

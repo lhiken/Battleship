@@ -56,7 +56,7 @@ void fragment() {
 	foam_mask = clamp(foam_mask, 0, 1);
 	vec2 foam_noise = 0.02 * (texture(water_noise_tex, world_coords.xz / 2.0 + TIME / 15.0).xy - 0.5);
 	foam_noise = clamp(foam_noise, 0, 1);
-	float foam_ripple = texture(foam_noise_tex, world_coords.xz * 0.1 + TIME * 0.005).x * foam_mask + foam_mask * 0.3 - get_ripple(foam_mask, depth, 0.5, 0.3, 0.15, 0.0);
+	float foam_ripple = texture(foam_noise_tex, world_coords.xz * 0.1 + TIME * 0.005).x * foam_mask + foam_mask * 0.3 /* - get_ripple(foam_mask, depth, 0.5, 0.3, 0.15, 0.0) */;
 	foam_ripple = clamp(foam_ripple, 0, 1);
 	foam_ripple = smoothstep(0, 1, foam_ripple);
 	foam_ripple = 1.0 - step(foam_ripple, 0.5);
@@ -68,5 +68,5 @@ void fragment() {
 
 	ALBEDO = final_albedo;
 	ALPHA = mix(1.0, 0.95, 1.0 - depth);
-	ROUGHNESS = 0.1;
+	ROUGHNESS = 0.01;
 }

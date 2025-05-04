@@ -1,0 +1,113 @@
+[gd_scene load_steps=5 format=3 uid="uid://dncl00rx548bq"]
+
+[ext_resource type="FontFile" uid="uid://68rliu44w64e" path="res://assets/PixelifySans-Regular.ttf" id="1_p0c5d"]
+
+[sub_resource type="Theme" id="Theme_r2iui"]
+default_font = ExtResource("1_p0c5d")
+default_font_size = 40
+VBoxContainer/constants/separation = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_laux1"]
+bg_color = Color(0.28836, 0.647904, 0.792468, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.98342, 0.98342, 0.98342, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p0c5d"]
+bg_color = Color(0.414589, 0.652622, 0.460639, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.98342, 0.98342, 0.98342, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[node name="StartMenu" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_r2iui")
+
+[node name="BackPanel" type="Panel" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.325
+anchor_bottom = 0.012
+offset_left = -260.0
+offset_top = -595.0
+offset_right = 232.0
+offset_bottom = 1844.04
+rotation = 0.261799
+theme_override_styles/panel = SubResource("StyleBoxFlat_laux1")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.562
+anchor_bottom = 0.215
+offset_left = 128.0
+offset_top = 128.0
+offset_right = -183.04
+offset_bottom = 87.8
+theme_override_styles/panel = SubResource("StyleBoxFlat_p0c5d")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 80
+text = "Battleship"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 128.0
+offset_top = -624.0
+offset_right = 448.0
+offset_bottom = -184.0
+grow_vertical = 0
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Button" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Host Game"
+flat = true
+alignment = 0
+
+[node name="Button2" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Join Game"
+flat = true
+alignment = 0
+
+[node name="Button3" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+flat = true
+alignment = 0
