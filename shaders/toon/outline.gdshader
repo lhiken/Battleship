@@ -6,7 +6,7 @@ uniform vec4 outline_color;
 uniform float outline_width;
 
 void vertex() {
-	vec4 clip_position = 
+	vec4 clip_position =
 			PROJECTION_MATRIX *
 			(MODELVIEW_MATRIX * vec4(VERTEX, 1.0));
 	vec3 clip_normal =

@@ -42,19 +42,19 @@ void fragment() {
 	};
 	vec3 normal[5];
 	vec3 position[5];
-	
+
 	vec3 world_normal = (INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz;
 	float upwardness = 1.0 - step(dot(world_normal, vec3(0, 1, 0)), terrain_threshold);
 	vec3 base_albedo = mix(base_color, terrain_color, upwardness);
-	
+
 	ALBEDO = base_albedo;
-	
+
 	for (int i = 0; i < 5; i++) {
 		vec2 uv = SCREEN_UV + offset[i] * texel_size;
 		position[i] = get_point_position(uv, depth_texture);
 		normal[i] = texture(normal_texture, uv).xyz * 2.0 - 1.0;
 	}
-	
+
 	// gets the threshold and stuff from the current pixel, probably not even needed
 	// this is straight up from david hollands code btw but it works and its the best way
 	// of doing it so why should i settle for anything lesser
@@ -73,13 +73,13 @@ void fragment() {
 		2.0, 0.25
 	);
 	float ct = convex_normal_threshold * convex_normal_bias;
-	
+
 	bool edge = false;
 	for (int i = 0; i < 5; i++) {
 		if (i == 2) continue;
 		vec3 cp = cross(normal[2], normal[i]);
 		float convexity = dot(cp, vec3(offset[i].yx, 0));
-		float norm_bias = i < 2 ? 1e-5 : 0.0;	
+		float norm_bias = i < 2 ? 1e-5 : 0.0;
 		edge =
 			abs(position[i].z - position[2].z) < dt
 			&& normal[i].z + 1.5 > normal[2].z
@@ -88,17 +88,17 @@ void fragment() {
 			? true : false;
 	}
 	ALBEDO = edge ? edge_color : ALBEDO;
-	
+
 	// literally just compares the depth of the current pixel and neighboring pixels
 	ALBEDO = upwardness < terrain_threshold && (
 		position[2].z - position[0].z > dt ||
 		position[2].z - position[1].z > dt ||
 		position[2].z - position[3].z > dt ||
 		position[2].z - position[4].z > dt )
-		? outline_color : ALBEDO;	
-		
+		? outline_color : ALBEDO;
+
 	vec3 point = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	float distortion = texture(color_noise, point).r;
-	
+
 	ALBEDO *= distortion;
 }

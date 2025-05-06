@@ -8,19 +8,12 @@ import godot.global.GD;
 
 @RegisterClass
 public class InputProvider extends Node3D {
-
 	private static final GD gd = GD.INSTANCE;
 
-	// input state? (bot or player)
-
 	@RegisterFunction
-	@Override
-	public void _input(InputEvent event) {
-		assert event != null;
-		if (event.isActionPressed("w")) {
-
-		}
+	public InputState getState() {
+		gd.print("not implemented grrr");
+		return new InputState();
 	}
-
 
 }

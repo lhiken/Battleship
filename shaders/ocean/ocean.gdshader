@@ -61,7 +61,6 @@ void fragment() {
 	foam_ripple = smoothstep(0, 1, foam_ripple);
 	foam_ripple = 1.0 - step(foam_ripple, 0.5);
 
-
 	float fresnel = pow(faux_depth, 12.0);
 
 	vec3 final_albedo = clamp(mix(base_albedo + foam_ripple, fresnel_color * fresnel_factor, fresnel), 0.0, 1.0);

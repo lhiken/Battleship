@@ -84,6 +84,6 @@ void fragment() {
 
 	// literally just compares the depth of the current pixel and neighboring pixels
 	ALBEDO = outline ? outline_color : ALBEDO;
-		
+
 	ALPHA = edge || outline ? 1.0 : 0.0;
 }
