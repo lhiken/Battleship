@@ -6,7 +6,7 @@ fqName = main.Frame
 relativeSourcePath = src/main/java/main/Frame.java
 baseType = TextureRect
 supertypes = [
-    godot.api.TextureRect,
+	godot.api.TextureRect,
 	godot.api.Control,
 	godot.api.CanvasItem,
 	godot.api.Node,
@@ -17,13 +17,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    camera,
+	camera,
 	target_height
 ]
 functions = [
-    _process,
+	_process,
 	_ready
 ]

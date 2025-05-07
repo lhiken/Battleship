@@ -8,10 +8,8 @@ import godot.annotation.RegisterFunction;
 import godot.api.Input;
 import godot.core.Vector2;
 import godot.global.GD;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @RegisterClass
 public class BotProvider extends InputProvider {
@@ -38,46 +36,43 @@ public class BotProvider extends InputProvider {
         emitAction = false;
     }
 
-    @RegisterFunction
-    public Vector2 findNearbyEnemies(double radius) {
+    // @RegisterFunction
+    // public Vector2 findNearbyEnemies(double radius) {
 
-        // How to access locations/input states of other ships?
+    //     // How to access locations/input states of other ships?
 
-    }
+    // }
 
-    @RegisterFunction
-    @Override
-    public void _process(double delta) {
+    // @RegisterFunction
+    // @Override
+    // public void _process(double delta) {
 
-        if (findNearbyEnemies(radius).isZeroApprox()) {
+    //     if (findNearbyEnemies(radius).isZeroApprox()) {
 
+    //         // Move randomly
 
-            // Move randomly
+    //     }
 
-        }
+    //     else {
 
-        else {
+    //     }
 
+    // }
 
-
-        }
-
-    }
-
-    private void updateState() {
-        currentState.acceleration = throttle;
-        currentState.rotation += angularAcceleration;
-        currentState.emitAction = emitAction ? selectedAction : -1;
-    }
+    // private void updateState() {
+    //     currentState.acceleration = throttle;
+    //     currentState.rotation += angularAcceleration;
+    //     currentState.emitAction = emitAction ? selectedAction : -1;
+    // }
 
     @RegisterFunction
     @Override
     public InputState getState() {
         return currentState;
     }
-//    @RegisterFunction
-//    @Override
-//    public void getState() {
-//
-//    }
+    //    @RegisterFunction
+    //    @Override
+    //    public void getState() {
+    //
+    //    }
 }

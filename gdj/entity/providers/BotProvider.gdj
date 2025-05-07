@@ -22,5 +22,6 @@ properties = [
     
 ]
 functions = [
-    get_state
+    _ready,
+	get_state
 ]
