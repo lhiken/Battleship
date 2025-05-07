@@ -7,3 +7,5 @@
 build
 builds
 jvm
+bin
+.settings

@@ -1,14 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cdkpe7nflna3v"]
+[gd_scene load_steps=6 format=3 uid="uid://cdkpe7nflna3v"]
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="2_2j7da"]
 [ext_resource type="PackedScene" uid="uid://i7gv2m3tsjhe" path="res://components/objects/props/naval_mine.tscn" id="2_krawj"]
 [ext_resource type="Script" uid="uid://cctjq18hkwk3h" path="res://gdj/main/GameCamera.gdj" id="5_2j7da"]
-[ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_wgkvx"]
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_wgkvx"]
-viewport_path = NodePath("Viewport")
 
 [node name="Match" type="Node3D"]
 
@@ -22,12 +18,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0501416, 0)
 [node name="NavalMine" parent="." instance=ExtResource("2_krawj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.227141, -0.743745, 4.03948)
 
-[node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_wgkvx")]
-texture = SubResource("ViewportTexture_wgkvx")
-camera = NodePath("GameCamera")
-
-[node name="GameCamera" type="Camera3D" parent="RenderTarget" node_paths=PackedStringArray("ship_node")]
+[node name="GameCamera" type="Camera3D" parent="." node_paths=PackedStringArray("ship_node")]
 fov = 45.0
 script = ExtResource("5_2j7da")
-ship_node = NodePath("../../PlayerShip")
+ship_node = NodePath("../PlayerShip")
 metadata/_custom_type_script = "uid://cctjq18hkwk3h"
