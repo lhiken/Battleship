@@ -21,5 +21,7 @@ properties = [
     
 ]
 functions = [
-    _ready
+    _ready,
+	initialize_host,
+	initialize_client
 ]

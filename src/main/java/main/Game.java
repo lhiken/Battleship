@@ -10,6 +10,7 @@ import godot.global.GD;
  */
 @RegisterClass
 public class Game extends Node3D {
+
     // include this line everywhere bc godot's methods use it
     private static final GD gd = GD.INSTANCE;
 
@@ -19,4 +20,12 @@ public class Game extends Node3D {
     public void _ready() {
         gd.print("loaded game");
     }
+
+    @RegisterFunction
+    public void initializeHost() {
+        gd.print("testing testing lmao");
+    }
+
+    @RegisterFunction
+    public void initializeClient() {}
 }

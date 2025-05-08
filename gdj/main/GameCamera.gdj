@@ -19,11 +19,11 @@ signals = [
     
 ]
 properties = [
-    ship_node
+    ship_node,
+	camera_parent
 ]
 functions = [
     _process,
 	_ready,
-	_input,
-	_unhandled_input
+	invoke_shake
 ]
