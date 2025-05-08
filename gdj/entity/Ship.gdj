@@ -21,8 +21,10 @@ signals = [
     
 ]
 properties = [
-    provider
+    provider,
+	gen
 ]
 functions = [
-    _physics_process
+    _process,
+	_physics_process
 ]

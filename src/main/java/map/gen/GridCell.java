@@ -41,4 +41,9 @@ public class GridCell {
         ) return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return center.toString();
+    }
 }

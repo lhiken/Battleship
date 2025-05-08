@@ -4,6 +4,7 @@ import godot.core.Vector2;
 import godot.core.Vector2i;
 import godot.core.Vector3;
 import godot.core.Vector3i;
+import java.util.Objects;
 
 public class Coordinate {
 
@@ -16,6 +17,8 @@ public class Coordinate {
     public Coordinate(double x, double z, int xi, int zi) {
         this.x = x;
         this.z = z;
+        this.xIndex = xi;
+        this.zIndex = zi;
     }
 
     public Coordinate(double x, int xi) {
@@ -79,5 +82,15 @@ public class Coordinate {
         Coordinate gc = (Coordinate) obj;
         if (gc.getX() != this.getX() || gc.getZ() != this.getZ()) return false;
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, z);
+    }
+
+    @Override
+    public String toString() {
+        return ("(" + x + ", " + z + " | " + xIndex + ", " + zIndex + ")");
     }
 }

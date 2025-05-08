@@ -3,10 +3,15 @@ package map.gen;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.AStarGrid2D.Heuristic;
+import godot.api.CSGBox3D;
 import godot.api.FastNoiseLite;
 import godot.api.FastNoiseLite.NoiseType;
 import godot.api.Node3D;
+import godot.api.StandardMaterial3D;
+import godot.core.Color;
 import godot.core.Vector2;
+import godot.core.Vector3;
+import godot.global.GD;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,6 +48,8 @@ enum Tile {
 @RegisterClass
 public class Generator extends Node3D {
 
+    private static final GD gd = GD.INSTANCE;
+
     private final double cellWidth = 2.0;
     private final int mapWidth = 60;
     private final int mapHeight = 60;
@@ -57,7 +64,41 @@ public class Generator extends Node3D {
     @RegisterFunction
     @Override
     public void _ready() {
+        grid = new GridCell[mapWidth][mapHeight];
         populateGrid();
+
+        //testing purposes
+        grid[32][29].setTile(Tile.GrassProp);
+        grid[32][28].setTile(Tile.GrassProp);
+        grid[32][27].setTile(Tile.GrassProp);
+        grid[32][26].setTile(Tile.GrassProp);
+        grid[32][25].setTile(Tile.GrassProp);
+        grid[32][30].setTile(Tile.GrassProp);
+        grid[32][31].setTile(Tile.GrassProp);
+        grid[33][31].setTile(Tile.GrassProp);
+        grid[34][31].setTile(Tile.GrassProp);
+        grid[35][31].setTile(Tile.GrassProp);
+
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                GridCell cell = grid[x][z];
+                if (cell.getTile() == Tile.GrassProp) {
+                    CSGBox3D box = new CSGBox3D();
+                    box.setSize(
+                        new Vector3((float) cellWidth, 1.0f, (float) cellWidth)
+                    );
+                    box.setPosition(
+                        new Vector3(
+                            (float) cell.getCoords().getX(),
+                            0,
+                            (float) cell.getCoords().getZ()
+                        )
+                    );
+                    box.setUseCollision(true);
+                    addChild(box);
+                }
+            }
+        }
     }
 
     // fill grid[][] with the proc gen tiles
@@ -77,7 +118,7 @@ public class Generator extends Node3D {
                 Tile tileType = getTileType(x, z);
 
                 GridCell cell = new GridCell(coord, tileType, height);
-                if (height < 0) cell.setTile(Tile.Empty);
+                cell.setTile(Tile.Empty);
                 spawnTile(cell);
                 grid[x][z] = cell;
             }
@@ -108,15 +149,18 @@ public class Generator extends Node3D {
     }
 
     private void spawnTile(GridCell cell) {
-        // todo soon
+        //todo
     }
 
     // pathfinding (scream emoji)
     // its 12 am but i really want to finish this
+    @RegisterFunction
     public ArrayList<Coordinate> navigate(Vector2 startPos, Vector2 endPos) {
         // get the grid cells that correspond with the world positions
         GridCell start = coordToGrid(startPos);
         GridCell end = coordToGrid(endPos);
+
+        gd.print("began pathfinding\n" + start + " to " + end);
 
         // a* algorithm 😱
 
@@ -135,6 +179,8 @@ public class Generator extends Node3D {
 
         while (!frontier.isEmpty()) {
             GridCell currentCell = frontier.poll().getFirst();
+
+            gd.print("Current cell: " + currentCell);
 
             if (currentCell == end) break;
 
@@ -164,14 +210,15 @@ public class Generator extends Node3D {
 
         path.add(start.getCoords());
         Collections.reverse(path);
+
+        gd.print("finished");
         return path;
     }
 
     private double getHeuristic(GridCell a, GridCell b) {
-        return (
-            Math.abs(a.getCoords().getX() - b.getCoords().getX()) +
-            Math.abs(a.getCoords().getZ() - b.getCoords().getZ())
-        );
+        double dx = a.getCoords().getX() - b.getCoords().getX();
+        double dz = a.getCoords().getZ() - b.getCoords().getZ();
+        return Math.sqrt(dx * dx + dz * dz);
     }
 
     // gets the cost

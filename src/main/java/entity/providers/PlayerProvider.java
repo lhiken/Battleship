@@ -13,10 +13,10 @@ public class PlayerProvider extends InputProvider {
 
     private static final GD gd = GD.INSTANCE;
 
-    private final double THROTTLE_STEP = 1.0;
-    private final double TURN_STEP = 1.0;
-    private double throttle;
-    private double angularAcceleration;
+    private final double VELOCITY_STEP = 3.0;
+    private final double ROTATION_STEP = 4.0;
+    private double rotation;
+    private double velocity;
     private int selectedAction;
     private boolean emitAction;
     private InputState currentState;
@@ -26,8 +26,8 @@ public class PlayerProvider extends InputProvider {
     public void _ready() {
         gd.print("Loaded player provider");
         currentState = new InputState();
-        throttle = 0;
-        angularAcceleration = 0;
+        rotation = 0;
+        velocity = 0;
         selectedAction = 0;
         emitAction = false;
     }
@@ -38,19 +38,13 @@ public class PlayerProvider extends InputProvider {
         Vector2 inputDirection = Input.getVector(
             "backward",
             "forward",
-            "left",
-            "right"
+            "right",
+            "left"
         );
 
-        if (!inputDirection.isZeroApprox()) {
-            if (inputDirection.getY() == 0) {
-                throttle += THROTTLE_STEP * delta * inputDirection.getX();
-            } else {
-                angularAcceleration = TURN_STEP;
-            }
-        } else {
-            angularAcceleration = 0.0;
-        }
+        rotation += inputDirection.getY() * ROTATION_STEP * delta;
+        velocity += inputDirection.getX() * VELOCITY_STEP * delta;
+        velocity = gd.clamp(velocity, -1, 1);
 
         if (Input.isActionJustPressed("performAction")) {
             emitAction = true;
@@ -62,8 +56,8 @@ public class PlayerProvider extends InputProvider {
     }
 
     private void updateState() {
-        currentState.acceleration = throttle;
-        currentState.rotation += angularAcceleration;
+        currentState.velocity = velocity;
+        currentState.rotation = rotation;
         currentState.emitAction = emitAction ? selectedAction : -1;
     }
 
