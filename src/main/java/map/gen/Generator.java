@@ -147,7 +147,7 @@ public class Generator extends Node3D {
                 if (!gCost.containsKey(next) || newCost < gCost.get(next)) {
                     gCost.put(next, newCost);
                     double priority = newCost + getHeuristic(next, end);
-                    frontier.add(new Pair<>(next, newCost));
+                    frontier.add(new Pair<>(next, priority));
                     cameFrom.put(next, currentCell);
                 }
             }
