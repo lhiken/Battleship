@@ -24,6 +24,14 @@ public class GridCell {
         return height;
     }
 
+    public void setTile(Tile tile) {
+        this.tile = tile;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof GridCell)) return false;

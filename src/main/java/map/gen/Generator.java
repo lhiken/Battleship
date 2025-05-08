@@ -1,38 +1,36 @@
 package map.gen;
 
-import godot.annotation.Export;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
-import godot.annotation.RegisterProperty;
+import godot.api.AStarGrid2D.Heuristic;
 import godot.api.FastNoiseLite;
 import godot.api.FastNoiseLite.NoiseType;
 import godot.api.Node3D;
-import godot.api.Noise;
 import godot.core.Vector2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Queue;
 
 // enum to keep track of tile types and their costs
-// costs are for pathfinding
+// costs are for pathfinding, nodepaths are to get the right
+// tile when spawning them
 enum Tile {
-    GrassTile(10, "GrassTile"),
-    RockTile(10, "RockTile"),
-    GrassProp(10, "GrassProp"),
-    RockProp(10, "RockProp"),
-    Shore(3, "Shore"),
-    Empty(1, "Empty");
+    GrassTile(10, false, "GrassTile"),
+    RockTile(10, false, "RockTile"),
+    GrassProp(10, false, "GrassProp"),
+    RockProp(10, false, "RockProp"),
+    Shore(3, true, "Shore"),
+    Empty(1, true, "Empty");
 
     public final int cost;
+    public final boolean walkable;
     public final String nodePath;
 
-    private Tile(int cost, String nodePath) {
+    private Tile(int cost, boolean walkable, String nodePath) {
         this.cost = cost;
+        this.walkable = walkable;
         this.nodePath = nodePath;
     }
 }
@@ -52,7 +50,6 @@ public class Generator extends Node3D {
     private GridCell[][] grid;
 
     private FastNoiseLite baseNoise;
-    private FastNoiseLite propNoise;
 
     private int noiseSeed = (int) (Math.random() * 1000);
     private float noiseFreq = 0.5f;
@@ -80,6 +77,7 @@ public class Generator extends Node3D {
                 Tile tileType = getTileType(x, z);
 
                 GridCell cell = new GridCell(coord, tileType, height);
+                if (height < 0) cell.setTile(Tile.Empty);
                 spawnTile(cell);
                 grid[x][z] = cell;
             }
@@ -104,6 +102,7 @@ public class Generator extends Node3D {
     }
 
     // samples the biome noise texture to get the tile type
+    // todo!
     private Tile getTileType(int x, int z) {
         return Tile.GrassTile;
     }
@@ -119,7 +118,7 @@ public class Generator extends Node3D {
         GridCell start = coordToGrid(startPos);
         GridCell end = coordToGrid(endPos);
 
-        // bfs/dijkstra
+        // a* algorithm 😱
 
         // the pq is funny because we want to be able to assign each grid cell
         // a custom priority that gets updated throughout the search, but we
@@ -147,6 +146,7 @@ public class Generator extends Node3D {
                 double newCost = gCost.get(currentCell) + getCost(next);
                 if (!gCost.containsKey(next) || newCost < gCost.get(next)) {
                     gCost.put(next, newCost);
+                    double priority = newCost + getHeuristic(next, end);
                     frontier.add(new Pair<>(next, newCost));
                     cameFrom.put(next, currentCell);
                 }
@@ -167,6 +167,15 @@ public class Generator extends Node3D {
         return path;
     }
 
+    private double getHeuristic(GridCell a, GridCell b) {
+        return (
+            Math.abs(a.getCoords().getX() - b.getCoords().getX()) +
+            Math.abs(a.getCoords().getZ() - b.getCoords().getZ())
+        );
+    }
+
+    // gets the cost
+    // this is what that funny enum is for
     private double getCost(GridCell next) {
         return next.getTile().cost;
     }
@@ -181,14 +190,17 @@ public class Generator extends Node3D {
         return grid[xi][zi];
     }
 
-    // gets neighboring cells of a cell (duh)
+    // gets neighboring walkable cells
     private ArrayList<GridCell> getNeighbors(int x, int z) {
         ArrayList<GridCell> arr = new ArrayList<>(4);
-        if (x < 0 || z < 0 || x >= mapWidth || z >= mapHeight) return arr;
-        if (x > 0) arr.add(grid[x - 1][z]);
-        if (x < mapWidth - 1) arr.add(grid[x + 1][z]);
-        if (z > 0) arr.add(grid[x][z - 1]);
-        if (z < mapHeight - 1) arr.add(grid[x][z + 1]);
+        if (x > 0 && grid[x - 1][z].getTile().walkable) arr.add(grid[x - 1][z]);
+        if (x < mapWidth - 1 && grid[x + 1][z].getTile().walkable) arr.add(
+            grid[x + 1][z]
+        );
+        if (z > 0 && grid[x][z - 1].getTile().walkable) arr.add(grid[x][z - 1]);
+        if (z < mapHeight - 1 && grid[x][z + 1].getTile().walkable) arr.add(
+            grid[x][z + 1]
+        );
         return arr;
     }
 }
