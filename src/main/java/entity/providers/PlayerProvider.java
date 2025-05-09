@@ -44,7 +44,7 @@ public class PlayerProvider extends InputProvider {
 
         rotation += inputDirection.getY() * ROTATION_STEP * delta;
         velocity += inputDirection.getX() * VELOCITY_STEP * delta;
-        velocity = gd.clamp(velocity, -1, 1);
+        velocity = gd.clamp(velocity, 0, 1);
 
         if (Input.isActionJustPressed("performAction")) {
             emitAction = true;

@@ -2,13 +2,15 @@ package map.gen;
 
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
-import godot.api.AStarGrid2D.Heuristic;
 import godot.api.CSGBox3D;
 import godot.api.FastNoiseLite;
 import godot.api.FastNoiseLite.NoiseType;
 import godot.api.Node3D;
 import godot.api.StandardMaterial3D;
+import godot.api.Timer;
+import godot.core.Callable;
 import godot.core.Color;
+import godot.core.StringNames;
 import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -16,13 +18,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 // enum to keep track of tile types and their costs
 // costs are for pathfinding, nodepaths are to get the right
 // tile when spawning them
 enum Tile {
-    GrassTile(10, false, "GrassTile"),
+    GrassTile(10, true, "GrassTile"),
     RockTile(10, false, "RockTile"),
     GrassProp(10, false, "GrassProp"),
     RockProp(10, false, "RockProp"),
@@ -37,6 +42,30 @@ enum Tile {
         this.cost = cost;
         this.walkable = walkable;
         this.nodePath = nodePath;
+    }
+}
+
+/**
+ * Visualization step class for storing the visualization sequence
+ */
+class VisStep {
+
+    public enum StepType {
+        RESET,
+        FRONTIER,
+        VISITED,
+        PATH,
+        START_END,
+    }
+
+    public StepType type;
+    public GridCell cell;
+    public Color color;
+
+    public VisStep(StepType type, GridCell cell, Color color) {
+        this.type = type;
+        this.cell = cell;
+        this.color = color;
     }
 }
 
@@ -55,11 +84,30 @@ public class Generator extends Node3D {
     private final int mapHeight = 60;
 
     private GridCell[][] grid;
+    private HashMap<GridCell, CSGBox3D> visualNodes = new HashMap<>();
 
     private FastNoiseLite baseNoise;
 
     private int noiseSeed = (int) (Math.random() * 1000);
     private float noiseFreq = 0.5f;
+
+    // Colors for visualization
+    private final Color COLOR_UNVISITED = new Color(0.8f, 0.8f, 0.8f, 1.0f); // Light gray
+    private final Color COLOR_FRONTIER = new Color(0.0f, 0.7f, 1.0f, 1.0f); // Cyan
+    private final Color COLOR_VISITED = new Color(0.5f, 0.5f, 0.5f, 1.0f); // Gray
+    private final Color COLOR_PATH = new Color(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
+    private final Color COLOR_START = new Color(0.0f, 1.0f, 0.0f, 1.0f); // Green
+    private final Color COLOR_END = new Color(1.0f, 0.0f, 0.0f, 1.0f); // Red
+    private final Color COLOR_OBSTACLE = new Color(0.3f, 0.3f, 0.3f, 1.0f); // Dark gray
+
+    // Visualization queue and timer
+    private Queue<VisStep> visualizationQueue = new LinkedList<>();
+    private Timer visualizationTimer;
+    private float visualizationStepDelay = 0.02f; // 20ms between steps (50 steps per second)
+    private boolean isVisualizing = false;
+
+    // Path result storage
+    private ArrayList<Coordinate> pathResult = null;
 
     @RegisterFunction
     @Override
@@ -67,7 +115,25 @@ public class Generator extends Node3D {
         grid = new GridCell[mapWidth][mapHeight];
         populateGrid();
 
-        //testing purposes
+        // Setup the visualization timer
+        visualizationTimer = new Timer();
+        visualizationTimer.setOneShot(false);
+        visualizationTimer.setWaitTime(visualizationStepDelay);
+
+        // Connect the signal with the recommended way from the documentation
+        visualizationTimer.connect(
+            "timeout",
+            Callable.create(
+                this,
+                StringNames.toGodotName("_on_visualization_timer_timeout")
+            )
+        );
+
+        addChild(visualizationTimer);
+
+        createVisualGrid();
+
+        //testing purposes - create some obstacles
         grid[32][29].setTile(Tile.GrassProp);
         grid[32][28].setTile(Tile.GrassProp);
         grid[32][27].setTile(Tile.GrassProp);
@@ -79,25 +145,88 @@ public class Generator extends Node3D {
         grid[34][31].setTile(Tile.GrassProp);
         grid[35][31].setTile(Tile.GrassProp);
 
+        // Update visualization for obstacles
         for (int x = 0; x < mapWidth; x++) {
             for (int z = 0; z < mapHeight; z++) {
                 GridCell cell = grid[x][z];
                 if (cell.getTile() == Tile.GrassProp) {
-                    CSGBox3D box = new CSGBox3D();
+                    // Make obstacle boxes taller
+                    CSGBox3D box = visualNodes.get(cell);
+                    updateNodeColor(cell, COLOR_OBSTACLE);
                     box.setSize(
                         new Vector3((float) cellWidth, 1.0f, (float) cellWidth)
                     );
-                    box.setPosition(
-                        new Vector3(
-                            (float) cell.getCoords().getX(),
-                            0,
-                            (float) cell.getCoords().getZ()
-                        )
-                    );
                     box.setUseCollision(true);
-                    addChild(box);
                 }
             }
+        }
+    }
+
+    @RegisterFunction
+    public void _on_visualization_timer_timeout() {
+        if (!visualizationQueue.isEmpty()) {
+            VisStep step = visualizationQueue.poll();
+
+            // Process visualization step
+            if (step.type == VisStep.StepType.RESET) {
+                resetVisualizationImmediate();
+            } else {
+                updateNodeColor(step.cell, step.color);
+            }
+        } else {
+            // Stop the timer when queue is empty
+            visualizationTimer.stop();
+            isVisualizing = false;
+
+            // Signal that pathfinding is complete
+            gd.print("Visualization complete!");
+        }
+    }
+
+    // Create a visual representation of the grid
+    private void createVisualGrid() {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                GridCell cell = grid[x][z];
+                CSGBox3D box = new CSGBox3D();
+
+                // Make the visualization boxes a bit shorter than obstacles
+                box.setSize(
+                    new Vector3(
+                        (float) cellWidth * 0.9f,
+                        0.1f,
+                        (float) cellWidth * 0.9f
+                    )
+                );
+                box.setPosition(
+                    new Vector3(
+                        (float) cell.getCoords().getX(),
+                        0.05f, // Slightly above ground
+                        (float) cell.getCoords().getZ()
+                    )
+                );
+
+                // Set default color
+                updateNodeColor(box, COLOR_UNVISITED);
+
+                addChild(box);
+                visualNodes.put(cell, box);
+            }
+        }
+    }
+
+    // Update material color for a visualization node
+    private void updateNodeColor(CSGBox3D box, Color color) {
+        StandardMaterial3D material = new StandardMaterial3D();
+        material.setAlbedo(color);
+        box.setMaterial(material);
+    }
+
+    // Update node color by cell
+    private void updateNodeColor(GridCell cell, Color color) {
+        CSGBox3D box = visualNodes.get(cell);
+        if (box != null) {
+            updateNodeColor(box, color);
         }
     }
 
@@ -156,22 +285,40 @@ public class Generator extends Node3D {
     // its 12 am but i really want to finish this
     @RegisterFunction
     public ArrayList<Coordinate> navigate(Vector2 startPos, Vector2 endPos) {
+        // If we're already visualizing, don't start a new pathfinding operation
+        if (isVisualizing) {
+            gd.print("Already visualizing a path. Please wait.");
+            return new ArrayList<>();
+        }
+
+        // Reset visualization and prepare for a new path
+        visualizationQueue.clear();
+        visualizationQueue.add(new VisStep(VisStep.StepType.RESET, null, null));
+
         // get the grid cells that correspond with the world positions
         GridCell start = coordToGrid(startPos);
         GridCell end = coordToGrid(endPos);
 
+        // Mark start and end points (add to visualization queue)
+        visualizationQueue.add(
+            new VisStep(VisStep.StepType.START_END, start, COLOR_START)
+        );
+        visualizationQueue.add(
+            new VisStep(VisStep.StepType.START_END, end, COLOR_END)
+        );
+
         gd.print("began pathfinding\n" + start + " to " + end);
 
         // a* algorithm 😱
-
-        // the pq is funny because we want to be able to assign each grid cell
-        // a custom priority that gets updated throughout the search, but we
-        // dont want to do that in gridcell because we want to keep this self
-        // contained without affecting anything else
         PriorityQueue<Pair<GridCell, Double>> frontier = new PriorityQueue<>(
-            Comparator.comparingDouble(Pair::getSecond) // ive never seen this syntax in java either!
+            Comparator.comparingDouble(Pair::getSecond)
         );
         frontier.add(new Pair<GridCell, Double>(start, 0d));
+
+        // Keep track of cells in frontier for visualization
+        HashSet<GridCell> frontierSet = new HashSet<>();
+        frontierSet.add(start);
+
         HashMap<GridCell, GridCell> cameFrom = new HashMap<>();
         cameFrom.put(start, null);
         HashMap<GridCell, Double> gCost = new HashMap<>();
@@ -179,6 +326,18 @@ public class Generator extends Node3D {
 
         while (!frontier.isEmpty()) {
             GridCell currentCell = frontier.poll().getFirst();
+            frontierSet.remove(currentCell);
+
+            // Don't color start/end nodes
+            if (currentCell != start && currentCell != end) {
+                visualizationQueue.add(
+                    new VisStep(
+                        VisStep.StepType.VISITED,
+                        currentCell,
+                        COLOR_VISITED
+                    )
+                );
+            }
 
             gd.print("Current cell: " + currentCell);
 
@@ -188,6 +347,7 @@ public class Generator extends Node3D {
                 currentCell.getCoords().getXIndex(),
                 currentCell.getCoords().getZIndex()
             );
+
             for (GridCell next : currentNeighbors) {
                 double newCost = gCost.get(currentCell) + getCost(next);
                 if (!gCost.containsKey(next) || newCost < gCost.get(next)) {
@@ -195,6 +355,18 @@ public class Generator extends Node3D {
                     double priority = newCost + getHeuristic(next, end);
                     frontier.add(new Pair<>(next, priority));
                     cameFrom.put(next, currentCell);
+
+                    // Visualize frontier
+                    if (next != end && !frontierSet.contains(next)) {
+                        frontierSet.add(next);
+                        visualizationQueue.add(
+                            new VisStep(
+                                VisStep.StepType.FRONTIER,
+                                next,
+                                COLOR_FRONTIER
+                            )
+                        );
+                    }
                 }
             }
         }
@@ -203,16 +375,47 @@ public class Generator extends Node3D {
         ArrayList<Coordinate> path = new ArrayList<>();
         GridCell current = end;
 
-        while (current != start) {
-            path.add(current.getCoords());
-            current = cameFrom.get(current);
+        if (cameFrom.get(end) != null) { // Only if path was found
+            while (current != start) {
+                path.add(current.getCoords());
+                if (current != end) { // Don't color the end node
+                    visualizationQueue.add(
+                        new VisStep(VisStep.StepType.PATH, current, COLOR_PATH)
+                    );
+                }
+                current = cameFrom.get(current);
+            }
+
+            path.add(start.getCoords());
+            Collections.reverse(path);
+        } else {
+            gd.print("No path found!");
         }
 
-        path.add(start.getCoords());
-        Collections.reverse(path);
+        gd.print("Path calculation finished, starting visualization");
 
-        gd.print("finished");
+        // Store the path for access later
+        pathResult = path;
+
+        // Start the visualization timer
+        isVisualizing = true;
+        visualizationTimer.start();
+
         return path;
+    }
+
+    // Reset visualization colors immediately (not queued)
+    private void resetVisualizationImmediate() {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                GridCell cell = grid[x][z];
+                if (cell.getTile() == Tile.GrassProp) {
+                    updateNodeColor(cell, COLOR_OBSTACLE);
+                } else {
+                    updateNodeColor(cell, COLOR_UNVISITED);
+                }
+            }
+        }
     }
 
     private double getHeuristic(GridCell a, GridCell b) {
@@ -234,6 +437,9 @@ public class Generator extends Node3D {
             cellWidth);
         int zi = (int) ((coords.getY() + (mapHeight * cellWidth) / 2) /
             cellWidth);
+        // Clamp to grid bounds
+        xi = Math.max(0, Math.min(mapWidth - 1, xi));
+        zi = Math.max(0, Math.min(mapHeight - 1, zi));
         return grid[xi][zi];
     }
 
