@@ -8,7 +8,6 @@ import godot.api.Camera3D;
 import godot.api.Input;
 import godot.api.Input.MouseMode;
 import godot.api.InputEvent;
-import godot.api.InputEventMouse;
 import godot.api.InputEventMouseButton;
 import godot.api.InputEventMouseMotion;
 import godot.api.SubViewport;
@@ -36,7 +35,11 @@ public class GameCameraFrame extends TextureRect {
 
     @Export
     @RegisterProperty
-    public int targetHeight;
+    public int maxHeight;
+
+    @Export
+    @RegisterProperty
+    public int minHeight;
 
     private double mouseSensitivity = 0.005;
     private double zoomSensitivity = 2.0;
@@ -47,6 +50,8 @@ public class GameCameraFrame extends TextureRect {
     private double yaw = 0.0;
     private double pitch = Math.toRadians(15);
 
+    private double maxCameraDistance = 16.0;
+    private double minCameraDistance = 6.0;
     private double cameraDistance = 10.0;
 
     @RegisterFunction
@@ -103,7 +108,11 @@ public class GameCameraFrame extends TextureRect {
                 cameraDistance += zoomSensitivity;
             }
 
-            cameraDistance = gd.clamp(cameraDistance, 3.0, 16.0);
+            cameraDistance = gd.clamp(
+                cameraDistance,
+                minCameraDistance,
+                maxCameraDistance
+            );
         }
     }
 
@@ -114,6 +123,12 @@ public class GameCameraFrame extends TextureRect {
     }
 
     private void updateViewport() {
+        int targetHeight = (int) gd.lerp(
+            minHeight,
+            maxHeight,
+            cameraDistance / maxCameraDistance
+        );
+
         windowSize = getViewport().getVisibleRect().getSize();
         aspectRatio = windowSize.getX() / windowSize.getY();
         int targetWidth = Math.round((int) (targetHeight * aspectRatio));

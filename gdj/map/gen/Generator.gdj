@@ -21,6 +21,7 @@ properties = [
     
 ]
 functions = [
-    _ready,
+    _process,
+	_ready,
 	navigate
 ]

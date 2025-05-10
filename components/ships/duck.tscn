@@ -1,12 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b122365k7kdmi"]
+[gd_scene load_steps=4 format=3 uid="uid://b122365k7kdmi"]
 
-[ext_resource type="Script" uid="uid://cvmh7t0yn8cfl" path="res://components/ships/duck.gd" id="1_t0agd"]
 [ext_resource type="ArrayMesh" uid="uid://cevx7uvuvtydt" path="res://assets/ships/duck/duck.res" id="1_xakl7"]
 [ext_resource type="ArrayMesh" uid="uid://dli40s2drdkcp" path="res://assets/ships/duck/nuke.res" id="3_6mam0"]
 [ext_resource type="ArrayMesh" uid="uid://w10q0f1kq1vg" path="res://assets/ships/duck/nuke_support.res" id="4_j13wg"]
 
 [node name="DuckShip" type="Node3D"]
-script = ExtResource("1_t0agd")
 
 [node name="Duck" type="MeshInstance3D" parent="."]
 
