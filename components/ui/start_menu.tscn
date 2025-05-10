@@ -1,10 +1,89 @@
-[gd_scene load_steps=5 format=3 uid="uid://dncl00rx548bq"]
+[gd_scene load_steps=11 format=3 uid="uid://dncl00rx548bq"]
 
 [ext_resource type="FontFile" uid="uid://68rliu44w64e" path="res://assets/PixelifySans-Regular.ttf" id="1_p0c5d"]
+[ext_resource type="Script" uid="uid://b7tuquth4nrix" path="res://components/ui/start_menu.gd" id="2_r2iui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bp3h6"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3gjs4"]
+bg_color = Color(0.325111, 0.530637, 0.36377, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.791999, 0.791999, 0.791999, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r2iui"]
+bg_color = Color(0.415686, 0.65098, 0.458824, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1d0o"]
+bg_color = Color(0.249804, 0.421074, 0.282437, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.537011, 0.537011, 0.537011, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
 
 [sub_resource type="Theme" id="Theme_r2iui"]
 default_font = ExtResource("1_p0c5d")
 default_font_size = 40
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.875, 0.875, 0.875, 0.5)
+Button/colors/font_focus_color = Color(0.95, 0.95, 0.95, 1)
+Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
+Button/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/font_outline_color = Color(0, 0, 0, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
+Button/colors/icon_disabled_color = Color(1, 1, 1, 0.4)
+Button/colors/icon_focus_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/icon_normal_color = Color(1, 1, 1, 1)
+Button/colors/icon_pressed_color = Color(1, 1, 1, 1)
+Button/constants/align_to_largest_stylebox = 0
+Button/constants/h_separation = 4
+Button/constants/icon_max_width = 0
+Button/constants/outline_size = 0
+Button/styles/disabled = SubResource("StyleBoxFlat_bp3h6")
+Button/styles/hover = SubResource("StyleBoxFlat_3gjs4")
+Button/styles/normal = SubResource("StyleBoxFlat_r2iui")
+Button/styles/pressed = SubResource("StyleBoxFlat_j1d0o")
 VBoxContainer/constants/separation = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_laux1"]
@@ -30,6 +109,24 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
+shadow_color = Color(0.165656, 0.165656, 0.165656, 0.6)
+shadow_size = 2
+shadow_offset = Vector2(10.825, 10.47)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_43fvg"]
+bg_color = Color(0.289568, 0.479759, 0.32559, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
 
 [node name="StartMenu" type="Control"]
 clip_contents = true
@@ -40,6 +137,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_r2iui")
+script = ExtResource("2_r2iui")
 
 [node name="BackPanel" type="Panel" parent="."]
 z_index = -1
@@ -52,6 +150,7 @@ offset_top = -595.0
 offset_right = 232.0
 offset_bottom = 1844.04
 rotation = 0.261799
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_laux1")
 
 [node name="Panel" type="Panel" parent="."]
@@ -63,6 +162,7 @@ offset_left = 128.0
 offset_top = 128.0
 offset_right = -183.04
 offset_bottom = 87.8
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_p0c5d")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Panel"]
@@ -76,38 +176,54 @@ offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 80
 text = "Battleship"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+z_index = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 128.0
-offset_top = -624.0
-offset_right = 448.0
-offset_bottom = -184.0
+offset_left = 126.0
+offset_top = -576.0
+offset_right = 485.0
+offset_bottom = -307.0
 grow_vertical = 0
-theme_override_constants/separation = 20
+mouse_filter = 2
+theme = SubResource("Theme_r2iui")
+theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Button" type="Button" parent="VBoxContainer"]
+[node name="Host" type="Button" parent="VBoxContainer"]
+z_index = 4
 layout_mode = 2
+size_flags_vertical = 3
 text = "Host Game"
-flat = true
-alignment = 0
 
-[node name="Button2" type="Button" parent="VBoxContainer"]
+[node name="Join" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/hover = SubResource("StyleBoxFlat_43fvg")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j1d0o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_r2iui")
 text = "Join Game"
-flat = true
-alignment = 0
 
-[node name="Button3" type="Button" parent="VBoxContainer"]
+[node name="Settings" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/hover = SubResource("StyleBoxFlat_43fvg")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j1d0o")
+theme_override_styles/normal = SubResource("StyleBoxFlat_r2iui")
 text = "Settings"
-flat = true
-alignment = 0
+
+[connection signal="button_down" from="VBoxContainer/Host" to="." method="_on_host_button_down"]
+[connection signal="pressed" from="VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="VBoxContainer/Host" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="VBoxContainer/Settings" to="." method="_on_settings_pressed"]

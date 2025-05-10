@@ -21,6 +21,7 @@ script = ExtResource("1_w8ifq")
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_ymw2v")]
 z_index = -5
+mouse_filter = 2
 texture = SubResource("ViewportTexture_w8ifq")
 camera = NodePath("Camera3D")
 target_height = 380
