@@ -3,20 +3,21 @@ package entity;
 import godot.core.Vector2;
 
 public class InputState {
-    public Double acceleration;
+
+    public Double velocity;
     public Double rotation;
     public Vector2 position;
     public Integer emitAction;
 
-    public InputState () {
-        acceleration = 0d;
+    public InputState() {
+        velocity = 0d;
         rotation = 0d;
         position = null;
         emitAction = 0;
     }
 
-    public double getAcceleration() {
-        return acceleration;
+    public double getVelocity() {
+        return velocity;
     }
 
     public double getRotation() {

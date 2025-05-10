@@ -7,29 +7,31 @@ import godot.annotation.RegisterProperty;
 import godot.api.Camera3D;
 import godot.api.Input;
 import godot.api.Input.MouseMode;
-import godot.api.InputEvent;
-import godot.api.InputEventMouseMotion;
 import godot.api.Node3D;
+import godot.api.TextureRect;
 import godot.core.Basis;
 import godot.core.EulerOrder;
 import godot.core.Vector3;
+import godot.global.GD;
 
 @RegisterClass
 public class GameCamera extends Camera3D {
+
+    private GD gd = GD.INSTANCE;
 
     @RegisterProperty
     @Export
     public Node3D shipNode;
 
-    private Vector3 shipPosition = new Vector3();
+    @RegisterProperty
+    @Export
+    public TextureRect cameraParent;
 
-    private double minInclinationDeg = 5.0;
-    private double maxInclinationDeg = 50.0;
+    private Vector3 shipPosition = new Vector3();
 
     private double cameraVerticalOffset = 1.0;
     private double cameraDistance = 10.0;
 
-    private double mouseSensitivity = 0.005; // better scale
     private double yaw = 0.0;
     private double pitch = Math.toRadians(15);
 
@@ -41,36 +43,20 @@ public class GameCamera extends Camera3D {
 
     @RegisterFunction
     @Override
-    public void _input(InputEvent event) {
-        if (event.isActionPressed("show_cursor")) {
-            Input.setMouseMode(MouseMode.VISIBLE);
-        } else if (event.isActionReleased("show_cursor")) {
-            Input.setMouseMode(MouseMode.CAPTURED);
-        }
-    }
-
-    @RegisterFunction
-    @Override
-    public void _unhandledInput(InputEvent event) {
-        if (
-            event instanceof InputEventMouseMotion &&
-            Input.getMouseMode() == MouseMode.CAPTURED
-        ) {
-            InputEventMouseMotion motion = (InputEventMouseMotion) event;
-            yaw -= motion.getRelative().getX() * mouseSensitivity;
-            pitch -= motion.getRelative().getY() * mouseSensitivity;
-
-            double minInclination = Math.toRadians(minInclinationDeg);
-            double maxInclination = Math.toRadians(maxInclinationDeg);
-
-            pitch = Math.max(minInclination, Math.min(maxInclination, pitch));
-        }
-    }
-
-    @RegisterFunction
-    @Override
     public void _process(double delta) {
-        if (shipNode == null) return;
+        if (shipNode == null || cameraParent == null) return;
+
+        GameCameraFrame frame = (GameCameraFrame) cameraParent;
+
+        // this is really stupid and input should be handled here but
+        // theres a bug or smth its prolly intended behavior but i dont
+        // want to deal with it so too bad
+        yaw = frame.getYaw();
+        pitch = frame.getPitch();
+        double tCameraDistance = frame.getZoom();
+
+        cameraDistance +=
+            (tCameraDistance - cameraDistance) * Math.min(1.0, 5.0 * delta);
 
         shipPosition = shipNode.getGlobalPosition();
 
@@ -90,7 +76,6 @@ public class GameCamera extends Camera3D {
         lookAt(focusPoint, new Vector3(0, 1, 0));
     }
 
-    public void invokeShake(double strength) {
-        // Placeholder for screen shake
-    }
+    @RegisterFunction
+    public void invokeShake(double strength) {}
 }
