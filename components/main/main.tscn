@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://bktut2nbxim2r"]
+[gd_scene load_steps=13 format=3 uid="uid://bktut2nbxim2r"]
 
 [ext_resource type="Script" uid="uid://b32np3npdvqpy" path="res://gdj/main/Game.gdj" id="1_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="2_4t43m"]
 [ext_resource type="PackedScene" uid="uid://dncl00rx548bq" path="res://components/ui/start_menu.tscn" id="2_lnf1j"]
+[ext_resource type="Script" uid="uid://ccju4kmw4pgah" path="res://gdj/multiplayer/MultiplayerManager.gdj" id="2_mvprt"]
 [ext_resource type="ArrayMesh" uid="uid://c1fmodjr5y6my" path="res://assets/props/rock.res" id="3_wfiak"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="4_ymw2v"]
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="5_w8ifq"]
@@ -17,133 +18,120 @@ viewport_path = NodePath("Viewport")
 [node name="Game" type="Node3D"]
 script = ExtResource("1_w8ifq")
 
-[node name="StartMenu" parent="." instance=ExtResource("2_lnf1j")]
+[node name="MultiplayerManager" type="Node" parent="."]
+script = ExtResource("2_mvprt")
+metadata/_custom_type_script = "uid://ccju4kmw4pgah"
 
-[node name="BackPanel" parent="StartMenu" index="0"]
-anchor_right = 0.314
-anchor_bottom = 0.063
-offset_left = -775.0
-offset_top = -733.0
-offset_right = 271.12
-offset_bottom = 2440.96
-
-[node name="VBoxContainer" parent="StartMenu" index="2"]
-anchor_top = 0.61
-anchor_right = 0.103
-offset_top = -202.8
-offset_right = 250.24
+[node name="StartMenu" parent="MultiplayerManager" node_paths=PackedStringArray("multiplayer_manager") instance=ExtResource("2_lnf1j")]
+multiplayer_manager = NodePath("..")
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_ymw2v")]
 z_index = -5
 mouse_filter = 2
 texture = SubResource("ViewportTexture_w8ifq")
 camera = NodePath("Camera3D")
+max_height = 240
+min_height = 120
 
 [node name="Camera3D" type="Camera3D" parent="RenderTarget"]
 transform = Transform3D(-0.191374, 0.513571, -0.836433, 1.19209e-07, 0.852184, 0.523242, 0.981517, 0.100135, -0.163085, -4.80038, 4.2382, -5.97713)
 fov = 40.0
 
-[node name="ReflectionProbe" type="ReflectionProbe" parent="RenderTarget/Camera3D"]
-transform = Transform3D(-0.191374, 1.24797e-07, 0.981517, 0.106991, 0.994041, 0.0208607, -0.975668, 0.109005, -0.190234, 0, 0, 0)
-update_mode = 1
-size = Vector3(40, 40, 40)
-box_projection = true
+[node name="Props" type="Node3D" parent="."]
 
-[node name="MatchEnvironment" parent="." instance=ExtResource("4_ymw2v")]
-
-[node name="Ocean" parent="." instance=ExtResource("2_4t43m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.41029, 0, 0)
-tile_x = 1
-tile_y = 1
-
-[node name="RockProps" type="Node3D" parent="."]
+[node name="RockProps" type="Node3D" parent="Props"]
 transform = Transform3D(0.987139, 0, 0.159864, 0, 1, 0, -0.159864, 0, 0.987139, 0.915758, 0, 0.15049)
 
-[node name="Rock13" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock13" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(-0.119267, 0, -0.521537, 0, 0.535, 0, 0.521537, 0, -0.119267, 6.25669, 0.247175, -8.31476)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("")
 
-[node name="Rock2" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock2" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.296761, 0, 0.363462, 0, 0.469225, 0, -0.363462, 0, 0.296761, 3.16443, 0.199145, -4.41013)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("")
 
-[node name="Rock4" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock4" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.185814, 0.00195474, -0.221876, 0.00125507, -0.289406, -0.0014986, -0.221881, -3.25381e-08, -0.185818, 1.61089, -0.546117, 0.11077)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("")
 
-[node name="Rock5" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock5" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.000187114, 0, 0.292307, 0, 0.507919, 0, -0.298095, 0, 0.000183702, 2.22762, -1.33859, -1.75631)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock6")
 
-[node name="Rock6" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock6" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.284798, 0, 0.0514795, 0, 0.289412, 0, -0.0514795, 0, 0.284798, 1.94501, 0.155291, 0.00516576)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("")
 
-[node name="Rock3" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock3" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.149916, 0, 0.284316, 0, 0.321419, 0, -0.284316, 0, 0.149916, 3.40629, -0.455263, -5.42986)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock2")
 
-[node name="Rock7" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock7" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.112156, 0, -0.189465, 0, 0.220172, 0, 0.189465, 0, 0.112156, -1.82258, 0.0776258, -1.14204)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock3")
 
-[node name="Rock8" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock8" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(-0.252814, 0, -0.11073, 0, 0.276, 0, 0.11073, 0, -0.252814, 6.74714, 0.107609, -7.26413)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock7")
 
-[node name="Rock9" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock9" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.0973054, 0, 0.152598, 0, 0.180982, 0, -0.152598, 0, 0.0973054, 2.04482, 0.290846, -7.14473)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock8")
 
-[node name="Rock10" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock10" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(-0.121967, 0.104504, -0.0834106, -0.0774002, 0.0368801, 0.159385, 0.10903, 0.143085, 0.0198386, 2.79064, -0.611224, -6.01155)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock9")
 
-[node name="Rock11" type="MeshInstance3D" parent="RockProps"]
+[node name="Rock11" type="MeshInstance3D" parent="Props/RockProps"]
 transform = Transform3D(0.0504417, -0.00926044, 0.171676, -0.0095278, 0.178486, 0.0124271, -0.17166, -0.0126277, 0.0497564, 1.98992, -0.93014, -7.12484)
 mesh = ExtResource("3_wfiak")
 skeleton = NodePath("../Rock10")
 
-[node name="SeaweedProps" type="Node3D" parent="."]
+[node name="SeaweedProps" type="Node3D" parent="Props"]
 
-[node name="seaweed" parent="SeaweedProps" instance=ExtResource("5_w8ifq")]
+[node name="seaweed" parent="Props/SeaweedProps" instance=ExtResource("5_w8ifq")]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 1.60545, -3.49462, -3.26116)
 
-[node name="seaweed2" parent="SeaweedProps" instance=ExtResource("5_w8ifq")]
+[node name="seaweed2" parent="Props/SeaweedProps" instance=ExtResource("5_w8ifq")]
 transform = Transform3D(-0.575828, 0, 0.398023, 0, 0.7, 0, -0.398023, 0, -0.575828, 4.55134, -3.70375, -3.47916)
 
-[node name="seaweed3" parent="SeaweedProps" instance=ExtResource("5_w8ifq")]
+[node name="seaweed3" parent="Props/SeaweedProps" instance=ExtResource("5_w8ifq")]
 transform = Transform3D(0.221522, 0, -0.664024, 0, 0.7, 0, 0.664024, 0, 0.221522, 0.912595, -3.56433, -2.07862)
 
-[node name="seaweed4" parent="SeaweedProps" instance=ExtResource("5_w8ifq")]
+[node name="seaweed4" parent="Props/SeaweedProps" instance=ExtResource("5_w8ifq")]
 transform = Transform3D(0.195341, 0, 0.672192, 0, 0.7, 0, -0.672192, 0, 0.195341, 1.97768, -3.62897, -5.60889)
 
-[node name="seaweed5" parent="SeaweedProps" instance=ExtResource("5_w8ifq")]
+[node name="seaweed5" parent="Props/SeaweedProps" instance=ExtResource("5_w8ifq")]
 transform = Transform3D(-0.559794, 0, -0.420275, 0, 0.7, 0, 0.420275, 0, -0.559794, 0.0465218, -3.63404, -3.33104)
 
-[node name="MineProps" type="Node3D" parent="."]
+[node name="MineProps" type="Node3D" parent="Props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8809, -0.657497, -6.91762)
 
-[node name="NavalMine2" parent="MineProps" instance=ExtResource("6_4t43m")]
+[node name="NavalMine2" parent="Props/MineProps" instance=ExtResource("6_4t43m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.653817, -0.254694, -0.206986)
 
-[node name="NavalMine" parent="MineProps" instance=ExtResource("6_4t43m")]
+[node name="NavalMine" parent="Props/MineProps" instance=ExtResource("6_4t43m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.60918, -0.473038, 1.90327)
 
-[node name="Node3D" parent="." instance=ExtResource("8_gjvd5")]
+[node name="Node3D" parent="Props" instance=ExtResource("8_gjvd5")]
 transform = Transform3D(0.948263, 0, 0.317487, 0, 1, 0, -0.317487, 0, 0.948263, 0.164727, 4.76837e-07, -3.99713)
 
-[node name="GrassTile1" parent="." instance=ExtResource("10_y7uxv")]
+[node name="GrassTile1" parent="Props" instance=ExtResource("10_y7uxv")]
 transform = Transform3D(0.56808, 0, 0.489679, 0, 0.53, 0, -0.489679, 0, 0.56808, 2.91104, 2.4035, -0.837715)
 
-[editable path="StartMenu"]
+[node name="Ocean" parent="Props" instance=ExtResource("2_4t43m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.41029, 0, 0)
+tile_x = 1
+tile_y = 1
+
+[node name="MatchEnvironment" parent="Props" instance=ExtResource("4_ymw2v")]

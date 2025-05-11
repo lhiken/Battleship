@@ -50,16 +50,17 @@ public class Generator extends Node3D {
 
     private static final GD gd = GD.INSTANCE;
 
-    private final double cellWidth = 2.0;
-    private final int mapWidth = 80;
-    private final int mapHeight = 80;
+    private final double cellWidth = 3.0;
+    private final double tileWidth = 2.0;
+    private final int mapWidth = 50;
+    private final int mapHeight = 50;
 
     private GridCell[][] grid;
 
     private FastNoiseLite baseNoise;
 
     private int noiseSeed = (int) (Math.random() * 1000);
-    private float noiseFreq = 0.08f;
+    private float noiseFreq = 0.06f;
 
     private Queue<Node3D> spawnedTiles;
 
@@ -96,8 +97,8 @@ public class Generator extends Node3D {
                 Tile tileType = getTileType(x, z);
 
                 GridCell cell = new GridCell(coord, tileType, height);
-                if (height < 0.15) cell.setTile(Tile.Empty);
-                cell.setHeight(height * 10);
+                if (height < 0.4) cell.setTile(Tile.Empty);
+                cell.setHeight(height * 12 - 2.0);
                 spawnTile(cell);
                 grid[x][z] = cell;
             }
@@ -143,12 +144,15 @@ public class Generator extends Node3D {
         );
 
         Node3D tileInstance = (Node3D) tileScene.instantiate();
-        float scale = 1.0f - (float) (Math.random() * 0.2);
+        float scale =
+            (float) (1.0f - ((Math.random() * 0.2))) *
+            (float) (cellWidth / tileWidth);
         tileInstance.setPosition(pos);
         tileInstance.setRotation(
             new Vector3(
                 0,
-                (Math.PI / 2) * (Math.random() * 4) + Math.random() * 0.1,
+                (Math.PI / 2.0) * Math.round((Math.random() * 4)) +
+                (Math.random() - 0.5) * 1.5,
                 0
             )
         );

@@ -29,8 +29,11 @@ fog_height_density = 1.2427
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 volumetric_fog_emission = Color(0.38087, 0.38087, 0.38087, 1)
+volumetric_fog_length = 400.0
 volumetric_fog_detail_spread = 6.0
 adjustment_enabled = true
+adjustment_brightness = 1.05
+adjustment_saturation = 1.1
 
 [node name="WorldEnvironment" type="WorldEnvironment"]
 environment = SubResource("Environment_0bthb")
@@ -38,7 +41,5 @@ environment = SubResource("Environment_0bthb")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.211398, 0.765295, -0.607976, -0.116854, 0.597783, 0.793096, 0.97039, 0.238702, -0.0369418, 0, 0, 0)
 light_energy = 0.8
-light_specular = 0.0
 shadow_enabled = true
-shadow_opacity = 0.89
-shadow_blur = 0.0
+directional_shadow_max_distance = 200.0

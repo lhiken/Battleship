@@ -2,20 +2,23 @@ package entity.providers;
 
 import entity.InputProvider;
 import entity.InputState;
+import godot.annotation.Export;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.Input;
 import godot.core.Vector2;
 import godot.global.GD;
 
-/** PlayerProvider
+/** MultiplayerProvider
  * a version of inputprovider for the local player's input
  */
 @RegisterClass
-public class PlayerProvider extends InputProvider {
+public class MultiplayerProvider extends InputProvider {
 
     private static final GD gd = GD.INSTANCE;
 
+    @Export int playerID = 1;
+    
     private final double VELOCITY_STEP = 3.0;
     private final double ROTATION_STEP = 4.0;
     private double rotation;

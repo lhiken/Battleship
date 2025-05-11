@@ -13,6 +13,7 @@ config_version=5
 config/name="Battleship"
 run/main_scene="uid://bktut2nbxim2r"
 config/features=PackedStringArray("4.4", "Forward Plus")
+run/max_fps=60
 boot_splash/bg_color=Color(0.85263, 0.85263, 0.85263, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"

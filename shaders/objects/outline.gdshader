@@ -51,7 +51,7 @@ void fragment() {
 	float depth_normal_bias = remap(
 		max(0.25, 1.0 - normal[2].z),
 		depth_normal_threshold, 1.0,
-		1.0, 2.0
+		1.0, 1.5
 	);
 	float dt = depth_normal_threshold * depth_normal_bias;
 

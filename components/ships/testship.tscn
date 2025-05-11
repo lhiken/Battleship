@@ -1,12 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://bqopxhv4l3nhu"]
+[gd_scene load_steps=7 format=3 uid="uid://bqopxhv4l3nhu"]
 
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="1_ohnw0"]
 [ext_resource type="PackedScene" uid="uid://b122365k7kdmi" path="res://components/ships/duck.tscn" id="2_n48u2"]
+[ext_resource type="ArrayMesh" uid="uid://cevx7uvuvtydt" path="res://assets/ships/duck/duck.res" id="3_n48u2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fijdg"]
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uqn88"]
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ik3un"]
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
 
 [node name="Ship" instance=ExtResource("1_ohnw0")]
 
 [node name="DuckShip" parent="." index="2" instance=ExtResource("2_n48u2")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="ShipMesh" parent="." index="3"]
+[node name="WaveEffector" parent="." index="3"]
+transform = Transform3D(-1, 0, 8.74228e-08, 9.31764e-22, 1, 1.06581e-14, -8.74228e-08, 1.06581e-14, -1, 0, 0, 0)
+mesh = ExtResource("3_n48u2")
+surface_material_override/0 = SubResource("StandardMaterial3D_fijdg")
+surface_material_override/1 = SubResource("StandardMaterial3D_uqn88")
+surface_material_override/2 = SubResource("StandardMaterial3D_ik3un")
+
+[node name="ShipMesh" parent="." index="4"]
 visible = false

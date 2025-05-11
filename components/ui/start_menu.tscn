@@ -1,93 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dncl00rx548bq"]
+[gd_scene load_steps=8 format=3 uid="uid://dncl00rx548bq"]
 
-[ext_resource type="FontFile" uid="uid://68rliu44w64e" path="res://assets/PixelifySans-Regular.ttf" id="1_p0c5d"]
-[ext_resource type="Script" uid="uid://b7tuquth4nrix" path="res://components/ui/start_menu.gd" id="2_r2iui"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bp3h6"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.1, 0.1, 0.1, 0.3)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3gjs4"]
-bg_color = Color(0.325111, 0.530637, 0.36377, 1)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(0.791999, 0.791999, 0.791999, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
-shadow_size = 3
-shadow_offset = Vector2(4.97, 5.195)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r2iui"]
-bg_color = Color(0.415686, 0.65098, 0.458824, 1)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
-shadow_size = 3
-shadow_offset = Vector2(4.97, 5.195)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1d0o"]
-bg_color = Color(0.249804, 0.421074, 0.282437, 1)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(0.537011, 0.537011, 0.537011, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
-shadow_size = 3
-shadow_offset = Vector2(4.97, 5.195)
-
-[sub_resource type="Theme" id="Theme_r2iui"]
-default_font = ExtResource("1_p0c5d")
-default_font_size = 40
-Button/colors/font_color = Color(1, 1, 1, 1)
-Button/colors/font_disabled_color = Color(0.875, 0.875, 0.875, 0.5)
-Button/colors/font_focus_color = Color(0.95, 0.95, 0.95, 1)
-Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
-Button/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-Button/colors/font_outline_color = Color(0, 0, 0, 1)
-Button/colors/font_pressed_color = Color(1, 1, 1, 1)
-Button/colors/icon_disabled_color = Color(1, 1, 1, 0.4)
-Button/colors/icon_focus_color = Color(1, 1, 1, 1)
-Button/colors/icon_hover_color = Color(1, 1, 1, 1)
-Button/colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-Button/colors/icon_normal_color = Color(1, 1, 1, 1)
-Button/colors/icon_pressed_color = Color(1, 1, 1, 1)
-Button/constants/align_to_largest_stylebox = 0
-Button/constants/h_separation = 4
-Button/constants/icon_max_width = 0
-Button/constants/outline_size = 0
-Button/styles/disabled = SubResource("StyleBoxFlat_bp3h6")
-Button/styles/hover = SubResource("StyleBoxFlat_3gjs4")
-Button/styles/normal = SubResource("StyleBoxFlat_r2iui")
-Button/styles/pressed = SubResource("StyleBoxFlat_j1d0o")
-VBoxContainer/constants/separation = 16
+[ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_r2iui"]
+[ext_resource type="Script" uid="uid://b3jvyj6mc0dhq" path="res://src/main/java/ui/StartMenu.java" id="2_r2iui"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_laux1"]
-bg_color = Color(0.28836, 0.647904, 0.792468, 1)
+bg_color = Color(0.113038, 0.656857, 0.835843, 1)
 border_width_left = 15
 border_width_top = 15
 border_width_right = 15
@@ -128,6 +45,36 @@ shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
 shadow_size = 3
 shadow_offset = Vector2(4.97, 5.195)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1d0o"]
+bg_color = Color(0.249804, 0.421074, 0.282437, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.537011, 0.537011, 0.537011, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r2iui"]
+bg_color = Color(0.415686, 0.65098, 0.458824, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.169245, 0.169245, 0.169245, 0.6)
+shadow_size = 3
+shadow_offset = Vector2(4.97, 5.195)
+
 [node name="StartMenu" type="Control"]
 clip_contents = true
 layout_mode = 3
@@ -136,75 +83,81 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_r2iui")
+theme = ExtResource("1_r2iui")
 script = ExtResource("2_r2iui")
 
-[node name="BackPanel" type="Panel" parent="."]
-z_index = -1
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.325
-anchor_bottom = 0.012
-offset_left = -260.0
-offset_top = -595.0
-offset_right = 232.0
-offset_bottom = 1844.04
-rotation = 0.261799
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_laux1")
-
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.562
-anchor_bottom = 0.215
-offset_left = 128.0
-offset_top = 128.0
-offset_right = -183.04
-offset_bottom = 87.8
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_p0c5d")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="Panel"]
+[node name="SelectMenu" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackPanel" type="Panel" parent="SelectMenu"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -72.0
+offset_top = -560.0
+offset_right = -187.16
+offset_bottom = 596.0
+rotation = 0.261799
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_laux1")
+
+[node name="Panel" type="Panel" parent="SelectMenu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 0.25
+offset_left = 128.0
+offset_top = 128.0
+offset_right = -116.16
+offset_bottom = 42.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_p0c5d")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SelectMenu/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 80
 text = "Battleship"
+fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="SelectMenu"]
 z_index = 1
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 1.0
+anchor_top = 0.914
+anchor_right = 0.304
 anchor_bottom = 1.0
-offset_left = 126.0
-offset_top = -576.0
-offset_right = 485.0
-offset_bottom = -307.0
+offset_left = 128.0
+offset_top = -475.12
+offset_right = 39.5187
+offset_bottom = -170.752
 grow_vertical = 0
 mouse_filter = 2
-theme = SubResource("Theme_r2iui")
+theme = ExtResource("1_r2iui")
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Host" type="Button" parent="VBoxContainer"]
+[node name="Host" type="Button" parent="SelectMenu/VBoxContainer"]
 z_index = 4
 layout_mode = 2
 size_flags_vertical = 3
 text = "Host Game"
 
-[node name="Join" type="Button" parent="VBoxContainer"]
+[node name="Join" type="Button" parent="SelectMenu/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -213,7 +166,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_j1d0o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_r2iui")
 text = "Join Game"
 
-[node name="Settings" type="Button" parent="VBoxContainer"]
+[node name="Settings" type="Button" parent="SelectMenu/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -222,8 +175,60 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_j1d0o")
 theme_override_styles/normal = SubResource("StyleBoxFlat_r2iui")
 text = "Settings"
 
-[connection signal="button_down" from="VBoxContainer/Host" to="." method="_on_host_button_down"]
-[connection signal="pressed" from="VBoxContainer/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="VBoxContainer/Host" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Join" to="." method="_on_join_pressed"]
-[connection signal="pressed" from="VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[node name="IPInput" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LineEdit" type="LineEdit" parent="IPInput"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.0
+offset_top = -44.0
+offset_right = 208.0
+offset_bottom = 52.0
+grow_horizontal = 2
+grow_vertical = 2
+placeholder_text = "Input IP here..."
+alignment = 1
+
+[node name="Panel" type="Panel" parent="IPInput"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.0
+offset_top = -132.0
+offset_right = 208.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="IPInput/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Host IP Address"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="button_down" from="SelectMenu/VBoxContainer/Host" to="." method="_on_host_button_down"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Host" to="." method="_on_host_clicked"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Host" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Join" to="." method="_on_join_clicked"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="SelectMenu/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="text_submitted" from="IPInput/LineEdit" to="." method="_on_ip_submit"]

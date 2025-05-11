@@ -7,8 +7,6 @@
 [node name="DuckShip" type="Node3D"]
 
 [node name="Duck" type="MeshInstance3D" parent="."]
-
-[node name="Duck2" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_xakl7")
 
 [node name="Nuke" type="MeshInstance3D" parent="."]

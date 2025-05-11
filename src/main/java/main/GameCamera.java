@@ -39,6 +39,7 @@ public class GameCamera extends Camera3D {
     @Override
     public void _ready() {
         Input.setMouseMode(MouseMode.CAPTURED);
+        setCurrent(true);
     }
 
     @RegisterFunction

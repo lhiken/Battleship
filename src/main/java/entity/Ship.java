@@ -6,9 +6,7 @@ import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.api.CSGSphere3D;
 import godot.api.CharacterBody3D;
-import godot.api.InputEvent;
 import godot.api.Node;
-import godot.api.Node3D;
 import godot.api.StandardMaterial3D;
 import godot.core.Color;
 import godot.core.Vector2;
@@ -58,22 +56,22 @@ public class Ship extends CharacterBody3D {
         );
         Vector2 endPosition = new Vector2(0, 0);
         ArrayList<Coordinate> path = gen.navigate(currentPosition, endPosition);
-        // clearPathVisualization();
+        clearPathVisualization();
 
-        // for (Coordinate coord : path) {
-        //     CSGSphere3D sphere = new CSGSphere3D();
-        //     sphere.setRadius(0.2f);
+        for (Coordinate coord : path) {
+            CSGSphere3D sphere = new CSGSphere3D();
+            sphere.setRadius(0.2f);
 
-        //     Vector3 position = coord.toVec3();
-        //     sphere.setPosition(position);
+            Vector3 position = coord.toVec3();
+            sphere.setPosition(position);
 
-        //     StandardMaterial3D material = new StandardMaterial3D();
-        //     material.setAlbedo(new Color(0, 1, 0, 0.8f));
-        //     sphere.setMaterial(material);
-        //     getParent().addChild(sphere);
+            StandardMaterial3D material = new StandardMaterial3D();
+            material.setAlbedo(new Color(0, 1, 0, 0.8f));
+            sphere.setMaterial(material);
+            getParent().addChild(sphere);
 
-        //     pathVisualization.add(sphere);
-        // }
+            pathVisualization.add(sphere);
+        }
     }
 
     private ArrayList<Node> pathVisualization = new ArrayList<>();

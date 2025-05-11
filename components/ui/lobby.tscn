@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://x7o8bvwag256"]
+
+[ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_dtsk5"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_dtsk5")
+
+[node name="LobbyMenu" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -348.0
+offset_right = 320.0
+offset_bottom = 364.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="Panel" parent="LobbyMenu"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 88.0
+grow_horizontal = 2
+
+[node name="IPLabel" type="RichTextLabel" parent="LobbyMenu/Header"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -384.0
+offset_top = -28.0
+offset_right = -16.0
+offset_bottom = 36.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "IP Address"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BattleshipLabel" type="RichTextLabel" parent="LobbyMenu/Header"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -32.0
+offset_right = 272.0
+offset_bottom = 32.0
+grow_vertical = 2
+text = "Your Room"
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LobbyMenu"]
+layout_mode = 0
+offset_top = 112.0
+offset_right = 640.0
+offset_bottom = 512.0

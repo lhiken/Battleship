@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cdkpe7nflna3v"]
+[gd_scene load_steps=13 format=3 uid="uid://cdkpe7nflna3v"]
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_wgkvx"]
 [ext_resource type="Script" uid="uid://bnrlsjacg5jdb" path="res://gdj/map/gen/Generator.gdj" id="7_cu54s"]
 [ext_resource type="PackedScene" uid="uid://bqopxhv4l3nhu" path="res://components/ships/testship.tscn" id="8_b56rx"]
+[ext_resource type="PackedScene" uid="uid://cwdninys4bmar" path="res://components/main/arena_border.tscn" id="8_p7m5x"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_wgkvx"]
 viewport_path = NodePath("Viewport")
@@ -18,10 +19,10 @@ frequency = 0.039
 noise = SubResource("FastNoiseLite_cu54s")
 
 [sub_resource type="FogMaterial" id="FogMaterial_b56rx"]
-density = 0.25
+density = 0.1012
 albedo = Color(0.230214, 0.215016, 0.163934, 1)
-emission = Color(0.702129, 0.766583, 0.746079, 1)
-height_falloff = 20.9716
+emission = Color(0.85211, 0.808598, 0.753851, 1)
+height_falloff = 1.26607
 edge_fade = 0.127457
 density_texture = SubResource("NoiseTexture3D_p7m5x")
 
@@ -41,6 +42,7 @@ max_height = 240
 min_height = 140
 
 [node name="GameCamera" type="Camera3D" parent="RenderTarget" node_paths=PackedStringArray("ship_node", "camera_parent")]
+cull_mask = 524287
 fov = 45.0
 script = ExtResource("5_2j7da")
 ship_node = NodePath("../../Ship")
@@ -51,12 +53,14 @@ metadata/_custom_type_script = "uid://cctjq18hkwk3h"
 script = ExtResource("7_cu54s")
 metadata/_custom_type_script = "uid://bnrlsjacg5jdb"
 
+[node name="FogVolume" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144193, 0)
+size = Vector3(300, 6, 300)
+shape = 2
+material = SubResource("FogMaterial_b56rx")
+
 [node name="Ship" parent="." node_paths=PackedStringArray("gen") instance=ExtResource("8_b56rx")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 gen = NodePath("../Generator")
 
-[node name="FogVolume" type="FogVolume" parent="Ship"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.144193, 0)
-size = Vector3(300, 6, 300)
-shape = 2
-material = SubResource("FogMaterial_b56rx")
+[node name="ArenaBorder" parent="." instance=ExtResource("8_p7m5x")]

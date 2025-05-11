@@ -1,12 +1,14 @@
 // THIS FILE IS GENERATED! DO NOT EDIT OR DELETE IT. EDIT OR DELETE THE ASSOCIATED SOURCE CODE FILE INSTEAD
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
-registeredName = MultiplayerServer
-fqName = multiplayer.MultiplayerServer
-relativeSourcePath = src/main/java/multiplayer/MultiplayerServer.java
-baseType = Node
+registeredName = MultiplayerProvider
+fqName = entity.providers.MultiplayerProvider
+relativeSourcePath = src/main/java/entity/providers/MultiplayerProvider.java
+baseType = Node3D
 supertypes = [
-    godot.api.Node,
+    entity.InputProvider,
+	godot.api.Node3D,
+	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
 	godot.common.interop.NativeWrapper,
@@ -20,5 +22,7 @@ properties = [
     
 ]
 functions = [
-    
+    _process,
+	_ready,
+	get_state
 ]

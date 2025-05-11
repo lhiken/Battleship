@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dh5bw48qnu17u"]
+[gd_scene load_steps=25 format=3 uid="uid://dh5bw48qnu17u"]
 
 [ext_resource type="Script" uid="uid://bnrc3xaeewy5o" path="res://gdj/map/Ocean.gdj" id="1_hsy7o"]
 [ext_resource type="Shader" uid="uid://clv2kwqnsmwak" path="res://shaders/ocean/ocean.gdshader" id="1_pv2xc"]
@@ -25,6 +25,12 @@ seamless = true
 seamless_blend_skirt = 0.162
 noise = SubResource("FastNoiseLite_hsy7o")
 
+[sub_resource type="Gradient" id="Gradient_63qka"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hsy7o"]
+gradient = SubResource("Gradient_63qka")
+
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_pv2xc"]
 frequency = 0.0737
 
@@ -34,7 +40,8 @@ height = 1024
 seamless = true
 noise = SubResource("FastNoiseLite_pv2xc")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_63qka"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hsy7o"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_pv2xc")
 shader_parameter/depth_fade_distance = 6.0
@@ -49,27 +56,174 @@ shader_parameter/fresnel_color = Color(0.53289, 0.92241, 0.715934, 1)
 shader_parameter/depth_noise_tex = SubResource("NoiseTexture2D_hsy7o")
 shader_parameter/water_noise_tex = SubResource("NoiseTexture2D_63qka")
 shader_parameter/foam_noise_tex = SubResource("NoiseTexture2D_d1bkx")
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_63qka"]
-material = SubResource("ShaderMaterial_63qka")
-size = Vector2(64, 64)
-subdivide_width = 256
-subdivide_depth = 256
+shader_parameter/simulation = SubResource("GradientTexture1D_hsy7o")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_hsy7o"]
-material = SubResource("ShaderMaterial_63qka")
-size = Vector2(128, 128)
+material = SubResource("ShaderMaterial_hsy7o")
+size = Vector2(164, 164)
 subdivide_width = 256
 subdivide_depth = 256
+
+[sub_resource type="VisualShaderNodeTexture2DParameter" id="VisualShaderNodeTexture2DParameter_p0lg0"]
+parameter_name = "Texture2DParameter"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_67w0s"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_a5yql"]
+source = 5
+
+[sub_resource type="VisualShader" id="VisualShader_hsy7o"]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform sampler2D Texture2DParameter;
+
+
+
+void fragment() {
+// Input:3
+	vec2 n_out3p0 = UV;
+
+
+	vec4 n_out4p0;
+// Texture2D:4
+	n_out4p0 = texture(Texture2DParameter, n_out3p0);
+
+
+// Output:0
+	COLOR.rgb = vec3(n_out4p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(78, 98)
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2(780, 160)
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture2DParameter_p0lg0")
+nodes/fragment/2/position = Vector2(60, 260)
+nodes/fragment/3/node = SubResource("VisualShaderNodeInput_67w0s")
+nodes/fragment/3/position = Vector2(80, 140)
+nodes/fragment/4/node = SubResource("VisualShaderNodeTexture_a5yql")
+nodes/fragment/4/position = Vector2(518, 283)
+nodes/fragment/connections = PackedInt32Array(2, 0, 4, 2, 3, 0, 4, 0, 4, 0, 0, 0)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_mtqrm"]
+viewport_path = NodePath("Simulation")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d1bkx"]
+resource_local_to_scene = true
+shader = SubResource("VisualShader_hsy7o")
+shader_parameter/Texture2DParameter = SubResource("ViewportTexture_mtqrm")
+
+[sub_resource type="Shader" id="Shader_d1bkx"]
+code = "shader_type canvas_item;
+
+uniform sampler2D sim_tex;
+uniform sampler2D col_tex;
+
+uniform float phase = 0.2;
+uniform float attenuation = 0.999;
+uniform float deltaUV = 3.0;
+
+void fragment() {
+	float dv = 1.0 / 1024.0;
+	float du = 1.0 / 1024.0;
+	vec3 duv = vec3(du, dv, 0) * deltaUV;
+
+	vec3 c = texture(sim_tex, UV).rgb;
+
+	float p = (2.0 * c.r - c.g + phase * (
+		texture(sim_tex, UV - duv.zy).r +
+		texture(sim_tex, UV + duv.zy).r +
+		texture(sim_tex, UV - duv.xz).r +
+		texture(sim_tex, UV + duv.xz).r - 4.0 * c.r)) * attenuation;
+		
+	vec2 col_uv = vec2(UV.x, 1.0 - UV.y);
+	float col = texture(col_tex, col_uv).r;
+	float prevCol = texture(sim_tex, UV).b;
+	
+	if (col > 0.0 && prevCol == 0.0) {
+		p += col * 0.5;
+	}
+	
+	if (prevCol > 0.0 && col == 0.0) {
+		p -= prevCol * 0.5;
+	}
+		
+	COLOR = vec4(p, c.r, col, 1);
+}
+"
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_oh23s"]
+viewport_path = NodePath("Collision")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_tvwu1"]
+viewport_path = NodePath("SimulationBuffer")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qr85h"]
+resource_local_to_scene = true
+shader = SubResource("Shader_d1bkx")
+shader_parameter/sim_tex = SubResource("ViewportTexture_tvwu1")
+shader_parameter/col_tex = SubResource("ViewportTexture_oh23s")
+shader_parameter/phase = 0.2
+shader_parameter/attenuation = 0.99
+shader_parameter/deltaUV = 0.5
+
+[sub_resource type="Environment" id="Environment_dr0iu"]
+background_mode = 1
 
 [node name="Ocean" type="Node3D"]
 script = ExtResource("1_hsy7o")
 
 [node name="EditorPlane" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013566, 0.0296359, -0.0495725)
-mesh = SubResource("PlaneMesh_63qka")
+mesh = SubResource("PlaneMesh_hsy7o")
 skeleton = NodePath("../OceanPlane")
 
 [node name="OceanPlane" type="MeshInstance3D" parent="."]
 visible = false
 mesh = SubResource("PlaneMesh_hsy7o")
+
+[node name="SimulationBuffer" type="SubViewport" parent="."]
+size = Vector2i(1024, 1024)
+render_target_clear_mode = 2
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="SimulationBuffer"]
+material = SubResource("ShaderMaterial_d1bkx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Simulation" type="SubViewport" parent="."]
+size = Vector2i(1024, 1024)
+render_target_clear_mode = 2
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="Simulation"]
+material = SubResource("ShaderMaterial_qr85h")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Collision" type="SubViewport" parent="."]
+size = Vector2i(1024, 1024)
+render_target_update_mode = 4
+
+[node name="WaterCam" type="Camera3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -5, 0)
+keep_aspect = 0
+cull_mask = 524288
+environment = SubResource("Environment_dr0iu")
+projection = 1
+current = true
+size = 164.0
+near = 0.001
+far = 5.0
