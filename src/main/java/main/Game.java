@@ -2,8 +2,17 @@ package main;
 
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
+import godot.api.MultiplayerAPI;
+import godot.api.Node;
 import godot.api.Node3D;
+import godot.api.PackedScene;
+import godot.core.Callable;
+import godot.core.StringName;
+import godot.core.StringNames;
 import godot.global.GD;
+import java.util.ArrayList;
+import java.util.HashMap;
+import multiplayer.MultiplayerManager;
 
 /** Game
  * the class for the main scene
@@ -19,13 +28,21 @@ public class Game extends Node3D {
     @Override
     public void _ready() {
         gd.print("loaded game");
+
+        MultiplayerManager.Instance.multiplayerConnected.connect(
+            Callable.create(this, StringNames.toGodotName("spawnMatch")),
+            0
+        );
     }
 
     @RegisterFunction
-    public void initializeHost() {
-        gd.print("testing testing lmao");
+    public void spawnMatch(boolean success) {
+        if (getNode("Match") != null || !success) return;
+        PackedScene matchScene = gd.load("res://components/main/match.tscn");
+        getNode("StartMenu").queueFree();
+        getNode("RenderTarget").queueFree();
+        getNode("Props").queueFree();
+        Node matchNode = matchScene.instantiate();
+        addChild(matchNode);
     }
-
-    @RegisterFunction
-    public void initializeClient() {}
 }

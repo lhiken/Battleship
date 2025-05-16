@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctgwsxbk3078g"]
+
+[ext_resource type="Script" uid="uid://dcfunomph1oie" path="res://gdj/entity/providers/PlayerProvider.gdj" id="1_3qauj"]
+
+[node name="PlayerProvider" type="Node3D"]
+script = ExtResource("1_3qauj")

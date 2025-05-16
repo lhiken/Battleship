@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cd4pndhcmny8k"]
+[gd_scene load_steps=7 format=3 uid="uid://cd4pndhcmny8k"]
 
 [ext_resource type="Script" uid="uid://cl8beghcl02js" path="res://gdj/entity/Ship.gdj" id="1_skmo2"]
 [ext_resource type="Script" uid="uid://dcfunomph1oie" path="res://gdj/entity/providers/PlayerProvider.gdj" id="2_33gvy"]
@@ -11,6 +11,14 @@ albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_kdijx"]
 material = SubResource("StandardMaterial3D_skmo2")
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_skmo2"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="Ship" type="CharacterBody3D" node_paths=PackedStringArray("provider")]
 script = ExtResource("1_skmo2")
@@ -40,3 +48,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 
 [node name="CollisionBox" type="CollisionShape3D" parent="ShipArea"]
 shape = SubResource("CapsuleShape3D_q4e71")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_skmo2")

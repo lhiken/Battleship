@@ -2,15 +2,12 @@
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
-[ext_resource type="PackedScene" uid="uid://i7gv2m3tsjhe" path="res://components/objects/props/naval_mine.tscn" id="2_krawj"]
+[ext_resource type="Script" uid="uid://h5tnfr8a08ei" path="res://gdj/main/MatchManager.gdj" id="1_su1xq"]
+[ext_resource type="PackedScene" uid="uid://x7o8bvwag256" path="res://components/ui/lobby.tscn" id="4_b56rx"]
 [ext_resource type="Script" uid="uid://cctjq18hkwk3h" path="res://gdj/main/GameCamera.gdj" id="5_2j7da"]
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_wgkvx"]
 [ext_resource type="Script" uid="uid://bnrlsjacg5jdb" path="res://gdj/map/gen/Generator.gdj" id="7_cu54s"]
-[ext_resource type="PackedScene" uid="uid://bqopxhv4l3nhu" path="res://components/ships/testship.tscn" id="8_b56rx"]
 [ext_resource type="PackedScene" uid="uid://cwdninys4bmar" path="res://components/main/arena_border.tscn" id="8_p7m5x"]
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_wgkvx"]
-viewport_path = NodePath("Viewport")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_cu54s"]
 frequency = 0.039
@@ -26,32 +23,14 @@ height_falloff = 1.26607
 edge_fade = 0.127457
 density_texture = SubResource("NoiseTexture3D_p7m5x")
 
-[node name="Match" type="Node3D"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_wgkvx"]
+viewport_path = NodePath("Viewport")
+
+[node name="Match" type="Node3D" node_paths=PackedStringArray("game_camera")]
+script = ExtResource("1_su1xq")
+game_camera = NodePath("RenderTarget/GameCamera")
 
 [node name="WorldEnvironment" parent="." instance=ExtResource("1_g6i2c")]
-
-[node name="Ocean" parent="." instance=ExtResource("1_4nox8")]
-
-[node name="NavalMine" parent="." instance=ExtResource("2_krawj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.98896, 0)
-
-[node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_wgkvx")]
-texture = SubResource("ViewportTexture_wgkvx")
-camera = NodePath("GameCamera")
-max_height = 240
-min_height = 140
-
-[node name="GameCamera" type="Camera3D" parent="RenderTarget" node_paths=PackedStringArray("ship_node", "camera_parent")]
-cull_mask = 524287
-fov = 45.0
-script = ExtResource("5_2j7da")
-ship_node = NodePath("../../Ship")
-camera_parent = NodePath("..")
-metadata/_custom_type_script = "uid://cctjq18hkwk3h"
-
-[node name="Generator" type="Node3D" parent="."]
-script = ExtResource("7_cu54s")
-metadata/_custom_type_script = "uid://bnrlsjacg5jdb"
 
 [node name="FogVolume" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144193, 0)
@@ -59,8 +38,47 @@ size = Vector3(300, 6, 300)
 shape = 2
 material = SubResource("FogMaterial_b56rx")
 
-[node name="Ship" parent="." node_paths=PackedStringArray("gen") instance=ExtResource("8_b56rx")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
-gen = NodePath("../Generator")
+[node name="Lobby" parent="." node_paths=PackedStringArray("match_manager") instance=ExtResource("4_b56rx")]
+z_index = 4
+match_manager = NodePath("..")
 
-[node name="ArenaBorder" parent="." instance=ExtResource("8_p7m5x")]
+[node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_wgkvx")]
+z_index = -2
+mouse_filter = 2
+texture = SubResource("ViewportTexture_wgkvx")
+camera = NodePath("GameCamera")
+max_height = 240
+min_height = 140
+
+[node name="GameCamera" type="Camera3D" parent="RenderTarget" node_paths=PackedStringArray("camera_parent")]
+transform = Transform3D(-0.707107, -0.19929, 0.678442, -2.98023e-08, 0.959462, 0.281839, -0.707107, 0.19929, -0.678442, 37.0089, 12.7697, -33.1402)
+cull_mask = 524287
+fov = 90.0
+script = ExtResource("5_2j7da")
+camera_parent = NodePath("..")
+metadata/_custom_type_script = "uid://cctjq18hkwk3h"
+
+[node name="Generator" type="Node3D" parent="."]
+script = ExtResource("7_cu54s")
+metadata/_custom_type_script = "uid://bnrlsjacg5jdb"
+
+[node name="MapTiles" type="Node3D" parent="."]
+
+[node name="Ships" type="Node3D" parent="."]
+
+[node name="Static" type="Node3D" parent="."]
+
+[node name="ArenaBorder" parent="Static" instance=ExtResource("8_p7m5x")]
+
+[node name="Ocean" parent="Static" instance=ExtResource("1_4nox8")]
+transform = Transform3D(1, -8.00296e-05, 0.000904318, 8.07317e-05, 1, -0.000764395, -0.000904255, 0.000764469, 0.999999, 0, 0, 0)
+
+[node name="MapSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk")
+spawn_path = NodePath("../MapTiles")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bqopxhv4l3nhu")
+spawn_path = NodePath("../Ships")
+
+[editable path="Lobby"]

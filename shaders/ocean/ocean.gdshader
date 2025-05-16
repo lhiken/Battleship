@@ -40,7 +40,7 @@ float get_ripple(float mask, float depth, float frequency, float offset, float t
 
 void fragment() {
 	vec3 world_coords = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	vec2 refraction_noise = refraction_factor * (texture(water_noise_tex, world_coords.xz / 2.0 + TIME / 15.0).xy - 0.5);
+	vec2 refraction_noise = refraction_factor * (texture(water_noise_tex, world_coords.xz / 10.0 + TIME / 40.0).xy - 0.5);
 
 	// gets correct depth to use as a mask for distortion
 	// this may or may not be really stupid i didnt think this through

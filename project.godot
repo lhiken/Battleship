@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
+MPManager="*res://gdj/multiplayer/MultiplayerManager.gdj"
 
 [display]
 

@@ -19,7 +19,7 @@ signals = [
     
 ]
 properties = [
-    multiplayer_manager
+    
 ]
 functions = [
     _ready,

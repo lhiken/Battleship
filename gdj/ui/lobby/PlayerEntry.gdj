@@ -1,12 +1,15 @@
 // THIS FILE IS GENERATED! DO NOT EDIT OR DELETE IT. EDIT OR DELETE THE ASSOCIATED SOURCE CODE FILE INSTEAD
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
-registeredName = MultiplayerManager
-fqName = multiplayer.MultiplayerManager
-relativeSourcePath = src/main/java/multiplayer/MultiplayerManager.java
-baseType = Node
+registeredName = PlayerEntry
+fqName = ui.lobby.PlayerEntry
+relativeSourcePath = src/main/java/ui/lobby/PlayerEntry.java
+baseType = Panel
 supertypes = [
-    godot.api.Node,
+    godot.api.Panel,
+	godot.api.Control,
+	godot.api.CanvasItem,
+	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
 	godot.common.interop.NativeWrapper,
@@ -14,26 +17,15 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    multiplayer_connected,
-	player_connected,
-	player_disconnected
+    
 ]
 properties = [
     
 ]
 functions = [
-    _ready,
-	initiate_host,
-	add_player,
-	remove_player,
-	initiate_client,
-	client_connection_failed,
-	client_connection_success,
-	get_player_data,
-	get_sorted_player_list,
-	get_host_i_p,
-	get_peer_id,
-	is_server,
-	cleanup,
-	has_player
+    _enter_tree,
+	set_peer_id,
+	set_index,
+	set_points,
+	update
 ]

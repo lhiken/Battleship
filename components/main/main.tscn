@@ -1,9 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://bktut2nbxim2r"]
+[gd_scene load_steps=12 format=3 uid="uid://bktut2nbxim2r"]
 
 [ext_resource type="Script" uid="uid://b32np3npdvqpy" path="res://gdj/main/Game.gdj" id="1_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="2_4t43m"]
 [ext_resource type="PackedScene" uid="uid://dncl00rx548bq" path="res://components/ui/start_menu.tscn" id="2_lnf1j"]
-[ext_resource type="Script" uid="uid://ccju4kmw4pgah" path="res://gdj/multiplayer/MultiplayerManager.gdj" id="2_mvprt"]
 [ext_resource type="ArrayMesh" uid="uid://c1fmodjr5y6my" path="res://assets/props/rock.res" id="3_wfiak"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="4_ymw2v"]
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="5_w8ifq"]
@@ -18,12 +17,7 @@ viewport_path = NodePath("Viewport")
 [node name="Game" type="Node3D"]
 script = ExtResource("1_w8ifq")
 
-[node name="MultiplayerManager" type="Node" parent="."]
-script = ExtResource("2_mvprt")
-metadata/_custom_type_script = "uid://ccju4kmw4pgah"
-
-[node name="StartMenu" parent="MultiplayerManager" node_paths=PackedStringArray("multiplayer_manager") instance=ExtResource("2_lnf1j")]
-multiplayer_manager = NodePath("..")
+[node name="StartMenu" parent="." instance=ExtResource("2_lnf1j")]
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_ymw2v")]
 z_index = -5
@@ -130,7 +124,7 @@ transform = Transform3D(0.948263, 0, 0.317487, 0, 1, 0, -0.317487, 0, 0.948263, 
 transform = Transform3D(0.56808, 0, 0.489679, 0, 0.53, 0, -0.489679, 0, 0.56808, 2.91104, 2.4035, -0.837715)
 
 [node name="Ocean" parent="Props" instance=ExtResource("2_4t43m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.41029, 0, 0)
+transform = Transform3D(0.999904, 0.0100586, 0.00955487, -0.0103206, 0.999561, 0.0277832, -0.00927121, -0.0278792, 0.999568, 8.41029, 0, 0)
 tile_x = 1
 tile_y = 1
 

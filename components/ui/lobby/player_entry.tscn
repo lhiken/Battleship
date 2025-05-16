@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://ccpe43omuygdx"]
+
+[ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_y43by"]
+[ext_resource type="Script" uid="uid://cdo2ujaetfnu6" path="res://gdj/ui/lobby/PlayerEntry.gdj" id="2_8j7iw"]
+
+[node name="PlayerEntry" type="Panel"]
+custom_minimum_size = Vector2(0, 80)
+offset_right = 589.0
+offset_bottom = 66.0
+theme = ExtResource("1_y43by")
+script = ExtResource("2_8j7iw")
+
+[node name="PointsLabel" type="RichTextLabel" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -229.0
+offset_top = -25.0
+offset_right = -10.0
+offset_bottom = 27.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "0 Pts"
+horizontal_alignment = 2
+
+[node name="PlayerLabel" type="RichTextLabel" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -26.0
+offset_right = 392.0
+offset_bottom = 26.0
+grow_vertical = 2
+text = "#1 | Player"

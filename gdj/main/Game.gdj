@@ -22,6 +22,5 @@ properties = [
 ]
 functions = [
 	_ready,
-	initialize_host,
-	initialize_client
+	spawn_match
 ]

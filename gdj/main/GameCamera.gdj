@@ -25,5 +25,8 @@ properties = [
 functions = [
 	_process,
 	_ready,
+	set_player_mode,
+	set_spectator_mode,
+	set_ship,
 	invoke_shake
 ]

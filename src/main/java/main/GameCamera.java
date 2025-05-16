@@ -1,5 +1,6 @@
 package main;
 
+import entity.Ship;
 import godot.annotation.Export;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
@@ -35,16 +36,33 @@ public class GameCamera extends Camera3D {
     private double yaw = 0.0;
     private double pitch = Math.toRadians(15);
 
+    private boolean playerMode = false;
+
+    private double time = 0.0;
+
     @RegisterFunction
     @Override
     public void _ready() {
-        Input.setMouseMode(MouseMode.CAPTURED);
         setCurrent(true);
     }
 
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        time += delta;
+
+        if (!playerMode) {
+            setGlobalPosition(
+                new Vector3(
+                    40 + Math.cos(time * 0.6 + 0.2) * 0.25,
+                    8.0 + Math.sin(time * 1.25) * 0.25,
+                    -40 + Math.sin(time + 0.75) * 0.25
+                )
+            );
+            lookAt(new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            return;
+        }
+
         if (shipNode == null || cameraParent == null) return;
 
         GameCameraFrame frame = (GameCameraFrame) cameraParent;
@@ -73,8 +91,33 @@ public class GameCamera extends Camera3D {
             .normalized()
             .times(-cameraDistance);
 
+        updatePosition(focusPoint, offset);
+    }
+
+    private void updatePosition(Vector3 focusPoint, Vector3 offset) {
         setGlobalPosition(focusPoint.plus(offset));
         lookAt(focusPoint, new Vector3(0, 1, 0));
+    }
+
+    @RegisterFunction
+    public void setPlayerMode() {
+        Input.setMouseMode(MouseMode.CAPTURED);
+
+        playerMode = true;
+        setFov(45f);
+    }
+
+    @RegisterFunction
+    public void setSpectatorMode() {
+        Input.setMouseMode(MouseMode.MAX);
+
+        playerMode = false;
+        setFov(70f);
+    }
+
+    @RegisterFunction
+    public void setShip(Ship ship) {
+        this.shipNode = ship;
     }
 
     @RegisterFunction

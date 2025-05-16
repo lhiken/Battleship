@@ -2,6 +2,10 @@ package map.gen;
 
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
+import godot.annotation.Rpc;
+import godot.annotation.RpcMode;
+import godot.annotation.Sync;
+import godot.annotation.TransferMode;
 import godot.api.FastNoiseLite;
 import godot.api.FastNoiseLite.NoiseType;
 import godot.api.Node3D;
@@ -17,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import multiplayer.MultiplayerManager;
 
 // enum to keep track of tile types and their costs
 // costs are for pathfinding, nodepaths are to get the right
@@ -67,16 +72,18 @@ public class Generator extends Node3D {
     @RegisterFunction
     @Override
     public void _ready() {
-        grid = new GridCell[mapWidth][mapHeight];
-        spawnedTiles = new LinkedList<>();
-        populateGrid();
+        if (getMultiplayer().isServer()) {
+            grid = new GridCell[mapWidth][mapHeight];
+            spawnedTiles = new LinkedList<>();
+            populateGrid();
+        }
     }
 
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        if (!spawnedTiles.isEmpty()) {
-            getParent().addChild(spawnedTiles.poll());
+        if (getMultiplayer().isServer() && !spawnedTiles.isEmpty()) {
+            getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
         }
     }
 
@@ -158,21 +165,28 @@ public class Generator extends Node3D {
         );
         tileInstance.setScale(new Vector3(scale, scale, scale));
 
-        gd.print(pos);
+        // gd.print(pos);
 
         spawnedTiles.add(tileInstance);
     }
 
     // pathfinding (scream emoji)
     // its 12 am but i really want to finish this
+    @Rpc(
+        rpcMode = RpcMode.ANY,
+        sync = Sync.SYNC,
+        transferMode = TransferMode.UNRELIABLE
+    )
     @RegisterFunction
-    public ArrayList<Coordinate> navigate(Vector2 startPos, Vector2 endPos) {
+    public ArrayList<Coordinate> navigate(Vector3 startPos, Vector3 endPos) {
         long startTime = System.nanoTime();
         // get the grid cells that correspond with the world positions
-        GridCell start = coordToGrid(startPos);
-        GridCell end = coordToGrid(endPos);
+        Vector2 sPosition = new Vector2(startPos.getX(), startPos.getZ());
+        Vector2 ePosition = new Vector2(endPos.getX(), endPos.getZ());
+        GridCell start = coordToGrid(sPosition);
+        GridCell end = coordToGrid(ePosition);
 
-        gd.print("began pathfinding\n" + start + " to " + end);
+        // gd.print("began pathfinding\n" + start + " to " + end);
 
         // a* algorithm 😱
 
@@ -223,12 +237,12 @@ public class Generator extends Node3D {
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
 
-        gd.print(
-            cameFrom.size() +
-            " nodes in " +
-            (duration / 1_000_000.0) +
-            " milliseconds"
-        );
+        // gd.print(
+        //     cameFrom.size() +
+        //     " nodes in " +
+        //     (duration / 1_000_000.0) +
+        //     " milliseconds"
+        // );
 
         return path;
     }

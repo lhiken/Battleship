@@ -44,34 +44,44 @@ public class Ship extends CharacterBody3D {
 
     @RegisterFunction
     @Override
+    public void _ready() {
+        setMultiplayerAuthority(Integer.parseInt(getName().toString()));
+    }
+
+    @RegisterFunction
+    @Override
     public void _process(double delta) {
-        frameCounter++;
-        if (frameCounter % 60 != 0) {
+        if (!isMultiplayerAuthority()) {
             return;
         }
+        // frameCounter++;
+        // if (frameCounter % 60 != 0) {
+        //     return;
+        // }
 
-        Vector2 currentPosition = new Vector2(
-            getPosition().getX(),
-            getPosition().getZ()
-        );
-        Vector2 endPosition = new Vector2(0, 0);
-        ArrayList<Coordinate> path = gen.navigate(currentPosition, endPosition);
-        clearPathVisualization();
+        // Vector3 currentPosition = new Vector3(
+        //     getPosition().getX(),
+        //     0,
+        //     getPosition().getZ()
+        // );
+        // Vector3 endPosition = new Vector3(0, 0, 0);
+        // ArrayList<Coordinate> path = gen.navigate(currentPosition, endPosition);
+        // clearPathVisualization();
 
-        for (Coordinate coord : path) {
-            CSGSphere3D sphere = new CSGSphere3D();
-            sphere.setRadius(0.2f);
+        // for (Coordinate coord : path) {
+        //     CSGSphere3D sphere = new CSGSphere3D();
+        //     sphere.setRadius(0.2f);
 
-            Vector3 position = coord.toVec3();
-            sphere.setPosition(position);
+        //     Vector3 position = coord.toVec3();
+        //     sphere.setPosition(position);
 
-            StandardMaterial3D material = new StandardMaterial3D();
-            material.setAlbedo(new Color(0, 1, 0, 0.8f));
-            sphere.setMaterial(material);
-            getParent().addChild(sphere);
+        //     StandardMaterial3D material = new StandardMaterial3D();
+        //     material.setAlbedo(new Color(0, 1, 0, 0.8f));
+        //     sphere.setMaterial(material);
+        //     getParent().addChild(sphere);
 
-            pathVisualization.add(sphere);
-        }
+        //     pathVisualization.add(sphere);
+        // }
     }
 
     private ArrayList<Node> pathVisualization = new ArrayList<>();
@@ -89,26 +99,32 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     @Override
     public void _physicsProcess(double delta) {
-        if (provider == null) return;
+        if (isMultiplayerAuthority()) {
+            if (provider == null) return;
 
-        state = provider.getState();
+            state = provider.getState();
 
-        double targetVelocity = state.getVelocity() * maxVelocity;
-        double targetRotation = state.getRotation();
+            double targetVelocity = state.getVelocity() * maxVelocity;
+            double targetRotation = state.getRotation();
 
-        velocity = gd.lerp(velocity, targetVelocity, 0.1);
-        rotation = gd.lerpAngle(rotation, targetRotation, 0.1);
+            velocity = gd.lerp(velocity, targetVelocity, 0.1);
+            rotation = gd.lerpAngle(rotation, targetRotation, 0.1);
 
-        // Rotate the forward direction by the Y rotation
-        Vector3 direction = new Vector3(
-            Math.sin(rotation),
-            0,
-            Math.cos(rotation)
-        );
+            // Rotate the forward direction by the Y rotation
+            Vector3 direction = new Vector3(
+                Math.sin(rotation),
+                0,
+                Math.cos(rotation)
+            );
 
-        setVelocity(direction.times(velocity));
-        setRotation(new Vector3(0, rotation, 0));
-
+            setVelocity(direction.times(velocity));
+            setRotation(new Vector3(0, rotation, 0));
+        }
         moveAndSlide();
+    }
+
+    @RegisterFunction
+    public void setProvider(InputProvider provider) {
+        this.provider = provider;
     }
 }
