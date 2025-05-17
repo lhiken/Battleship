@@ -5,6 +5,7 @@
 [ext_resource type="ArrayMesh" uid="uid://w10q0f1kq1vg" path="res://assets/ships/duck/nuke_support.res" id="4_j13wg"]
 
 [node name="DuckShip" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000958085, -0.00365829, 0.00175405)
 
 [node name="Duck" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_xakl7")
