@@ -6,7 +6,7 @@ fqName = map.Ocean
 relativeSourcePath = src/main/java/map/Ocean.java
 baseType = Node3D
 supertypes = [
-    godot.api.Node3D,
+	godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
@@ -15,13 +15,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    tile_x,
+	tile_x,
 	tile_y,
 	tile_size
 ]
 functions = [
-    _ready
+	_ready
 ]
