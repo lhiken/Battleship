@@ -1,0 +1,145 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4t5yn8wk4gps"]
+
+[ext_resource type="Script" uid="uid://c48vw6nw6vmrs" path="res://components/main/volume.gd" id="1_1q15i"]
+[ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_v6yvm"]
+[ext_resource type="Script" uid="uid://dj2ibyaqxiohk" path="res://components/main/Settings.java" id="2_v6yvm"]
+[ext_resource type="AudioStream" uid="uid://bq0i2mfk48sdi" path="res://audio/2-02. Fortree City.mp3" id="3_8w2nc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3rsk"]
+bg_color = Color(0.511968, 0.754543, 0.551349, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oidxn"]
+bg_color = Color(0.511968, 0.754543, 0.551349, 1)
+
+[node name="Settings" type="Control"]
+visible = false
+z_index = 6
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_v6yvm")
+script = ExtResource("2_v6yvm")
+metadata/_edit_horizontal_guides_ = [-146.0]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_8w2nc")
+autoplay = true
+bus = &"Music"
+
+[node name="Options" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Options"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -491.0
+offset_top = -323.0
+offset_right = 492.0
+offset_bottom = 238.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="Options/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -119.5
+offset_top = -254.5
+offset_right = 119.5
+offset_bottom = -187.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 55
+text = "Settings"
+
+[node name="Volume Label" type="Label" parent="Options/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.5
+offset_top = -116.5
+offset_right = 122.5
+offset_bottom = -67.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Volume" type="HSlider" parent="Options/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -386.5
+offset_top = -56.5
+offset_right = 385.5
+offset_bottom = -20.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_c3rsk")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_oidxn")
+max_value = 0.4
+step = 0.001
+value = 0.4
+script = ExtResource("1_1q15i")
+bus_name = "Music"
+
+[node name="Mute Label" type="Label" parent="Options/Panel"]
+layout_mode = 1
+offset_left = 398.0
+offset_top = 300.0
+offset_right = 510.0
+offset_bottom = 349.0
+text = "Mute"
+horizontal_alignment = 1
+
+[node name="Mute" type="CheckBox" parent="Options/Panel"]
+layout_mode = 1
+offset_left = 527.0
+offset_top = 309.0
+offset_right = 555.0
+offset_bottom = 337.0
+scale = Vector2(1.3, 1.3)
+size_flags_horizontal = 4
+
+[node name="Return" type="Button" parent="Options/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -217.5
+offset_top = 148.5
+offset_right = 218.5
+offset_bottom = 236.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 45
+text = "Return"
+
+[connection signal="value_changed" from="Options/Panel/Volume" to="." method="_on_volume_value_changed"]
+[connection signal="toggled" from="Options/Panel/Mute" to="." method="_on_mute_toggled"]
