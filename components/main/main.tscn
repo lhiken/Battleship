@@ -1,9 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://bktut2nbxim2r"]
+[gd_scene load_steps=13 format=3 uid="uid://bktut2nbxim2r"]
 
 [ext_resource type="Script" uid="uid://b32np3npdvqpy" path="res://gdj/main/Game.gdj" id="1_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="2_4t43m"]
 [ext_resource type="PackedScene" uid="uid://dncl00rx548bq" path="res://components/ui/start_menu.tscn" id="2_lnf1j"]
 [ext_resource type="ArrayMesh" uid="uid://c1fmodjr5y6my" path="res://assets/props/rock.res" id="3_wfiak"]
+[ext_resource type="PackedScene" uid="uid://c4t5yn8wk4gps" path="res://components/main/settings.tscn" id="4_54wvq"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="4_ymw2v"]
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="5_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_ymw2v"]
@@ -18,6 +19,9 @@ viewport_path = NodePath("Viewport")
 script = ExtResource("1_w8ifq")
 
 [node name="StartMenu" parent="." instance=ExtResource("2_lnf1j")]
+
+[node name="Settings" parent="." instance=ExtResource("4_54wvq")]
+mouse_filter = 2
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_ymw2v")]
 z_index = -5
@@ -129,3 +133,7 @@ tile_x = 1
 tile_y = 1
 
 [node name="MatchEnvironment" parent="Props" instance=ExtResource("4_ymw2v")]
+
+[connection signal="pressed" from="StartMenu/SelectMenu/VBoxContainer/Settings" to="Settings" method="_on_settings_clicked"]
+
+[editable path="StartMenu"]
