@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://bqopxhv4l3nhu"]
+[gd_scene load_steps=8 format=3 uid="uid://bqopxhv4l3nhu"]
 
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="1_ohnw0"]
+[ext_resource type="PackedScene" uid="uid://8b8s8v1t7iui" path="res://components/objects/weapon.tscn" id="2_fijdg"]
 [ext_resource type="PackedScene" uid="uid://b122365k7kdmi" path="res://components/ships/duck.tscn" id="2_n48u2"]
 [ext_resource type="ArrayMesh" uid="uid://cevx7uvuvtydt" path="res://assets/ships/duck/duck.res" id="3_n48u2"]
 
@@ -16,24 +17,21 @@ albedo_color = Color(1, 0, 0, 1)
 shading_mode = 0
 albedo_color = Color(1, 0, 0, 1)
 
-[node name="Ship" instance=ExtResource("1_ohnw0")]
+[node name="Ship2" instance=ExtResource("1_ohnw0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00264001, -0.00436544, -0.00868344)
 
-[node name="DuckShip" parent="." index="2" instance=ExtResource("2_n48u2")]
+[node name="Weapon" parent="." index="0" instance=ExtResource("2_fijdg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.07634, -0.243848)
+
+[node name="DuckShip" parent="." index="3" instance=ExtResource("2_n48u2")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="WaveEffector" parent="." index="3"]
+[node name="WaveEffector" parent="." index="4"]
 transform = Transform3D(-1, 0, 8.74228e-08, 9.31764e-22, 1, 1.06581e-14, -8.74228e-08, 1.06581e-14, -1, 0, 0, 0)
 mesh = ExtResource("3_n48u2")
 surface_material_override/0 = SubResource("StandardMaterial3D_fijdg")
 surface_material_override/1 = SubResource("StandardMaterial3D_uqn88")
 surface_material_override/2 = SubResource("StandardMaterial3D_ik3un")
 
-[node name="ShipMesh" parent="." index="4"]
+[node name="ShipMesh" parent="." index="5"]
 visible = false
-
-[node name="Node3D" parent="." index="6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0188471, 0.550919, 2.65493)
-
-[node name="Weapon" parent="Node3D" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00660456, 1.12413, 0.00400758)
