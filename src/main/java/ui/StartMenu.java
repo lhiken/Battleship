@@ -25,6 +25,7 @@ public class StartMenu extends Control {
 		ipInput = (Control) getNode("IPInput");
 		ipInput.setVisible(false);
 		MultiplayerManager.Instance.multiplayerConnected.connect(
+			Callable.create(
 				this,
 				StringNames.toGodotName("onMultiplayerConnect")
 			),
