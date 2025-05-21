@@ -28,11 +28,12 @@ z_index = -5
 mouse_filter = 2
 texture = SubResource("ViewportTexture_w8ifq")
 camera = NodePath("Camera3D")
-max_height = 240
-min_height = 120
+max_height = 480
+min_height = 240
 
 [node name="Camera3D" type="Camera3D" parent="RenderTarget"]
 transform = Transform3D(-0.191374, 0.513571, -0.836433, 1.19209e-07, 0.852184, 0.523242, 0.981517, 0.100135, -0.163085, -4.80038, 4.2382, -5.97713)
+current = true
 fov = 40.0
 
 [node name="Props" type="Node3D" parent="."]

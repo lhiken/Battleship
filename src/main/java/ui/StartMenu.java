@@ -25,10 +25,10 @@ public class StartMenu extends Control {
 		ipInput = (Control) getNode("IPInput");
 		ipInput.setVisible(false);
 		MultiplayerManager.Instance.multiplayerConnected.connect(
-				this,
-				StringNames.toGodotName("onMultiplayerConnect")
-			),
-			1
+				Callable.create(this,
+				StringNames.toGodotName("onMultiplayerConnect"))
+		,
+				1
 		);
 	}
 
@@ -45,7 +45,7 @@ public class StartMenu extends Control {
 	@RegisterFunction
 	public void _onIpSubmit(String text) {
 		Pattern pat = Pattern.compile(
-			"^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+				"^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 		);
 		Matcher mat = pat.matcher(text);
 
@@ -61,7 +61,7 @@ public class StartMenu extends Control {
 	@Override
 	public void _input(InputEvent event) {
 		if (
-			event.isActionPressed("ui_cancel") && ipInput.isVisible()
+				event.isActionPressed("ui_cancel") && ipInput.isVisible()
 		) ipInput.setVisible(false);
 	}
 
@@ -69,13 +69,13 @@ public class StartMenu extends Control {
 	public void onMultiplayerConnect(Boolean success) {
 		MultiplayerAPI multiplayer = getMultiplayer();
 		gd.print(
-			"connected: " +
-			success +
-			" with peer id " +
-			multiplayer.getUniqueId() +
-			" as server: " +
-			multiplayer.isServer()
+				"connected: " +
+						success +
+						" with peer id " +
+						multiplayer.getUniqueId() +
+						" as server: " +
+						multiplayer.isServer()
 		);
 	}
-	
+
 }
