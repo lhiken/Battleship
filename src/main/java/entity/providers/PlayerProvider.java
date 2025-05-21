@@ -22,6 +22,7 @@ public class PlayerProvider extends InputProvider {
     private double velocity;
     private int selectedAction;
     private boolean emitAction;
+    private double power;
     private InputState currentState;
 
     /** _ready
@@ -35,6 +36,7 @@ public class PlayerProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
+        power = 1;
         selectedAction = -1;
         emitAction = false;
     }
@@ -72,10 +74,14 @@ public class PlayerProvider extends InputProvider {
             selectedAction = 2;
         }
 
-        if (Input.isActionJustPressed("space")) {
+        if (Input.isActionPressed("space")) {
+            power += delta;
+        }
+        else if (Input.isActionJustReleased("space")) {
             emitAction = true;
         } else {
             emitAction = false;
+            power = 0;
         }
 
         updateState();
@@ -85,6 +91,7 @@ public class PlayerProvider extends InputProvider {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
         currentState.emitAction = emitAction ? selectedAction : -1;
+        currentState.power = Math.min(14, power * 3);
     }
 
     @RegisterFunction

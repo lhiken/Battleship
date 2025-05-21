@@ -1,0 +1,48 @@
+[gd_scene load_steps=10 format=3 uid="uid://dpxrjkp2sqdp"]
+
+[ext_resource type="Script" uid="uid://def0vdwm7folg" path="res://gdj/entity/Bullet.gdj" id="1_wfxba"]
+[ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/objects/outline.gdshader" id="2_vdg2j"]
+[ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="3_hfktk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pnc25"]
+render_priority = -2
+shader = ExtResource("2_vdg2j")
+shader_parameter/outline_color = Color(0.660396, 0.660396, 0.660396, 1)
+shader_parameter/edge_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Gradient" id="Gradient_ijgdc"]
+offsets = PackedFloat32Array(0.97619, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ijfv8"]
+gradient = SubResource("Gradient_ijgdc")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yk7t3"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_pnc25")
+shader = ExtResource("3_hfktk")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/specular_texture = SubResource("GradientTexture1D_ijfv8")
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="SphereMesh" id="SphereMesh_rdyoy"]
+material = SubResource("ShaderMaterial_yk7t3")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_vdg2j"]
+
+[node name="Bullet" type="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00365877, 0, 0.00199866)
+disable_mode = 2
+script = ExtResource("1_wfxba")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00353074, -2.38419e-07, 0.00184917)
+mesh = SubResource("SphereMesh_rdyoy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00548816, -1.19209e-07, -0.000831962)
+shape = SubResource("SphereShape3D_vdg2j")

@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://8b8s8v1t7iui"]
+
+[ext_resource type="Script" uid="uid://b0ihn8io4xc7o" path="res://gdj/entity/Weapon.gdj" id="1_bcni6"]
+[ext_resource type="PackedScene" uid="uid://dpxrjkp2sqdp" path="res://components/objects/bullet.tscn" id="2_bcni6"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_dfyb0"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bcni6"]
+
+[node name="Weapon" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00344345, 0, -0.000867844)
+script = ExtResource("1_bcni6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00580049, 0)
+mesh = SubResource("SphereMesh_dfyb0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_bcni6")
+
+[node name="Bullet" parent="." instance=ExtResource("2_bcni6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00288463, 1.16315, -0.00732958)
