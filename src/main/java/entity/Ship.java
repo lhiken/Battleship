@@ -6,6 +6,7 @@ import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.api.*;
 import godot.core.Color;
+import godot.core.NodePath;
 import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -24,6 +25,8 @@ public class Ship extends CharacterBody3D {
 	private double rotation;
 	private InputState state;
 	private Weapon cannon;
+	private AudioStreamPlayer3D boom;
+
 
 	private double maxVelocity = 10.0;
 
@@ -45,6 +48,7 @@ public class Ship extends CharacterBody3D {
 	public void _ready() {
 		setMultiplayerAuthority(Integer.parseInt(getName().toString()));
 		instantiateNewCannon();
+		boom = (AudioStreamPlayer3D) getNode(new NodePath("CannonFire"));
 	}
 
 	@RegisterFunction
@@ -90,10 +94,19 @@ public class Ship extends CharacterBody3D {
 			state = provider.getState();
 
 			if (state.getEmittedAction() != -1) {
-				gd.print("pew pew");
+//				gd.print("pew pew");
 
 				gd.print(state.getPower());
 				cannon.instantiateNewBullet(this.getRotation(), velocity + state.getPower());
+				if (boom != null) {
+					gd.print(boom);
+					boom.play();
+//					gd.print("Ship pos: " + this.getGlobalPosition());
+//					gd.print("Sound pos: " + boom.getGlobalPosition());
+				}
+				else {
+					gd.print("you wish");
+				}
 
 
 			}
