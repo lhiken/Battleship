@@ -6,7 +6,7 @@ fqName = entity.Ship
 relativeSourcePath = src/main/java/entity/Ship.java
 baseType = CharacterBody3D
 supertypes = [
-	godot.api.CharacterBody3D,
+    godot.api.CharacterBody3D,
 	godot.api.PhysicsBody3D,
 	godot.api.CollisionObject3D,
 	godot.api.Node3D,
@@ -18,14 +18,14 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	provider,
+    provider,
 	gen
 ]
 functions = [
-	_process,
+    _process,
 	_physics_process,
 	_ready,
 	set_provider
