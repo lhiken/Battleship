@@ -50,4 +50,8 @@ public class Weapon extends CharacterBody3D {
 
 	}
 
+	public double getCooldown() {
+		return Math.min(cooldown / 3.0, 1.0);
+	}
+
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cdkpe7nflna3v"]
+[gd_scene load_steps=18 format=3 uid="uid://cdkpe7nflna3v"]
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
@@ -8,6 +8,11 @@
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_wgkvx"]
 [ext_resource type="Script" uid="uid://bnrlsjacg5jdb" path="res://gdj/map/gen/Generator.gdj" id="7_cu54s"]
 [ext_resource type="PackedScene" uid="uid://cwdninys4bmar" path="res://components/main/arena_border.tscn" id="8_p7m5x"]
+[ext_resource type="Script" uid="uid://3nbvgwog8odp" path="res://components/main/hud.gdj" id="9_cldnh"]
+[ext_resource type="Texture2D" uid="uid://htod16fq2n06" path="res://components/ui/images/progress-bar-circle.png" id="9_su1xq"]
+[ext_resource type="Texture2D" uid="uid://g2xj24tmsxv5" path="res://components/ui/images/progress-bar-frame.png" id="10_cldnh"]
+[ext_resource type="Texture2D" uid="uid://t7q151jqrwgn" path="res://components/ui/images/healthbarUnder.png" id="12_ivnly"]
+[ext_resource type="Texture2D" uid="uid://2u4p226njjmy" path="res://components/ui/images/healthbarProgress.png" id="13_2s1nh"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_cu54s"]
 frequency = 0.039
@@ -81,5 +86,44 @@ spawn_path = NodePath("../MapTiles")
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://bqopxhv4l3nhu")
 spawn_path = NodePath("../Ships")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("9_cldnh")
+
+[node name="Cooldown Bar" type="TextureProgressBar" parent="HUD"]
+texture_filter = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -247.0
+offset_top = 77.0
+offset_right = -119.0
+offset_bottom = 205.0
+grow_horizontal = 0
+scale = Vector2(0.75, 0.75)
+value = 33.0
+fill_mode = 4
+nine_patch_stretch = true
+texture_under = ExtResource("9_su1xq")
+texture_over = ExtResource("10_cldnh")
+texture_progress = ExtResource("9_su1xq")
+tint_under = Color(0.23212, 0.23212, 0.23212, 1)
+tint_progress = Color(0.363902, 0.743912, 0.369408, 1)
+
+[node name="Health Bar" type="TextureProgressBar" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -285.0
+offset_top = -87.0
+offset_right = 288.0
+offset_bottom = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+nine_patch_stretch = true
+texture_under = ExtResource("12_ivnly")
+texture_progress = ExtResource("13_2s1nh")
 
 [editable path="Lobby"]
