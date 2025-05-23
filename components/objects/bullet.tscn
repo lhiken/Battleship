@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dpxrjkp2sqdp"]
 
 [ext_resource type="Script" uid="uid://def0vdwm7folg" path="res://gdj/entity/Bullet.gdj" id="1_wfxba"]
-[ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/objects/outline.gdshader" id="2_vdg2j"]
+[ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/outline.gdshader" id="2_vdg2j"]
 [ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="3_hfktk"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pnc25"]

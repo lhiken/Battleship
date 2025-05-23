@@ -6,7 +6,7 @@ fqName = entity.Bullet
 relativeSourcePath = src/main/java/entity/Bullet.java
 baseType = RigidBody3D
 supertypes = [
-    godot.api.RigidBody3D,
+	godot.api.RigidBody3D,
 	godot.api.PhysicsBody3D,
 	godot.api.CollisionObject3D,
 	godot.api.Node3D,
@@ -18,13 +18,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    
+	
 ]
 functions = [
-    _process,
+	_process,
 	_ready,
 	shoot
 ]
