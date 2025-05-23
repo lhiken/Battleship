@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://d3mnbhs4ncn34"]
+
+[ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="1_13ckw"]
+
+[sub_resource type="Gradient" id="Gradient_gye0i"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2muvi"]
+gradient = SubResource("Gradient_gye0i")
+
+[sub_resource type="Gradient" id="Gradient_yu1p3"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u8amj"]
+gradient = SubResource("Gradient_yu1p3")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_13ckw")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0.306631, 0.264122, 0.242854, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/specular_texture = SubResource("GradientTexture1D_u8amj")
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/fresnel_texture = SubResource("GradientTexture1D_2muvi")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)

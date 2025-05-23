@@ -1,0 +1,126 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://bxlauu2op5qi0"
+path="res://.godot/imported/ship_final.glb-ab954173321e7cffe7ab7e3a9f5b30a1.scn"
+
+[deps]
+
+source_file="res://assets/ships/pirate/ship_final.glb"
+dest_files=["res://.godot/imported/ship_final.glb-ab954173321e7cffe7ab7e3a9f5b30a1.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+_subresources={
+"materials": {
+"Cannon": {
+"use_external/enabled": true,
+"use_external/path": "uid://ty7ur7dvgxix"
+},
+"CannonRim": {
+"use_external/enabled": true,
+"use_external/path": "uid://d1ovsoupkc26w"
+},
+"Rope": {
+"use_external/enabled": true,
+"use_external/path": "uid://4sg05f0xqg00"
+},
+"Sails": {
+"use_external/enabled": true,
+"use_external/path": "uid://bo73dlv85etd7"
+},
+"ShipArmor": {
+"use_external/enabled": true,
+"use_external/path": "uid://cqharikswemb7"
+},
+"ShipDeck": {
+"use_external/enabled": true,
+"use_external/path": "uid://d3mnbhs4ncn34"
+},
+"ShipHull": {
+"use_external/enabled": true,
+"use_external/path": "uid://gdvr30ijdb4c"
+},
+"ShipWood": {
+"use_external/enabled": true,
+"use_external/path": "uid://b21phqpj4k7qm"
+},
+"TurretBase": {
+"use_external/enabled": true,
+"use_external/path": "uid://ckolyecy8d46r"
+},
+"TurretBolt": {
+"use_external/enabled": true,
+"use_external/path": "uid://d1jhsmkwicckv"
+},
+"TurretSwivel": {
+"use_external/enabled": true,
+"use_external/path": "uid://dj51r0uh114f0"
+}
+},
+"meshes": {
+"ship_final_Circle_004": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/ships/pirate/components/cannon.res"
+},
+"ship_final_Plane_006": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/ships/pirate/components/ship_base.res"
+},
+"ship_final_Plane_007": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/ships/pirate/components/sails.res"
+},
+"ship_final_Plane_009": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/ships/pirate/components/turret.res"
+},
+"ship_final_Plane_010": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/ships/pirate/components/armor.res"
+}
+}
+}
+gltf/naming_version=1
+gltf/embedded_image_handling=1

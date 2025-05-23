@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bo73dlv85etd7"]
+
+[ext_resource type="Shader" uid="uid://gw37dr3x5oit" path="res://shaders/toon/cel-shader-base-nocull.gdshader" id="1_0adnu"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_0adnu")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0.228525, 0.203712, 0.204212, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)

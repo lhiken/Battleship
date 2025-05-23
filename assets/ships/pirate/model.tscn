@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://5kc4imd7mjml"]
+
+[ext_resource type="ArrayMesh" uid="uid://n5aeqaf66e3a" path="res://assets/ships/pirate/components/ship_base.res" id="1_lbhrr"]
+[ext_resource type="ArrayMesh" uid="uid://gg21wmt7lfan" path="res://assets/ships/pirate/components/sails.res" id="2_ydh60"]
+[ext_resource type="ArrayMesh" uid="uid://cyet6joloumlt" path="res://assets/ships/pirate/components/armor.res" id="3_kf5yn"]
+[ext_resource type="ArrayMesh" uid="uid://ciw5j2m7tldg1" path="res://assets/ships/pirate/components/turret.res" id="4_fxyhu"]
+[ext_resource type="ArrayMesh" uid="uid://qn4h2ohqxodv" path="res://assets/ships/pirate/components/cannon.res" id="5_oydkx"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="ShipBase" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_lbhrr")
+
+[node name="Sails" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_ydh60")
+
+[node name="Armor" type="MeshInstance3D" parent="."]
+mesh = ExtResource("3_kf5yn")
+
+[node name="Turret" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.860125, 0.494598)
+mesh = ExtResource("4_fxyhu")
+
+[node name="Cannon" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 1.32671, 0.37858)
+mesh = ExtResource("5_oydkx")

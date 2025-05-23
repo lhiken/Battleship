@@ -1,14 +1,14 @@
 // THIS FILE IS GENERATED! DO NOT EDIT OR DELETE IT. EDIT OR DELETE THE ASSOCIATED SOURCE CODE FILE INSTEAD
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
-registeredName = Ship
-fqName = entity.Ship
-relativeSourcePath = src/main/java/entity/Ship.java
-baseType = CharacterBody3D
+registeredName = Turret
+fqName = entity.weapon.Turret
+relativeSourcePath = src/main/java/entity/weapon/Turret.java
+baseType = MeshInstance3D
 supertypes = [
-    godot.api.CharacterBody3D,
-	godot.api.PhysicsBody3D,
-	godot.api.CollisionObject3D,
+    godot.api.MeshInstance3D,
+	godot.api.GeometryInstance3D,
+	godot.api.VisualInstance3D,
 	godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
@@ -21,14 +21,9 @@ signals = [
     
 ]
 properties = [
-    provider,
-	gen
+    
 ]
 functions = [
     _process,
-	_physics_process,
-	_ready,
-	get_pitch,
-	get_yaw,
-	set_provider
+	_ready
 ]

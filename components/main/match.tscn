@@ -70,6 +70,7 @@ metadata/_custom_type_script = "uid://bnrlsjacg5jdb"
 [node name="Static" type="Node3D" parent="."]
 
 [node name="ArenaBorder" parent="Static" instance=ExtResource("8_p7m5x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505918, 0)
 
 [node name="Ocean" parent="Static" instance=ExtResource("1_4nox8")]
 transform = Transform3D(1, -8.00296e-05, 0.000904318, 8.07317e-05, 1, -0.000764395, -0.000904255, 0.000764469, 0.999999, 0, 0, 0)
@@ -79,7 +80,7 @@ _spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk")
 spawn_path = NodePath("../MapTiles")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://bqopxhv4l3nhu")
+_spawnable_scenes = PackedStringArray("uid://bqopxhv4l3nhu", "uid://bo7hcc6it8x4n")
 spawn_path = NodePath("../Ships")
 
 [editable path="Lobby"]

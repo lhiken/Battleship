@@ -1,0 +1,36 @@
+[gd_resource type="ShaderMaterial" load_steps=8 format=3 uid="uid://dj51r0uh114f0"]
+
+[ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/outline.gdshader" id="1_8gxq1"]
+[ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="2_cmopa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_imyk2"]
+render_priority = -2
+shader = ExtResource("1_8gxq1")
+shader_parameter/outline_color = Color(0.395544, 0.268624, 0.142543, 1)
+shader_parameter/edge_color = Color(0.410461, 0.247427, 0.131797, 1)
+
+[sub_resource type="Gradient" id="Gradient_ndg48"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mp766"]
+gradient = SubResource("Gradient_ndg48")
+
+[sub_resource type="Gradient" id="Gradient_y1dow"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ujjt8"]
+gradient = SubResource("Gradient_y1dow")
+
+[resource]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_imyk2")
+shader = ExtResource("2_cmopa")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0.39, 0.32448, 0.2808, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/specular_texture = SubResource("GradientTexture1D_ujjt8")
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/fresnel_texture = SubResource("GradientTexture1D_mp766")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
