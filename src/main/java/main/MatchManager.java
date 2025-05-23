@@ -47,7 +47,7 @@ public class MatchManager extends Node {
     }
 
     public Ship instantiateNewPlayer(int playerId) {
-        PackedScene ship = gd.load("res://components/ships/testship.tscn");
+        PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene playerProvider = gd.load(
             "res://components/providers/player_provider.tscn"
         );

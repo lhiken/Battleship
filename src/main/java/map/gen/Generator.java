@@ -31,6 +31,7 @@ enum Tile {
     RockTile(10, false, "RockTile"),
     GrassProp(10, false, "GrassProp"),
     RockProp(10, false, "RockProp"),
+    SeaMine(5, true, "SeaMine"),
     Shore(3, true, "Shore"),
     Empty(1, true, "Empty");
 
@@ -55,7 +56,10 @@ public class Generator extends Node3D {
 
     private static final GD gd = GD.INSTANCE;
 
-    private final double cellWidth = 3.0;
+    // change this
+    private final double cellWidth = 2.0;
+
+    // do not change this
     private final double tileWidth = 2.0;
     private final int mapWidth = 50;
     private final int mapHeight = 50;
@@ -69,6 +73,10 @@ public class Generator extends Node3D {
 
     private Queue<Node3D> spawnedTiles;
 
+    /** _ready
+     * godot built in function, runs on spawn
+     * generates the map
+     */
     @RegisterFunction
     @Override
     public void _ready() {
@@ -79,6 +87,10 @@ public class Generator extends Node3D {
         }
     }
 
+    /** _process
+     * godot built in function, runs every frame
+     * adds new child every frame if there are tiles that have not spawned
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -87,7 +99,9 @@ public class Generator extends Node3D {
         }
     }
 
-    // fill grid[][] with the proc gen tiles
+    /** populateGrid
+     * populates the grid array with representations of map tiles
+     */
     private void populateGrid() {
         // generate noise
         baseNoise = new FastNoiseLite();
@@ -104,21 +118,52 @@ public class Generator extends Node3D {
                 Tile tileType = getTileType(x, z);
 
                 GridCell cell = new GridCell(coord, tileType, height);
-                if (height < 0.4) cell.setTile(Tile.Empty);
-                cell.setHeight(height * 12 - 2.0);
+                if (height < 0.2) cell.setTile(Tile.Empty);
+                cell.setHeight(height * 10 - 2.0);
                 spawnTile(cell);
                 grid[x][z] = cell;
+                applyShore(x, z);
             }
         }
     }
 
-    // samples the terrain noise texture
+    /** applyShore
+     * generates shore for ai pathfinding
+     */
+    private void applyShore(int x, int z) {
+        if (grid[x][z] == null || grid[x][z].getTile() == Tile.Empty) return;
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
+
+                int nx = x + dx;
+                int nz = z + dz;
+
+                if (nx >= 0 && nx < mapWidth && nz >= 0 && nz < mapHeight) {
+                    if (
+                        grid[nx][nz] == null ||
+                        grid[nx][nz].getTile() == Tile.Empty
+                    ) {
+                        grid[x][z].setTile(Tile.Shore);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    /** sampleNoise
+     * samples the noise texture to get tile height
+     */
     private double sampleNoise(int x, int z) {
         double val = baseNoise.getNoise2d(x, z);
         return val;
     }
 
-    // gets world coords from the x and z indices
+    /** getCoord
+     * converts array indices into a Coordinate object
+     */
     private Coordinate getCoord(int xIndex, int zIndex) {
         // position of each axis, scaled to -w to w and -h to h
         double px = xIndex * cellWidth - (mapWidth * cellWidth) / 2;
@@ -127,12 +172,16 @@ public class Generator extends Node3D {
         return newCoord;
     }
 
-    // samples the biome noise texture to get the tile type
-    // todo!
+    /** getTileType
+     * gets the tile type for the biome
+     */
     private Tile getTileType(int x, int z) {
         return Tile.GrassTile;
     }
 
+    /** spawnTile
+     * makes the tile exist
+     */
     private void spawnTile(GridCell cell) {
         String tileName = cell.getTile().nodePath;
         if (tileName.equals("Empty")) return;
@@ -170,8 +219,10 @@ public class Generator extends Node3D {
         spawnedTiles.add(tileInstance);
     }
 
-    // pathfinding (scream emoji)
-    // its 12 am but i really want to finish this
+    /** navigate
+     * a* pathfinding, takes a start and end position and generates
+     * a path between the two positions
+     */
     @Rpc(
         rpcMode = RpcMode.ANY,
         sync = Sync.SYNC,
@@ -247,7 +298,9 @@ public class Generator extends Node3D {
         return path;
     }
 
-    // this is prolly the cause of all my problems
+    /** getHeuristic
+     * a* pathfinding heuristic
+     */
     private double getHeuristic(GridCell a, GridCell b) {
         int dx = Math.abs(
             a.getCoords().getXIndex() - b.getCoords().getXIndex()
@@ -258,14 +311,16 @@ public class Generator extends Node3D {
         return dx + dz;
     }
 
-    // gets the cost
-    // this is what that funny enum is for
+    /** getCost
+     * gets cost to move to a tile
+     */
     private double getCost(GridCell next) {
         return next.getTile().cost;
     }
 
-    // gets gridcell from world coord (i dont want to write this)
-    // i sure hope this works lmao
+    /** coordTogrid
+     * takes a Vector2 world position and converts it to a GridCell object
+     */
     private GridCell coordToGrid(Vector2 coords) {
         int xi = (int) ((coords.getX() + (mapWidth * cellWidth) / 2) /
             cellWidth);
@@ -274,7 +329,9 @@ public class Generator extends Node3D {
         return grid[xi][zi];
     }
 
-    // gets neighboring walkable cells
+    /** getNeighbors
+     * takes an array index and returns the neighbors
+     */
     private ArrayList<GridCell> getNeighbors(int x, int z) {
         ArrayList<GridCell> arr = new ArrayList<>(4);
         if (x > 0 && grid[x - 1][z].getTile().walkable) arr.add(grid[x - 1][z]);

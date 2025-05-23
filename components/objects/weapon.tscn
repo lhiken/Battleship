@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://8b8s8v1t7iui"]
+[gd_scene load_steps=5 format=3 uid="uid://bkvyww2g6iw1q"]
 
 [ext_resource type="Script" uid="uid://b0ihn8io4xc7o" path="res://gdj/entity/Weapon.gdj" id="1_bcni6"]
-[ext_resource type="PackedScene" uid="uid://dpxrjkp2sqdp" path="res://components/objects/bullet.tscn" id="2_bcni6"]
+[ext_resource type="PackedScene" path="res://components/objects/bullet.tscn" id="2_bcni6"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_dfyb0"]
 
