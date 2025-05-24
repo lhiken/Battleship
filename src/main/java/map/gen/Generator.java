@@ -61,8 +61,9 @@ public class Generator extends Node3D {
 
     // do not change this
     private final double tileWidth = 2.0;
-    private final int mapWidth = 50;
-    private final int mapHeight = 50;
+
+    private final int mapWidth = 70;
+    private final int mapHeight = 70;
 
     private GridCell[][] grid;
 

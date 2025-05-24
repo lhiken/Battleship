@@ -16,9 +16,6 @@ public class Turret extends MeshInstance3D {
     private Ship ship;
     private Node3D cannon;
 
-    private final double CAMERA_PITCH_MAX = gd.degToRad(5);
-    private final double CAMERA_PITCH_MIN = gd.degToRad(50);
-
     private double yaw;
     private double pitch;
 
@@ -32,21 +29,12 @@ public class Turret extends MeshInstance3D {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (getMultiplayerAuthority() != getMultiplayer().getUniqueId()) return;
         yaw = gd.lerpAngle(yaw, ship.getYaw(), 0.1);
         pitch = gd.lerpAngle(pitch, ship.getPitch(), 0.1);
 
-        double turretPitch = gd.remap(
-            pitch,
-            CAMERA_PITCH_MAX,
-            CAMERA_PITCH_MIN,
-            gd.degToRad(-25),
-            gd.degToRad(5)
-        );
-
-        double turretYaw = yaw;
-
-        setRotation(new Vector3(0, turretYaw, 0).minus(ship.getRotation()));
-        cannon.setRotation((new Vector3((Math.PI / 2.0) + turretPitch, 0, 0)));
+        setRotation(new Vector3(0, yaw, 0).minus(ship.getRotation()));
+        cannon.setRotation((new Vector3((Math.PI / 2.0) - pitch, 0, 0)));
         cannon.setRotationOrder(EulerOrder.XYZ);
     }
 }

@@ -7,11 +7,14 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
+import godot.annotation.RpcMode;
+import godot.annotation.Sync;
 import godot.api.Control;
 import godot.api.MultiplayerAPI;
 import godot.api.Node;
 import godot.api.Node3D;
 import godot.api.PackedScene;
+import godot.api.RigidBody3D;
 import godot.core.Signal1;
 import godot.core.StringName;
 import godot.core.StringNames;
@@ -90,5 +93,21 @@ public class MatchManager extends Node {
         gameCamera.setPlayerMode();
 
         ((Lobby) getNode("Lobby")).setVisible(false);
+    }
+
+    @Rpc(rpcMode = RpcMode.ANY, sync = Sync.SYNC)
+    @RegisterFunction
+    public void spawnBullet(
+        int peerOrigin,
+        Vector3 direction,
+        Vector3 position,
+        Vector3 shipVelocity
+    ) {
+        PackedScene bullet = gd.load("res://components/objects/bullet.tscn");
+        RigidBody3D bulletNode = (RigidBody3D) bullet.instantiate();
+        bulletNode.setLinearVelocity(shipVelocity);
+        bulletNode.setGlobalPosition(position);
+        getNode("Bullets").addChild(bulletNode);
+        bulletNode.applyImpulse(direction.times(25.0));
     }
 }

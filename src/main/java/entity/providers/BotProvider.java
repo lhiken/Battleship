@@ -23,8 +23,8 @@ public class BotProvider extends InputProvider {
     private final double ROTATION_STEP = 4.0;
     private double rotation;
     private double velocity;
-//    private int selectedAction;
-//    private boolean emitAction;
+    //    private int selectedAction;
+    //    private boolean emitAction;
     private InputState currentState;
     private boolean enemyWithinRadius = false;
 
@@ -46,8 +46,8 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-//        selectedAction = 0;
-//        emitAction = false;
+        //        selectedAction = 0;
+        //        emitAction = false;
 
         frameCounter = 0;
     }
@@ -58,20 +58,12 @@ public class BotProvider extends InputProvider {
         if (frameCounter % 60 == 0) updatePath();
         frameCounter++;
 
-        if (!enemyWithinRadius) {
-
-        }
+        if (!enemyWithinRadius) {}
     }
 
-    public void wander() {
+    public void wander() {}
 
-    }
-
-    public void chase() {
-
-    }
-
-
+    public void chase() {}
 
     private void updatePath() {
         ArrayList<Coordinate> tempPath = gen.navigate(

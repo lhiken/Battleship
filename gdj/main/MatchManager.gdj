@@ -21,5 +21,6 @@ properties = [
 ]
 functions = [
     _ready,
-	start_match
+	start_match,
+	spawn_bullet
 ]

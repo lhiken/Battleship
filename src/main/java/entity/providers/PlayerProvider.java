@@ -96,7 +96,15 @@ public class PlayerProvider extends InputProvider {
         double frameYaw = frame.getYaw();
 
         turretYaw = frameYaw;
-        turretPitch = framePitch;
+        turretPitch = gd.clamp(framePitch, gd.degToRad(5), gd.degToRad(20));
+
+        turretPitch = gd.remap(
+            turretPitch,
+            gd.degToRad(5),
+            gd.degToRad(20),
+            gd.degToRad(20),
+            gd.degToRad(-10)
+        );
 
         updateState();
     }

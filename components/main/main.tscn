@@ -132,7 +132,7 @@ tile_y = 1
 
 [node name="MatchEnvironment" parent="Props" instance=ExtResource("4_ymw2v")]
 
-[node name="Node3D" parent="." instance=ExtResource("11_mvprt")]
+[node name="Node3D" parent="Props" instance=ExtResource("11_mvprt")]
 transform = Transform3D(-0.991445, 0, -0.130526, 0, 1, 0, 0.130526, 0, -0.991445, 0.297823, -0.402026, -2.84233)
 
 [connection signal="pressed" from="StartMenu/SelectMenu/VBoxContainer/Settings" to="Settings" method="_on_settings_clicked"]

@@ -167,9 +167,9 @@ resource_local_to_scene = true
 shader = SubResource("Shader_d1bkx")
 shader_parameter/sim_tex = SubResource("ViewportTexture_tvwu1")
 shader_parameter/col_tex = SubResource("ViewportTexture_oh23s")
-shader_parameter/phase = 0.2
-shader_parameter/attenuation = 0.99
-shader_parameter/deltaUV = 0.5
+shader_parameter/phase = 0.3
+shader_parameter/attenuation = 0.995
+shader_parameter/deltaUV = 0.2
 
 [sub_resource type="Environment" id="Environment_dr0iu"]
 background_mode = 1
