@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://dpxrjkp2sqdp"]
+[gd_scene load_steps=14 format=3 uid="uid://dpxrjkp2sqdp"]
 
 [ext_resource type="Script" uid="uid://def0vdwm7folg" path="res://gdj/entity/Bullet.gdj" id="1_wfxba"]
+[ext_resource type="PackedScene" uid="uid://cxtblmouwvmye" path="res://shaders/particles/Prefab.tscn" id="2_vdg2j"]
 [ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="3_hfktk"]
 
 [sub_resource type="Gradient" id="Gradient_vdg2j"]
@@ -59,7 +60,10 @@ properties/1/replication_mode = 1
 
 [node name="Bullet" type="RigidBody3D"]
 disable_mode = 2
+contact_monitor = true
+max_contacts_reported = 55
 script = ExtResource("1_wfxba")
+explosion = ExtResource("2_vdg2j")
 
 [node name="RealMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000485882, 0.000977665, -0.000560999)
@@ -77,3 +81,5 @@ shape = SubResource("SphereShape3D_vdg2j")
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 root_path = NodePath("../WaveEffector")
 replication_config = SubResource("SceneReplicationConfig_jf5o5")
+
+[connection signal="body_entered" from="." to="." method="on_collision"]

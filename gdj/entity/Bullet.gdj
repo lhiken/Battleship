@@ -21,8 +21,9 @@ signals = [
 	
 ]
 properties = [
-	
+	explosion
 ]
 functions = [
-	_process
+	_process,
+	on_collision
 ]
