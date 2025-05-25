@@ -1,5 +1,6 @@
 package entity;
 
+import entity.weapon.Turret;
 import entity.weapon.Weapon;
 import godot.annotation.Export;
 import godot.annotation.RegisterClass;
@@ -30,6 +31,7 @@ public class Ship extends CharacterBody3D {
 	private InputState state;
 	// private Weapon cannon;
 	private AudioStreamPlayer3D boom;
+	private Turret turret = (Turret) getNode("Turret");
 
 	private double maxVelocity = 5.0;
 

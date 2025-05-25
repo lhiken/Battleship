@@ -6,6 +6,7 @@ import godot.annotation.RegisterFunction;
 import godot.api.*;
 import godot.core.Color;
 import godot.core.EulerOrder;
+import godot.core.Transform3D;
 import godot.core.Vector3;
 import godot.global.GD;
 
@@ -50,50 +51,52 @@ public class Turret extends MeshInstance3D {
                             "Cannon/ProjectileOrigin"
                     )).getGlobalPosition();
 
-            Path3D path =
-                    ((Path3D) getNode(
-                            "Cannon/ProjectileOrigin/Path3D"
-                    ));
+//            Path3D path =
+//                    ((Path3D) getNode(
+//                            "Cannon/ProjectileOrigin/Path3D"
+//                    ));
 
-            MeshInstance3D aimCurve = (MeshInstance3D) getNode("Cannon/ProjectileOrigin/Path3D/MeshInstance3D");
+            MeshInstance3D aimCurve = (MeshInstance3D) getNode("Cannon/ProjectileOrigin/MeshInstance3D");
             ImmediateMesh mesh = new ImmediateMesh();
             aimCurve.setMesh(mesh);
 
             mesh.surfaceBegin(Mesh.PrimitiveType.LINE_STRIP);
-         //   mesh.surfaceSetColor();
+            mesh.surfaceSetColor(Color.Companion.getWhite());
 
             double step = 0.05;
             double simTime = 0.0;
             double maxTime = 10.0;
-            int counter = 0;
+//            int counter = 0;
 
-            Curve3D curve = path.getCurve();
-
-            gd.print("Cannon position" + pos);
+        //    Curve3D curve = path.getCurve();
 
             while (pos.getY() >= 0 && simTime <= maxTime) {
                 simTime += step;
 
-                curve.addPoint(pos);
-                mesh.surfaceAddVertex(pos);
+        //        curve.addPoint(pos);
+
+                Transform3D meshTransform = aimCurve.getGlobalTransform();
+                Vector3 localPos = meshTransform.affineInverse().xform$godot_core_library(pos);
+                mesh.surfaceAddVertex(localPos);
 
                 velocity.setY(velocity.getY() - (9.8 * step));
                 pos.setX(pos.getX() + (velocity.getX() * step));
-                if (counter % 5 == 0) {
-                    gd.print("X Distance Added: " + (velocity.getX()) * step + " Z Distance Added:" + (velocity.getZ() * step) + " Y Distance Added: " + (velocity.getY() * step));
-                    gd.print("Position: " + pos);
-
-                }
+//                if (counter % 5 == 0) {
+//                    gd.print("X Distance Added: " + (velocity.getX()) * step + " Z Distance Added:" + (velocity.getZ() * step) + " Y Distance Added: " + (velocity.getY() * step));
+//                    gd.print("Position: " + pos);
+//
+//                }
                 pos.setY(pos.getY() + (velocity.getY() * step));
                 pos.setZ(pos.getZ() + (velocity.getZ() * step));
 
-                counter++;
+
+//                counter++;
 
 
             }
-            gd.print("simTime" + simTime);
-            gd.print("Counter" + counter);
-            gd.print("curve made");
+//            gd.print("simTime" + simTime);
+//            gd.print("Counter" + counter);
+//            gd.print("curve made");
 
             mesh.surfaceEnd();
 
