@@ -361,7 +361,6 @@ draw_pass_1 = SubResource("QuadMesh_b4gqm")
 [node name="ArcingChunkSmoke" type="GPUParticles3D" parent="Explosion"]
 material_override = SubResource("ShaderMaterial_fn2x5")
 gi_mode = 0
-emitting = false
 amount = 1000
 lifetime = 3.0
 explosiveness = 1.0

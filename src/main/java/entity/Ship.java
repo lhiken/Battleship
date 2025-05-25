@@ -65,7 +65,8 @@ public class Ship extends CharacterBody3D {
     // only for visualization
     public double projectilePathTimestep = 0.1;
     public double projectilePathSpeed = 25.0;
-    private MeshInstance3D trajectoryMesh;
+
+    // private MeshInstance3D trajectoryMesh;
 
     @RegisterFunction
     @Override
@@ -128,84 +129,83 @@ public class Ship extends CharacterBody3D {
                 cooldownPercent = 0;
             }
         }
-
-        drawProjectilePath();
+        // drawProjectilePath();
     }
 
-    @RegisterFunction
-    public void drawProjectilePath() {
-        ArrayList<Vector3> points = new ArrayList<>();
+    // @RegisterFunction
+    // public void drawProjectilePath() {
+    //     ArrayList<Vector3> points = new ArrayList<>();
 
-        if (trajectoryMesh != null) {
-            trajectoryMesh.queueFree();
-            trajectoryMesh = null;
-        }
+    //     if (trajectoryMesh != null) {
+    //         trajectoryMesh.queueFree();
+    //         trajectoryMesh = null;
+    //     }
 
-        for (double t = 0; t < 5.0; t += projectilePathTimestep) {
-            Vector3 newPoint = getProjectilePosition(
-                ((Node3D) getNode(
-                        "Turret/Cannon/ProjectileOrigin"
-                    )).getGlobalPosition(),
-                new Vector3(
-                    Math.sin(turretYaw),
-                    Math.sin(turretPitch),
-                    Math.cos(turretYaw)
-                )
-                    .normalized()
-                    .times(projectilePathSpeed)
-                    .plus(velocityProperty()),
-                t
-            );
-            points.add(newPoint);
-        }
+    //     for (double t = 0; t < 5.0; t += projectilePathTimestep) {
+    //         Vector3 newPoint = getProjectilePosition(
+    //             ((Node3D) getNode(
+    //                     "Turret/Cannon/ProjectileOrigin"
+    //                 )).getGlobalPosition(),
+    //             new Vector3(
+    //                 Math.sin(turretYaw),
+    //                 Math.sin(turretPitch),
+    //                 Math.cos(turretYaw)
+    //             )
+    //                 .normalized()
+    //                 .times(projectilePathSpeed)
+    //                 .plus(velocityProperty()),
+    //             t
+    //         );
+    //         points.add(newPoint);
+    //     }
 
-        trajectoryMesh = createTrajectoryMesh(points);
-        getTree().getRoot().addChild(trajectoryMesh);
-    }
+    //     trajectoryMesh = createTrajectoryMesh(points);
+    //     getTree().getRoot().addChild(trajectoryMesh);
+    // }
 
-    @RegisterFunction
-    public Vector3 getProjectilePosition(
-        Vector3 shipPos,
-        Vector3 vi,
-        double time
-    ) {
-        return vi
-            .times(time)
-            .plus(new Vector3(0, -9.8, 0).times(Math.pow(time, 2)).times(0.5))
-            .plus(shipPos);
-    }
+    // @RegisterFunction
+    // public Vector3 getProjectilePosition(
+    //     Vector3 shipPos,
+    //     Vector3 vi,
+    //     double time
+    // ) {
+    //     return vi
+    //         .times(time)
+    //         .plus(new Vector3(0, -9.8, 0).times(Math.pow(time, 2)).times(0.5))
+    //         .plus(shipPos);
+    // }
 
-    @RegisterFunction
-    public MeshInstance3D createTrajectoryMesh(ArrayList<Vector3> points) {
-        if (points.size() < 2) return null;
+    // @RegisterFunction
+    // public MeshInstance3D createTrajectoryMesh(ArrayList<Vector3> points) {
+    //     if (points.size() < 2) return null;
 
-        MeshInstance3D meshInstance = new MeshInstance3D();
-        SurfaceTool surfaceTool = new SurfaceTool();
+    //     MeshInstance3D meshInstance = new MeshInstance3D();
+    //     SurfaceTool surfaceTool = new SurfaceTool();
 
-        surfaceTool.begin(Mesh.PrimitiveType.LINES);
+    //     surfaceTool.begin(Mesh.PrimitiveType.LINES);
 
-        for (int i = 0; i < points.size() - 1; i++) {
-            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-            surfaceTool.addVertex(points.get(i));
+    //     for (int i = 0; i < points.size() - 1; i++) {
+    //         surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+    //         surfaceTool.addVertex(points.get(i));
 
-            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-            surfaceTool.addVertex(points.get(i + 1));
-        }
+    //         surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+    //         surfaceTool.addVertex(points.get(i + 1));
+    //     }
 
-        ArrayMesh mesh = surfaceTool.commit();
+    //     ArrayMesh mesh = surfaceTool.commit();
 
-        ORMMaterial3D material = new ORMMaterial3D();
-        material.setShadingMode(ShadingMode.UNSHADED);
-        material.setAlbedo(
-            new Color(cooldownPercent, cooldownPercent, cooldownPercent, 1.0)
-        );
+    //     ORMMaterial3D material = new ORMMaterial3D();
+    //     material.setShadingMode(ShadingMode.UNSHADED);
+    //     material.setAlbedo(
+    //         new Color(cooldownPercent, cooldownPercent, cooldownPercent, 1.0)
+    //     );
 
-        meshInstance.setMesh(mesh);
-        meshInstance.setMaterialOverride(material);
-        meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
+    //     meshInstance.setMesh(mesh);
+    //     meshInstance.setMaterialOverride(material);
+    //     meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
 
-        return meshInstance;
-    }
+    //     return meshInstance;
+    // }
 
     @RegisterFunction
     public double getPitch() {
