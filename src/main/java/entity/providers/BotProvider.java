@@ -23,8 +23,8 @@ public class BotProvider extends InputProvider {
     private final double ROTATION_STEP = 4.0;
     private double rotation;
     private double velocity;
-    //    private int selectedAction;
-    //    private boolean emitAction;
+//    private int selectedAction;
+//    private boolean emitAction;
     private InputState currentState;
     private boolean enemyWithinRadius = false;
 
@@ -46,8 +46,8 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-        //        selectedAction = 0;
-        //        emitAction = false;
+//        selectedAction = 0;
+//        emitAction = false;
 
         frameCounter = 0;
     }
@@ -55,26 +55,41 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        if (frameCounter % 60 == 0) updatePath();
-        frameCounter++;
 
-        if (!enemyWithinRadius) {}
+        if (!enemyWithinRadius) {
+
+            wander();
+
+        }
+
     }
 
-    public void wander() {}
+    public void wander() {
 
-    public void chase() {}
+        double randomAngle = Math.random() * 360;
+        double distance = Math.random() * 65;
+        Vector3 randomCoordinate = new Vector3(Math.cos(Math.toRadians(randomAngle)) * distance, 0, Math.sin(Math.toRadians(randomAngle)) * distance);
+        if (true) {      // random coordinate is not on the island
 
-    private void updatePath() {
-        ArrayList<Coordinate> tempPath = gen.navigate(
-            getGlobalPosition(),
-            getTargetPosition()
-        );
+            moveToPoint(this.getGlobalPosition(), randomCoordinate);
+
+        }
     }
 
-    private Vector3 getTargetPosition() {
-        return new Vector3(0, 0, 0);
+    public void chase() {
+
     }
+
+    public void moveToPoint(Vector3 start, Vector3 end) {
+
+        ArrayList<Coordinate> path = gen.navigate(start, end);
+
+
+
+
+
+    }
+
 
     private void adjustCurrentNode() {}
 
