@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://idft2dqfrfw7"]
+
+[ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="1_xuvis"]
+
+[node name="Seaweed" type="Node3D"]
+
+[node name="seaweed" parent="." instance=ExtResource("1_xuvis")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -7.19935, 0)

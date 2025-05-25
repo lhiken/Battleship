@@ -33,7 +33,8 @@ enum Tile {
     RockProp(10, false, "RockProp"),
     SeaMine(5, true, "SeaMine"),
     Shore(3, true, "Shore"),
-    Empty(1, true, "Empty");
+    Empty(1, true, "Empty"),
+    Seaweed(3, true, "Seaweed");
 
     public final int cost;
     public final boolean walkable;
@@ -96,6 +97,10 @@ public class Generator extends Node3D {
     @Override
     public void _process(double delta) {
         if (getMultiplayer().isServer() && !spawnedTiles.isEmpty()) {
+            gd.print(spawnedTiles.peek().getName());
+            getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
+            getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
+            getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
             getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
         }
     }
@@ -114,7 +119,7 @@ public class Generator extends Node3D {
         for (int x = 0; x < mapWidth; x++) {
             for (int z = 0; z < mapHeight; z++) {
                 // oh my god theyre all the same length!
-                double height = sampleNoise(x, z);
+                double height = sampleNoise(baseNoise, x, z);
                 Coordinate coord = getCoord(x, z);
                 Tile tileType = getTileType(x, z);
 
@@ -124,6 +129,23 @@ public class Generator extends Node3D {
                 spawnTile(cell);
                 grid[x][z] = cell;
                 applyShore(x, z);
+            }
+        }
+
+        FastNoiseLite decoNoise = new FastNoiseLite();
+        decoNoise.setNoiseType(NoiseType.TYPE_SIMPLEX);
+        decoNoise.setSeed(noiseSeed + 10);
+        decoNoise.setFrequency(0.1f);
+
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                double val = sampleNoise(decoNoise, x, z);
+
+                if (grid[x][z].getTile() == Tile.Empty && val > 0.4) {
+                    grid[x][z].setTile(Tile.Seaweed);
+                    grid[x][z].setHeight(Math.random() * 1.0 - 1.0);
+                    spawnTile(grid[x][z]);
+                }
             }
         }
     }
@@ -157,8 +179,8 @@ public class Generator extends Node3D {
     /** sampleNoise
      * samples the noise texture to get tile height
      */
-    private double sampleNoise(int x, int z) {
-        double val = baseNoise.getNoise2d(x, z);
+    private double sampleNoise(FastNoiseLite noise, int x, int z) {
+        double val = noise.getNoise2d(x, z);
         return val;
     }
 
@@ -215,7 +237,7 @@ public class Generator extends Node3D {
         );
         tileInstance.setScale(new Vector3(scale, scale, scale));
 
-        // gd.print(pos);
+        gd.print(tileName);
 
         spawnedTiles.add(tileInstance);
     }

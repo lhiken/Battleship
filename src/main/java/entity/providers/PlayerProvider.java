@@ -44,7 +44,7 @@ public class PlayerProvider extends InputProvider {
         rotation = 0;
         velocity = 0;
         power = 1;
-        selectedAction = -1;
+        selectedAction = 1;
         emitAction = false;
     }
 
@@ -96,12 +96,12 @@ public class PlayerProvider extends InputProvider {
         double frameYaw = frame.getYaw();
 
         turretYaw = frameYaw;
-        turretPitch = gd.clamp(framePitch, gd.degToRad(5), gd.degToRad(20));
+        turretPitch = gd.clamp(framePitch, gd.degToRad(10), gd.degToRad(40));
 
         turretPitch = gd.remap(
             turretPitch,
-            gd.degToRad(5),
-            gd.degToRad(20),
+            gd.degToRad(10),
+            gd.degToRad(40),
             gd.degToRad(20),
             gd.degToRad(-10)
         );

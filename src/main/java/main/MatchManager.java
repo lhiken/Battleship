@@ -2,6 +2,7 @@ package main;
 
 import entity.Ship;
 import entity.providers.PlayerProvider;
+import entity.weapon.Bullet;
 import godot.annotation.Export;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
@@ -104,10 +105,11 @@ public class MatchManager extends Node {
         Vector3 shipVelocity
     ) {
         PackedScene bullet = gd.load("res://components/objects/bullet.tscn");
-        RigidBody3D bulletNode = (RigidBody3D) bullet.instantiate();
+        Bullet bulletNode = (Bullet) bullet.instantiate();
+        bulletNode.setOwner(peerOrigin);
         bulletNode.setLinearVelocity(shipVelocity);
-        bulletNode.setGlobalPosition(position);
-        getNode("Bullets").addChild(bulletNode);
+        bulletNode.setPosition(position);
+        getNode("Bullets").addChild(bulletNode, true);
         bulletNode.applyImpulse(direction.times(25.0));
     }
 }

@@ -25,5 +25,7 @@ properties = [
 ]
 functions = [
 	_process,
-	on_collision
+	set_owner,
+	on_collision,
+	spawn_explosion
 ]

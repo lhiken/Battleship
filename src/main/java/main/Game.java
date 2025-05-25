@@ -29,6 +29,13 @@ public class Game extends Node3D {
     public void _ready() {
         gd.print("loaded game");
 
+        gd.print("preloading resources");
+
+        PackedScene bullet = gd.load("res://components/objects/bullet.tscn");
+        Node3D bulletNode = (Node3D) bullet.instantiate();
+        addChild(bulletNode);
+        bulletNode.queueFree();
+
         MultiplayerManager.Instance.multiplayerConnected.connect(
             Callable.create(this, StringNames.toGodotName("spawnMatch")),
             0

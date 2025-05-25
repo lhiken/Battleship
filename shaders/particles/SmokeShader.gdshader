@@ -35,7 +35,7 @@ void fragment() {
 	
 	ALBEDO = mix(ColorTint, COLOR.rgb, TextureAlpha);
 	BACKLIGHT = vec3(1.0);
-	ALPHA = COLOR.a * (noise_texture.r + 0.5) * texture(GradientFalloff, UV).r;
+	ALPHA = 0.5;
 	EMISSION = COLOR.rgb * ((EmissionPower * noise_texture.r) * pow(texture(GradientFalloff, UV).r, EmissionAlphaPower) * COLOR.a);
 	ALPHA_SCISSOR_THRESHOLD = AlphaCutoff;
 }

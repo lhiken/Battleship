@@ -6,13 +6,22 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.api.*;
+import godot.api.BaseMaterial3D.DepthDrawMode;
+import godot.api.BaseMaterial3D.ShadingMode;
+import godot.api.GeometryInstance3D.ShadowCastingSetting;
+import godot.api.Mesh.PrimitiveType;
 import godot.core.Color;
 import godot.core.NodePath;
+import godot.core.PackedInt32Array;
+import godot.core.PackedVector3Array;
 import godot.core.StringName;
 import godot.core.StringNames;
+import godot.core.VariantArray;
+import godot.core.VariantType;
 import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import main.MatchManager;
 import map.gen.Coordinate;
@@ -27,9 +36,13 @@ public class Ship extends CharacterBody3D {
     private static final GD gd = GD.INSTANCE;
     private double velocity;
     private double rotation;
+    private double turretYaw;
+    private double turretPitch;
     private InputState state;
-    // private Weapon cannon;
-    private AudioStreamPlayer3D boom;
+
+    @RegisterProperty
+    @Export
+    public AudioStreamPlayer3D boom;
 
     private double maxVelocity = 5.0;
 
@@ -46,6 +59,14 @@ public class Ship extends CharacterBody3D {
 
     private int frameCounter = 0;
 
+    public double cooldownTime = 2;
+    public double cooldownPercent = 1;
+
+    // only for visualization
+    public double projectilePathTimestep = 0.1;
+    public double projectilePathSpeed = 25.0;
+    private MeshInstance3D trajectoryMesh;
+
     @RegisterFunction
     @Override
     public void _ready() {
@@ -59,46 +80,23 @@ public class Ship extends CharacterBody3D {
     public void _process(double delta) {
         frameCounter++;
 
+        cooldownPercent += delta / cooldownTime;
+        cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
+
         if (!isMultiplayerAuthority()) {
             return;
         }
-        // frameCounter++;
-        // if (frameCounter % 60 != 0) {
-        //     return;
-        // }
 
-        // Vector3 currentPosition = new Vector3(
-        //     getPosition().getX(),
-        //     0,
-        //     getPosition().getZ()
-        // );
-        // Vector3 endPosition = new Vector3(0, 0, 0);
-        // ArrayList<Coordinate> path = gen.navigate(currentPosition, endPosition);
-        // clearPathVisualization();
-
-        // for (Coordinate coord : path) {
-        //     CSGSphere3D sphere = new CSGSphere3D();
-        //     sphere.setRadius(0.2f);
-
-        //     Vector3 position = coord.toVec3();
-        //     sphere.setPosition(position);
-
-        //     StandardMaterial3D material = new StandardMaterial3D();
-        //     material.setAlbedo(new Color(0, 1, 0, 0.8f));
-        //     sphere.setMaterial(material);
-        //     getParent().addChild(sphere);
-
-        //     pathVisualization.add(sphere);
-        // }
+        turretYaw = gd.lerpAngle(turretYaw, state.getYaw(), 0.1);
+        turretPitch = gd.lerpAngle(turretPitch, state.getPitch(), 0.1);
 
         Vector3 position = this.getGlobalPosition();
         position.setY(position.getY() + 3);
-        // cannon.setPosition(position);
 
         if (provider != null) {
             state = provider.getState();
 
-            if (state.getEmittedAction() != -1) {
+            if (state.getEmittedAction() != -1 && cooldownPercent == 1) {
                 MatchManager matchManager = (MatchManager) getParent()
                     .getParent();
                 Vector3 origin =
@@ -126,47 +124,102 @@ public class Ship extends CharacterBody3D {
                     gd.print(boom);
                     boom.play();
                 }
+
+                cooldownPercent = 0;
             }
         }
+
+        drawProjectilePath();
+    }
+
+    @RegisterFunction
+    public void drawProjectilePath() {
+        ArrayList<Vector3> points = new ArrayList<>();
+
+        if (trajectoryMesh != null) {
+            trajectoryMesh.queueFree();
+            trajectoryMesh = null;
+        }
+
+        for (double t = 0; t < 5.0; t += projectilePathTimestep) {
+            Vector3 newPoint = getProjectilePosition(
+                ((Node3D) getNode(
+                        "Turret/Cannon/ProjectileOrigin"
+                    )).getGlobalPosition(),
+                new Vector3(
+                    Math.sin(turretYaw),
+                    Math.sin(turretPitch),
+                    Math.cos(turretYaw)
+                )
+                    .normalized()
+                    .times(projectilePathSpeed)
+                    .plus(velocityProperty()),
+                t
+            );
+            points.add(newPoint);
+        }
+
+        trajectoryMesh = createTrajectoryMesh(points);
+        getTree().getRoot().addChild(trajectoryMesh);
+    }
+
+    @RegisterFunction
+    public Vector3 getProjectilePosition(
+        Vector3 shipPos,
+        Vector3 vi,
+        double time
+    ) {
+        return vi
+            .times(time)
+            .plus(new Vector3(0, -9.8, 0).times(Math.pow(time, 2)).times(0.5))
+            .plus(shipPos);
+    }
+
+    @RegisterFunction
+    public MeshInstance3D createTrajectoryMesh(ArrayList<Vector3> points) {
+        if (points.size() < 2) return null;
+
+        MeshInstance3D meshInstance = new MeshInstance3D();
+        SurfaceTool surfaceTool = new SurfaceTool();
+
+        surfaceTool.begin(Mesh.PrimitiveType.LINES);
+
+        for (int i = 0; i < points.size() - 1; i++) {
+            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+            surfaceTool.addVertex(points.get(i));
+
+            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+            surfaceTool.addVertex(points.get(i + 1));
+        }
+
+        ArrayMesh mesh = surfaceTool.commit();
+
+        ORMMaterial3D material = new ORMMaterial3D();
+        material.setShadingMode(ShadingMode.UNSHADED);
+        material.setAlbedo(
+            new Color(cooldownPercent, cooldownPercent, cooldownPercent, 1.0)
+        );
+
+        meshInstance.setMesh(mesh);
+        meshInstance.setMaterialOverride(material);
+        meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
+
+        return meshInstance;
     }
 
     @RegisterFunction
     public double getPitch() {
-        return state.getPitch();
+        return turretPitch;
     }
 
     @RegisterFunction
     public double getYaw() {
-        return state.getYaw();
+        return turretYaw;
     }
-
-    // private void instantiateNewCannon() {
-    //     PackedScene weapon = gd.load("res://components/objects/weapon.tscn");
-    //     cannon = (Weapon) (weapon.instantiate());
-
-    //     Vector3 pos = this.getGlobalPosition();
-    //     pos.setY(pos.getY() + 3);
-    //     cannon.setPosition(pos);
-    //     cannon.setRotation(this.getRotation());
-
-    //     getParent().addChild(cannon);
-    // }
 
     public InputState getState() {
         return provider.getState();
     }
-
-    private ArrayList<Node> pathVisualization = new ArrayList<>();
-
-    private void clearPathVisualization() {
-        for (Node node : pathVisualization) {
-            removeChild(node);
-            node.queueFree();
-        }
-        pathVisualization.clear();
-    }
-
-    // pathfinding debug end
 
     @RegisterFunction
     @Override
@@ -205,5 +258,10 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     public void setProvider(InputProvider provider) {
         this.provider = provider;
+    }
+
+    @RegisterFunction
+    public double getCooldownPercentage() {
+        return cooldownPercent;
     }
 }

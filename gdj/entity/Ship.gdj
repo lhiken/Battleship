@@ -21,6 +21,7 @@ signals = [
 	
 ]
 properties = [
+	boom,
 	provider,
 	gen
 ]
@@ -28,7 +29,11 @@ functions = [
 	_process,
 	_physics_process,
 	_ready,
+	draw_projectile_path,
+	get_projectile_position,
+	create_trajectory_mesh,
 	get_pitch,
 	get_yaw,
-	set_provider
+	set_provider,
+	get_cooldown_percentage
 ]

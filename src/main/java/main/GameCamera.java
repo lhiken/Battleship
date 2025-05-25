@@ -40,6 +40,12 @@ public class GameCamera extends Camera3D {
 
     private double time = 0.0;
 
+    private double shakeStrength = 0.0;
+    private double shakeDuration = 0.0;
+    private double shakeTimer = 0.0;
+    private Vector3 shakeOffset = new Vector3();
+    private double shakeFrequency = 30.0;
+
     @RegisterFunction
     @Override
     public void _ready() {
@@ -50,6 +56,10 @@ public class GameCamera extends Camera3D {
     @Override
     public void _process(double delta) {
         time += delta;
+
+        if (shakeTimer < shakeDuration) {
+            shakeTimer += delta;
+        }
 
         if (!playerMode) {
             setGlobalPosition(
@@ -95,7 +105,30 @@ public class GameCamera extends Camera3D {
     }
 
     private void updatePosition(Vector3 focusPoint, Vector3 offset) {
-        setGlobalPosition(focusPoint.plus(offset));
+        Vector3 finalPosition = focusPoint.plus(offset);
+
+        if (shakeTimer < shakeDuration) {
+            double intensity =
+                shakeStrength * (1.0 - (shakeTimer / shakeDuration));
+
+            double shakeX =
+                Math.sin(shakeTimer * shakeFrequency) * intensity * 0.1;
+            double shakeY =
+                Math.sin(shakeTimer * shakeFrequency * 1.3 + 1.0) *
+                intensity *
+                0.15;
+            double shakeZ =
+                Math.sin(shakeTimer * shakeFrequency * 0.8 + 2.0) *
+                intensity *
+                0.02;
+
+            shakeOffset = new Vector3(shakeX, shakeY, shakeZ);
+            finalPosition = finalPosition.plus(shakeOffset);
+        } else {
+            shakeOffset = new Vector3();
+        }
+
+        setGlobalPosition(finalPosition);
         lookAt(focusPoint, new Vector3(0, 1, 0));
     }
 
@@ -121,5 +154,10 @@ public class GameCamera extends Camera3D {
     }
 
     @RegisterFunction
-    public void invokeShake(double strength) {}
+    public void invokeShake(double strength) {
+        this.shakeStrength = strength;
+        this.shakeDuration = Math.min(strength * 0.8, 3.0);
+        this.shakeTimer = 0.0;
+        this.shakeFrequency = Math.random() * 10.0 + 20.0;
+    }
 }

@@ -1,7 +1,7 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c82veycg0l5xj"]
 
-[ext_resource type="Shader" uid="uid://crw01ga1hc582" path="res://Shaders/particles/SmokeShader.gdshader" id="1_ymw8q"]
-[ext_resource type="NoiseTexture3D" uid="uid://bwydqh15qmvxa" path="res://Shaders/particles/NoiseResource.tres" id="2_cm5gb"]
+[ext_resource type="Shader" uid="uid://crw01ga1hc582" path="res://shaders/particles/SmokeShader.gdshader" id="1_ymw8q"]
+[ext_resource type="NoiseTexture3D" uid="uid://bwydqh15qmvxa" path="res://shaders/particles/NoiseResource.tres" id="2_cm5gb"]
 
 [resource]
 render_priority = 0

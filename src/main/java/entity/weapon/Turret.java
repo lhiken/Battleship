@@ -30,8 +30,9 @@ public class Turret extends MeshInstance3D {
     @Override
     public void _process(double delta) {
         if (getMultiplayerAuthority() != getMultiplayer().getUniqueId()) return;
-        yaw = gd.lerpAngle(yaw, ship.getYaw(), 0.1);
-        pitch = gd.lerpAngle(pitch, ship.getPitch(), 0.1);
+
+        yaw = ship.getYaw();
+        pitch = ship.getPitch();
 
         setRotation(new Vector3(0, yaw, 0).minus(ship.getRotation()));
         cannon.setRotation((new Vector3((Math.PI / 2.0) - pitch, 0, 0)));
