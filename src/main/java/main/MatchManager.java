@@ -1,6 +1,7 @@
 package main;
 
 import entity.Ship;
+import entity.providers.BotProvider;
 import entity.providers.PlayerProvider;
 import entity.weapon.Bullet;
 import godot.annotation.Export;
@@ -42,6 +43,8 @@ public class MatchManager extends Node {
     public void _ready() {
         gd.print("loaded match manager");
         gameCamera.setSpectatorMode();
+
+        instantiateNewBot();
         // MultiplayerAPI multiplayer = getMultiplayer();
         // var peerIds = multiplayer.getPeers();
 
@@ -62,6 +65,27 @@ public class MatchManager extends Node {
 
         shipNode.addChild(provider);
         shipNode.setName(playerId + "");
+        shipNode.setProvider(provider);
+        shipNode.translate(
+            new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
+        );
+
+        getNode("Ships").addChild(shipNode);
+
+        return shipNode;
+    }
+
+    public Ship instantiateNewBot() {
+        PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
+        PackedScene botProvider = gd.load(
+            "res://components/providers/bot_provider.tscn"
+        );
+
+        Ship shipNode = (Ship) (ship.instantiate());
+        BotProvider provider = (BotProvider) (botProvider.instantiate());
+
+        shipNode.addChild(provider);
+        shipNode.setName("Bot");
         shipNode.setProvider(provider);
         shipNode.translate(
             new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)

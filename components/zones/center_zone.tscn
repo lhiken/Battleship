@@ -1,0 +1,141 @@
+[gd_scene load_steps=18 format=3 uid="uid://cnbmkpv8baiyy"]
+
+[ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/outline.gdshader" id="2_pmcir"]
+[ext_resource type="Script" uid="uid://g0ib717xbso4" path="res://components/zones/crystal_center.gd" id="3_pmcir"]
+[ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="3_treyv"]
+[ext_resource type="ArrayMesh" uid="uid://bd8yrc7tn42nw" path="res://assets/zones/center/crystalCenter.res" id="4_dj2w7"]
+[ext_resource type="ArrayMesh" uid="uid://bfqa5ssp7ybta" path="res://assets/zones/center/crystalStand.res" id="5_pmcir"]
+[ext_resource type="Shader" uid="uid://gw37dr3x5oit" path="res://shaders/toon/cel-shader-base-nocull.gdshader" id="6_treyv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aqns1"]
+render_priority = 0
+shader = ExtResource("2_pmcir")
+shader_parameter/outline_color = Color(0.522653, 0.85774, 0.925191, 1)
+shader_parameter/edge_color = Color(0.586263, 0.859825, 0.865603, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pmcir"]
+next_pass = SubResource("ShaderMaterial_aqns1")
+albedo_color = Color(0, 0.927521, 0.900142, 1)
+emission_enabled = true
+emission = Color(0.223913, 0.686042, 0.692327, 1)
+emission_energy_multiplier = 6.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dj2w7"]
+render_priority = -2
+shader = ExtResource("2_pmcir")
+shader_parameter/outline_color = Color(0.610309, 0.541701, 0.465144, 1)
+shader_parameter/edge_color = Color(0.825154, 0.697839, 0.604067, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_treyv"]
+render_priority = 2
+next_pass = SubResource("ShaderMaterial_dj2w7")
+shader = ExtResource("3_treyv")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0.922945, 0.774784, 0.667696, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pmcir"]
+height = 9.113
+radius = 0.918
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_treyv"]
+height = 7.021
+radius = 6.0
+
+[sub_resource type="Shader" id="Shader_pmcir"]
+code = "shader_type spatial;
+render_mode cull_disabled;
+
+uniform vec3 emission_color : source_color;
+uniform vec3 zone_color : source_color;
+
+void fragment() {
+	float height = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).y;
+	
+	if (height > 1.0 || height < 0.0) discard;
+	
+	ALBEDO = zone_color;
+	EMISSION = vec3(1.0 - height) * emission_color;
+	ALPHA = 1.0 - height;
+}
+
+//void light() {
+//	// Called for every pixel for every light affecting the material.
+//	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_71ket"]
+render_priority = 1
+shader = SubResource("Shader_pmcir")
+shader_parameter/emission_color = Color(0.160456, 0.428714, 0.488635, 1)
+shader_parameter/zone_color = Color(0.314603, 0.806068, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3dyyb"]
+material = SubResource("ShaderMaterial_71ket")
+top_radius = 6.0
+bottom_radius = 6.0
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3dyyb"]
+render_priority = 0
+shader = ExtResource("6_treyv")
+shader_parameter/specular_smoothness = 0.0
+shader_parameter/fresnel_smoothness = 0.0
+shader_parameter/color = Color(0.190516, 0.547561, 0.657189, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_i8utg"]
+material = SubResource("ShaderMaterial_3dyyb")
+top_radius = 6.0
+bottom_radius = 6.0
+height = 9.792
+cap_top = false
+cap_bottom = false
+
+[node name="CenterZone" type="StaticBody3D"]
+
+[node name="Crystal" type="MeshInstance3D" parent="."]
+
+[node name="CrystalCenter" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 2.85857, 0)
+mesh = ExtResource("4_dj2w7")
+surface_material_override/0 = SubResource("StandardMaterial3D_pmcir")
+script = ExtResource("3_pmcir")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="CrystalCenter"]
+light_color = Color(0.288319, 0.536993, 0.634472, 1)
+light_energy = 8.86
+shadow_enabled = true
+
+[node name="CrystalStand" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.645, 0, 0, 0, 0.645, 0, 0, 0, 0.645, 0, 0.461933, 0)
+mesh = ExtResource("5_pmcir")
+surface_material_override/0 = SubResource("ShaderMaterial_treyv")
+
+[node name="StandCollider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.869357, 0)
+shape = SubResource("CylinderShape3D_pmcir")
+
+[node name="ZoneArea" type="Area3D" parent="."]
+
+[node name="ZoneCollider" type="CollisionShape3D" parent="ZoneArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.84209, 0)
+shape = SubResource("CylinderShape3D_treyv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_3dyyb")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.87146, 0)
+mesh = SubResource("CylinderMesh_i8utg")

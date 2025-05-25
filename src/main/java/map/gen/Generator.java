@@ -125,7 +125,7 @@ public class Generator extends Node3D {
 
                 GridCell cell = new GridCell(coord, tileType, height);
                 if (height < 0.2) cell.setTile(Tile.Empty);
-                cell.setHeight(height * 10 - 2.0);
+                cell.setHeight(height * 10 - 1.5);
                 spawnTile(cell);
                 grid[x][z] = cell;
                 applyShore(x, z);

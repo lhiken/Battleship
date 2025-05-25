@@ -23,9 +23,13 @@ public class BotProvider extends InputProvider {
     private final double ROTATION_STEP = 4.0;
     private double rotation;
     private double velocity;
-//    private int selectedAction;
-//    private boolean emitAction;
+    private int selectedAction;
+    private boolean emitAction;
+    private double power;
     private InputState currentState;
+
+    private double turretPitch;
+    private double turretYaw;
     private boolean enemyWithinRadius = false;
 
     private int frameCounter;
@@ -46,8 +50,8 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-//        selectedAction = 0;
-//        emitAction = false;
+        //        selectedAction = 0;
+        //        emitAction = false;
 
         frameCounter = 0;
     }
@@ -55,45 +59,170 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        Ship target = (Ship) getParent().getParent().getNode("1");
+        Ship thisShip = (Ship) getParent();
 
-        if (!enemyWithinRadius) {
+        setAimDirection(
+            target
+                .getGlobalPosition()
+                .plus(
+                    new Vector3(
+                        0,
+                        target
+                                .getGlobalPosition()
+                                .distanceTo(thisShip.getGlobalPosition()) /
+                            30.0 -
+                        1,
+                        0
+                    )
+                ),
+            thisShip.getGlobalPosition(),
+            target.velocityProperty(),
+            thisShip.velocityProperty(),
+            25.0
+        );
 
-            wander();
+        emitAction = true;
+        selectedAction = 1;
 
-        }
+        // if (!enemyWithinRadius) {
+        //     wander();
+        // }
 
+        updateState();
+    }
+
+    private void updateState() {
+        currentState.velocity = velocity;
+        currentState.rotation = rotation;
+        currentState.emitAction = emitAction ? selectedAction : -1;
+        currentState.power = Math.min(14, power * 3);
+        currentState.turretYaw = turretYaw;
+        currentState.turretPitch = turretPitch;
+    }
+
+    @RegisterFunction
+    @Override
+    public InputState getState() {
+        return currentState;
     }
 
     public void wander() {
-
         double randomAngle = Math.random() * 360;
         double distance = Math.random() * 65;
-        Vector3 randomCoordinate = new Vector3(Math.cos(Math.toRadians(randomAngle)) * distance, 0, Math.sin(Math.toRadians(randomAngle)) * distance);
-        if (true) {      // random coordinate is not on the island
-
+        Vector3 randomCoordinate = new Vector3(
+            Math.cos(Math.toRadians(randomAngle)) * distance,
+            0,
+            Math.sin(Math.toRadians(randomAngle)) * distance
+        );
+        if (true) { // random coordinate is not on the island
             moveToPoint(this.getGlobalPosition(), randomCoordinate);
-
         }
     }
 
-    public void chase() {
-
-    }
+    public void chase() {}
 
     public void moveToPoint(Vector3 start, Vector3 end) {
-
         ArrayList<Coordinate> path = gen.navigate(start, end);
-
-
-
-
-
     }
-
 
     private void adjustCurrentNode() {}
 
     private Vector3 getAverageNode(int nodes) {
         return new Vector3();
+    }
+
+    private void setAimDirection(
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p
+    ) {
+        double t = 2.0;
+
+        // newtons method with like 5 iterations
+        for (int i = 0; i < 5; i++) {
+            double f = f_t(P_t, P_s, V_t, V_s, S_p, t);
+            double f_p = f_pt(P_t, P_s, V_t, V_s, S_p, t);
+
+            if (Math.abs(f_p) < 1e-8) break;
+
+            t = t - f / f_p;
+        }
+
+        // get direction based on solved t
+        Vector3 direction = getProjectileVelocity(
+            P_t,
+            P_s,
+            V_t,
+            V_s,
+            t
+        ).normalized();
+
+        // convert direction into yaw and pitch input
+        turretPitch = Math.asin(direction.getY() / direction.length());
+        turretYaw = Math.atan2(direction.getX(), direction.getZ());
+    }
+
+    private Vector3 getProjectileVelocity(
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double t
+    ) {
+        Vector3 g = new Vector3(0, -9.8, 0);
+        return P_t.plus(V_t.times(t))
+            .minus(P_s.plus(V_s.times(t)))
+            .minus(g.times(t * t * 0.5))
+            .div(t);
+    }
+
+    // f(t) vector
+    private double f_t(
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
+    ) {
+        return (u_t(P_t, P_s, V_t, V_s, S_p, t).length() - S_p * t);
+    }
+
+    // f'(t) vector
+    private double f_pt(
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
+    ) {
+        Vector3 u_t = u_t(P_t, P_s, V_t, V_s, S_p, t);
+        Vector3 u_pt = u_pt(V_t, V_s, t);
+        Vector3 g = new Vector3(0, -9.8, 0);
+        return u_t.dot(u_pt) / u_t.length() - S_p;
+    }
+
+    // u(t) vector
+    private Vector3 u_t(
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
+    ) {
+        Vector3 R = P_t.minus(P_s); // relative distance
+        Vector3 g = new Vector3(0, -9.8, 0);
+        return (R.plus(V_t.minus(V_s).times(t)).minus(g.times(t * t * 0.5)));
+    }
+
+    // u'(t) vector
+    private Vector3 u_pt(Vector3 V_t, Vector3 V_s, double t) {
+        Vector3 g = new Vector3(0, -9.8, 0);
+        return (V_t.minus(V_s)).minus(g.times(t));
     }
 }
