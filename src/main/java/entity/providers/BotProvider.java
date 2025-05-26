@@ -50,6 +50,7 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _ready() {
+        gd.print("STARTING POS: " + this.getGlobalPosition());
         gd.print("Loaded bot provider");
         currentState = new InputState();
         rotation = 0;
@@ -57,6 +58,9 @@ public class BotProvider extends InputProvider {
         targetPos = new Vector3(0, 0, 60);
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
+        for (Coordinate i : path) {
+            gd.print(i.toVec3());
+        }
         //        selectedAction = 0;
         //        emitAction = false;
         frameCounter = 0;
@@ -102,6 +106,7 @@ public class BotProvider extends InputProvider {
     }
 
     public void wander() {
+        gd.print("WANDERING");
         if (this.getGlobalPosition().isEqualApprox(targetPos)) {
             do {
                 double randomAngle = Math.random() * 360;
@@ -125,14 +130,21 @@ public class BotProvider extends InputProvider {
     public void moveToPoint() {
         Coordinate temp = path.get(0);
         Vector3 target = temp.toVec3();
+        gd.print("Going to: " + target);
+        gd.print("Pos: " + this.getGlobalPosition());
 
         Vector3 difference = target.minus(this.getGlobalPosition());
+        gd.print("Distance between: " + difference);
 
         if (difference.isZeroApprox()) {
+            for (int i = 0; i < 10; i++) {
+                gd.print("NEXT POINT");
+            }
             path.remove(0);
         }
 
-        rotation = this.getGlobalPosition().angleTo(target); // this is definitely not right
+        rotation = Math.tan(difference.getZ()/difference.getX()); // this is definitely not right
+        gd.print("Rotation: " + rotation);
         velocity = 1; // this might be right
     }
 
