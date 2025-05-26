@@ -99,8 +99,8 @@ public class BotProvider extends InputProvider {
             25.0
         );
 
-        emitAction = true;
-        selectedAction = 1;
+        // emitAction = true;
+        // selectedAction = 1;
 
         gen.visualizePath(path);
 
@@ -138,17 +138,17 @@ public class BotProvider extends InputProvider {
         Vector3 difference = target.minus(this.getGlobalPosition());
         gd.print("Distance between: " + difference);
 
-        if (difference.isZeroApprox()) {
+        if (difference.length() < 0.25) {
             for (int i = 0; i < 10; i++) {
                 gd.print("NEXT POINT");
             }
             path.remove(0);
         }
 
-        Vector2 vector = new Vector2(difference.getX(), difference.getZ());
-        rotation = -1 * vector.angle(); // this is definitely not right
+        Vector2 vector = new Vector2(difference.getZ(), difference.getX());
+        rotation = vector.angle(); // this is definitely not right
         gd.print("Rotation: " + rotation);
-        velocity = 1; // this might be right
+        velocity = 0.5; // this might be right
     }
 
     private void updateState() {
@@ -207,7 +207,8 @@ public class BotProvider extends InputProvider {
 
         // convert direction into yaw and pitch input
         turretPitch = Math.asin(direction.getY() / direction.length());
-        turretYaw = Math.atan2(direction.getX(), direction.getZ());
+        double yaw = Math.atan2(direction.getX(), direction.getZ());
+        turretYaw = yaw;
     }
 
     private Vector3 getProjectileVelocity(
@@ -224,7 +225,7 @@ public class BotProvider extends InputProvider {
             .div(t);
     }
 
-    // f(t) vector
+    // f(t) scalar
     private double f_t(
         Vector3 P_t,
         Vector3 P_s,
@@ -236,7 +237,7 @@ public class BotProvider extends InputProvider {
         return (u_t(P_t, P_s, V_t, V_s, S_p, t).length() - S_p * t);
     }
 
-    // f'(t) vector
+    // f'(t) scalar
     private double f_pt(
         Vector3 P_t,
         Vector3 P_s,

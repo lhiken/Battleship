@@ -135,10 +135,11 @@ public class Generator extends Node3D {
                 GridCell cell = new GridCell(coord, tileType, height);
                 if (height < 0.2) cell.setTile(Tile.Empty);
                 cell.setHeight(height * 10 - 1.5);
-                spawnTile(cell);
                 grid[x][z] = cell;
             }
         }
+
+        removeCircle(35, 35, 10);
 
         // for (int x = 0; x < mapWidth; x++) {
         //     for (int z = 0; z < mapHeight; z++) {
@@ -158,7 +159,44 @@ public class Generator extends Node3D {
                 if (grid[x][z].getTile() == Tile.Empty && val > 0.4) {
                     grid[x][z].setTile(Tile.Seaweed);
                     grid[x][z].setHeight(Math.random() * 1.0 - 1.0);
-                    spawnTile(grid[x][z]);
+                }
+            }
+        }
+
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                spawnTile(grid[x][z]);
+            }
+        }
+    }
+
+    private void removeCircle(int cx, int cz, double radius) {
+        int startX = (int) Math.max(0, cx - radius);
+        int endX = (int) Math.min(mapWidth - 1, cx + radius);
+        int startZ = (int) Math.max(0, cz - radius);
+        int endZ = (int) Math.min(mapHeight - 1, cz + radius);
+
+        for (int x = startX; x <= endX; x++) {
+            for (int z = startZ; z <= endZ; z++) {
+                double dx = x - cx;
+                double dz = z - cz;
+                double distance = Math.sqrt(dx * dx + dz * dz);
+
+                if (distance <= radius) {
+                    GridCell cell = grid[x][z];
+
+                    if (!cell.getTile().walkable) {
+                        // Inside the circle: clear it
+                        cell.setTile(Tile.Empty);
+                        cell.setHeight(-1.5); // Default empty height
+                        spawnTile(cell);
+                    } else if (distance > radius - 1.5) {
+                        // Near the edge of the circle: lower the terrain
+                        double softFactor = (radius - distance) / 1.5; // from 0 (at edge) to 1 (just inside)
+                        double newHeight = cell.getHeight() - softFactor * 2.0; // soften edge by lowering up to 2.0
+                        cell.setHeight(newHeight);
+                        spawnTile(cell);
+                    }
                 }
             }
         }
