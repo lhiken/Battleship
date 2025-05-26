@@ -24,5 +24,6 @@ properties = [
 functions = [
     _process,
 	_ready,
-	get_state
+	get_state,
+	set_generator
 ]

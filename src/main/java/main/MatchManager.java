@@ -23,6 +23,7 @@ import godot.core.StringNames;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
+import map.gen.Generator;
 import multiplayer.MultiplayerManager;
 import multiplayer.PlayerData;
 import ui.lobby.Lobby;
@@ -83,6 +84,8 @@ public class MatchManager extends Node {
 
         Ship shipNode = (Ship) (ship.instantiate());
         BotProvider provider = (BotProvider) (botProvider.instantiate());
+
+        provider.setGenerator((Generator) getNode("Generator"));
 
         shipNode.addChild(provider);
         shipNode.setName("Bot");
