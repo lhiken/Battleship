@@ -45,6 +45,8 @@ public class BotProvider extends InputProvider {
 
     private Generator gen;
 
+    private double actualTargetRotation = 0.0;
+
     /** _ready
      * runs upon being instantiated in the game world
      * acts as a constructor
@@ -124,7 +126,6 @@ public class BotProvider extends InputProvider {
                 );
                 path = gen.navigate(this.getGlobalPosition(), targetPos);
                 smoothOutPath(path);
-
             } while (path != null); // random coordinate generated is on the island
 
             startPos = this.getGlobalPosition();
@@ -135,10 +136,12 @@ public class BotProvider extends InputProvider {
     public void smoothOutPath(ArrayList<Coordinate> path) {
         for (int j = 0; j < 10; j++) {
             path.add(0, path.get(0));
-            path.add(path.get(path.size()-1));
+            path.add(path.get(path.size() - 1));
             for (int i = 0; i < path.size() - 1; i++) {
-                double averageX = (path.get(i).getX() + path.get(i + 1).getX()) / 2;
-                double averageZ = (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
+                double averageX =
+                    (path.get(i).getX() + path.get(i + 1).getX()) / 2;
+                double averageZ =
+                    (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
                 path.set(i, new Coordinate(averageX, averageZ, i, i));
             }
         }
@@ -182,20 +185,20 @@ public class BotProvider extends InputProvider {
             time = 0;
         }
 
-        double ExpectedRotation = Math.atan2(difference.getX(), difference.getZ());
-        rotation = Math.atan2(difference.getX(), difference.getZ());
-//        if (ExpectedRotation > 0 && rotation < ExpectedRotation && rotation <= 1) {
-//            rotation += ROTATION_STEP * delta2;
-//        } else if (ExpectedRotation < 0 && rotation > ExpectedRotation && rotation >= -1) {
-//            rotation -= ROTATION_STEP * delta2;
-//        }
-        velocity = 0.5; // this might be right
+        double ExpectedRotation = Math.atan2(
+            difference.getX(),
+            difference.getZ()
+        );
+
+        rotation = gd.lerpAngle(rotation, ExpectedRotation, 0.05);
+
+        velocity = 1; // this might be right
     }
 
     private void updateState() {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
-//        currentState.emitAction = emitAction ? selectedAction : -1;
+        //        currentState.emitAction = emitAction ? selectedAction : -1;
         currentState.emitAction = 1;
         currentState.power = Math.min(14, power * 3);
         currentState.turretYaw = turretYaw;
