@@ -6,11 +6,19 @@ import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
 import godot.annotation.TransferMode;
+import godot.api.ArrayMesh;
+import godot.api.BaseMaterial3D.ShadingMode;
 import godot.api.FastNoiseLite;
 import godot.api.FastNoiseLite.NoiseType;
+import godot.api.GeometryInstance3D.ShadowCastingSetting;
+import godot.api.Mesh.PrimitiveType;
+import godot.api.MeshInstance3D;
 import godot.api.Node3D;
+import godot.api.ORMMaterial3D;
 import godot.api.PackedScene;
 import godot.api.ResourceLoader;
+import godot.api.SurfaceTool;
+import godot.core.Color;
 import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -32,7 +40,7 @@ enum Tile {
     GrassProp(10, false, "GrassProp"),
     RockProp(10, false, "RockProp"),
     SeaMine(5, true, "SeaMine"),
-    Shore(3, true, "Shore"),
+    Shore(5, true, "Shore"),
     Empty(1, true, "Empty"),
     Seaweed(3, true, "Seaweed");
 
@@ -75,6 +83,8 @@ public class Generator extends Node3D {
 
     private Queue<Node3D> spawnedTiles;
 
+    private MeshInstance3D debugMesh;
+
     /** _ready
      * godot built in function, runs on spawn
      * generates the map
@@ -97,7 +107,6 @@ public class Generator extends Node3D {
     @Override
     public void _process(double delta) {
         if (getMultiplayer().isServer() && !spawnedTiles.isEmpty()) {
-            gd.print(spawnedTiles.peek().getName());
             getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
             getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
             getParent().getNode("MapTiles").addChild(spawnedTiles.poll(), true);
@@ -128,9 +137,14 @@ public class Generator extends Node3D {
                 cell.setHeight(height * 10 - 1.5);
                 spawnTile(cell);
                 grid[x][z] = cell;
-                applyShore(x, z);
             }
         }
+
+        // for (int x = 0; x < mapWidth; x++) {
+        //     for (int z = 0; z < mapHeight; z++) {
+        //         applyShore(x, z);
+        //     }
+        // }
 
         FastNoiseLite decoNoise = new FastNoiseLite();
         decoNoise.setNoiseType(NoiseType.TYPE_SIMPLEX);
@@ -154,23 +168,18 @@ public class Generator extends Node3D {
      * generates shore for ai pathfinding
      */
     private void applyShore(int x, int z) {
-        if (grid[x][z] == null || grid[x][z].getTile() == Tile.Empty) return;
+        if (grid[x][z].getTile().walkable) return;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
+        int[][] directions = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
 
-                int nx = x + dx;
-                int nz = z + dz;
+        for (int[] dir : directions) {
+            int nx = x + dir[0];
+            int nz = z + dir[1];
 
-                if (nx >= 0 && nx < mapWidth && nz >= 0 && nz < mapHeight) {
-                    if (
-                        grid[nx][nz] == null ||
-                        grid[nx][nz].getTile() == Tile.Empty
-                    ) {
-                        grid[x][z].setTile(Tile.Shore);
-                        return;
-                    }
+            if (nx >= 0 && nx < grid.length && nz >= 0 && nz < grid[0].length) {
+                if (grid[nx][nz].getTile().walkable) {
+                    gd.print("set " + x + " " + z);
+                    grid[x][z].setTile(Tile.Shore);
                 }
             }
         }
@@ -207,6 +216,7 @@ public class Generator extends Node3D {
      */
     private void spawnTile(GridCell cell) {
         String tileName = cell.getTile().nodePath;
+        if (tileName.equals("Shore")) gd.print("SHORE!!!");
         if (tileName.equals("Empty")) return;
         String tilePath = "res://components/tiles/" + tileName + ".tscn";
 
@@ -236,8 +246,6 @@ public class Generator extends Node3D {
             )
         );
         tileInstance.setScale(new Vector3(scale, scale, scale));
-
-        gd.print(tileName);
 
         spawnedTiles.add(tileInstance);
     }
@@ -325,13 +333,9 @@ public class Generator extends Node3D {
      * a* pathfinding heuristic
      */
     private double getHeuristic(GridCell a, GridCell b) {
-        int dx = Math.abs(
-            a.getCoords().getXIndex() - b.getCoords().getXIndex()
-        );
-        int dz = Math.abs(
-            a.getCoords().getZIndex() - b.getCoords().getZIndex()
-        );
-        return dx + dz;
+        int dx = a.getCoords().getXIndex() - b.getCoords().getXIndex();
+        int dz = a.getCoords().getZIndex() - b.getCoords().getZIndex();
+        return Math.sqrt(dx * dx + dz * dz);
     }
 
     /** getCost
@@ -366,5 +370,43 @@ public class Generator extends Node3D {
             grid[x][z + 1]
         );
         return arr;
+    }
+
+    /** visualizePath
+     * debug function for visualizing a generated path
+     */
+    public void visualizePath(ArrayList<Coordinate> path) {
+        if (debugMesh != null) {
+            debugMesh.queueFree();
+            debugMesh = null;
+        }
+
+        if (path.size() < 2) return;
+
+        MeshInstance3D meshInstance = new MeshInstance3D();
+        SurfaceTool surfaceTool = new SurfaceTool();
+
+        surfaceTool.begin(PrimitiveType.LINES);
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+            surfaceTool.addVertex(path.get(i).toVec3());
+
+            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
+            surfaceTool.addVertex(path.get(i + 1).toVec3());
+        }
+
+        ArrayMesh mesh = surfaceTool.commit();
+
+        ORMMaterial3D material = new ORMMaterial3D();
+        material.setShadingMode(ShadingMode.UNSHADED);
+        material.setAlbedo(new Color(0.0, 1.0, 0.0, 1.0));
+
+        meshInstance.setMesh(mesh);
+        meshInstance.setMaterialOverride(material);
+        meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
+
+        debugMesh = meshInstance;
+        addChild(debugMesh);
     }
 }
