@@ -6,7 +6,7 @@ fqName = entity.weapon.Weapon
 relativeSourcePath = src/main/java/entity/weapon/Weapon.java
 baseType = CharacterBody3D
 supertypes = [
-    godot.api.CharacterBody3D,
+	godot.api.CharacterBody3D,
 	godot.api.PhysicsBody3D,
 	godot.api.CollisionObject3D,
 	godot.api.Node3D,
@@ -18,12 +18,12 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    
+	
 ]
 functions = [
-    _process,
+	_process,
 	_ready
 ]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cool1ey4j5666"]
+[gd_scene load_steps=2 format=3 uid="uid://deys64m066v2g"]
 
 [ext_resource type="Script" uid="uid://b07prdd7ypo8s" path="res://gdj/entity/providers/BotProvider.gdj" id="1_t03py"]
 
