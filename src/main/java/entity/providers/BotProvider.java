@@ -57,7 +57,7 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-        targetPos = this.getGlobalPosition();
+        targetPos = getRandomPosition();
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
         for (Coordinate i : path) {
@@ -104,8 +104,8 @@ public class BotProvider extends InputProvider {
             25.0
         );
 
-        emitAction = true;
-        selectedAction = 1;
+        // emitAction = true;
+        // selectedAction = 1;
 
         gen.visualizePath(path);
 
@@ -134,25 +134,45 @@ public class BotProvider extends InputProvider {
     }
 
     public void smoothOutPath(ArrayList<Coordinate> path) {
-
-        for (int i = 0; i < path.size()-1; i++) {
-            double averageX = (path.get(i).getX() + path.get(i+1).getX())/2;
-            double averageZ = (path.get(i).getZ() + path.get(i+1).getZ())/2;
+        for (int i = 0; i < path.size() - 1; i++) {
+            double averageX = (path.get(i).getX() + path.get(i + 1).getX()) / 2;
+            double averageZ = (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
             path.set(i, new Coordinate(averageX, averageZ, i, i));
         }
-
     }
+
     public void chase() {}
 
+    private Vector3 getRandomPosition() {
+        Vector3 position = null;
+
+        while (position == null) {
+            double direction = Math.random() * 2 * Math.PI;
+            double distance = Math.random() * 60;
+
+            Vector3 pos = new Vector3(
+                Math.cos(direction),
+                0,
+                Math.sin(direction)
+            );
+
+            pos = pos.times(distance);
+
+            if (gen.checkWalkable(pos)) position = pos;
+            gd.print(position);
+        }
+
+        return position;
+    }
+
     public void moveToPoint() {
+        if (path.size() == 0) path = gen.navigate(
+            getGlobalPosition(),
+            getRandomPosition()
+        );
         Coordinate temp = path.get(0);
         Vector3 target = temp.toVec3();
-        gd.print("Going to: " + target);
-        gd.print("Pos: " + this.getGlobalPosition());
-
         Vector3 difference = target.minus(this.getGlobalPosition());
-        gd.print("Distance between: " + difference);
-
 
         if (difference.length() < 0.33 || time > 2) {
             path.remove(0);
@@ -165,7 +185,6 @@ public class BotProvider extends InputProvider {
         } else if (ExpectedRotation < 0 && rotation > ExpectedRotation && rotation >= -1) {
             rotation -= ROTATION_STEP * delta2;
         }
-        gd.print("Rotation: " + rotation);
         velocity = 0.5; // this might be right
     }
 
@@ -226,7 +245,8 @@ public class BotProvider extends InputProvider {
 
         // convert direction into yaw and pitch input
         turretPitch = Math.asin(direction.getY() / direction.length());
-        turretYaw = Math.atan2(direction.getX(), direction.getZ());
+        double yaw = Math.atan2(direction.getX(), direction.getZ());
+        turretYaw = yaw;
     }
 
     private Vector3 getProjectileVelocity(
@@ -243,7 +263,7 @@ public class BotProvider extends InputProvider {
             .div(t);
     }
 
-    // f(t) vector
+    // f(t) scalar
     private double f_t(
         Vector3 P_t,
         Vector3 P_s,
@@ -255,7 +275,7 @@ public class BotProvider extends InputProvider {
         return (u_t(P_t, P_s, V_t, V_s, S_p, t).length() - S_p * t);
     }
 
-    // f'(t) vector
+    // f'(t) scalar
     private double f_pt(
         Vector3 P_t,
         Vector3 P_s,

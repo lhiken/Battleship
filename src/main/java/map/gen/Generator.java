@@ -40,9 +40,9 @@ enum Tile {
     GrassProp(10, false, "GrassProp"),
     RockProp(10, false, "RockProp"),
     SeaMine(5, true, "SeaMine"),
-    Shore(5, true, "Shore"),
+    Shore(4, true, "Shore"),
     Empty(1, true, "Empty"),
-    Seaweed(3, true, "Seaweed");
+    Seaweed(1, true, "Seaweed");
 
     public final int cost;
     public final boolean walkable;
@@ -135,22 +135,24 @@ public class Generator extends Node3D {
                 GridCell cell = new GridCell(coord, tileType, height);
                 if (height < 0.2) cell.setTile(Tile.Empty);
                 cell.setHeight(height * 10 - 1.5);
-                spawnTile(cell);
                 grid[x][z] = cell;
             }
         }
 
-        // for (int x = 0; x < mapWidth; x++) {
-        //     for (int z = 0; z < mapHeight; z++) {
-        //         applyShore(x, z);
-        //     }
-        // }
+        removeCircle(35, 35, 10);
+
+        coordToGrid(new Vector2(0, 0)).setTile(Tile.Shore);
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                applyShore(x, z);
+            }
+        }
 
         FastNoiseLite decoNoise = new FastNoiseLite();
+
         decoNoise.setNoiseType(NoiseType.TYPE_SIMPLEX);
         decoNoise.setSeed(noiseSeed + 10);
         decoNoise.setFrequency(0.1f);
-
         for (int x = 0; x < mapWidth; x++) {
             for (int z = 0; z < mapHeight; z++) {
                 double val = sampleNoise(decoNoise, x, z);
@@ -158,7 +160,42 @@ public class Generator extends Node3D {
                 if (grid[x][z].getTile() == Tile.Empty && val > 0.4) {
                     grid[x][z].setTile(Tile.Seaweed);
                     grid[x][z].setHeight(Math.random() * 1.0 - 1.0);
-                    spawnTile(grid[x][z]);
+                }
+            }
+        }
+
+        for (int x = 0; x < mapWidth; x++) {
+            for (int z = 0; z < mapHeight; z++) {
+                spawnTile(grid[x][z]);
+            }
+        }
+    }
+
+    private void removeCircle(int cx, int cz, double radius) {
+        int startX = (int) Math.max(0, cx - radius);
+        int endX = (int) Math.min(mapWidth - 1, cx + radius);
+        int startZ = (int) Math.max(0, cz - radius);
+        int endZ = (int) Math.min(mapHeight - 1, cz + radius);
+
+        for (int x = startX; x <= endX; x++) {
+            for (int z = startZ; z <= endZ; z++) {
+                double dx = x - cx;
+                double dz = z - cz;
+                double distance = Math.sqrt(dx * dx + dz * dz);
+
+                if (distance <= radius) {
+                    GridCell cell = grid[x][z];
+
+                    if (!cell.getTile().walkable) {
+                        cell.setTile(Tile.Empty);
+                        cell.setHeight(-1.5);
+                        spawnTile(cell);
+                    } else if (distance > radius - 1.5) {
+                        double softFactor = (radius - distance) / 1.5;
+                        double newHeight = cell.getHeight() - softFactor * 2.0;
+                        cell.setHeight(newHeight);
+                        spawnTile(cell);
+                    }
                 }
             }
         }
@@ -170,7 +207,20 @@ public class Generator extends Node3D {
     private void applyShore(int x, int z) {
         if (grid[x][z].getTile().walkable) return;
 
-        int[][] directions = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
+        int[][] directions = {
+            { 0, -1 },
+            { 0, 1 },
+            { -1, 0 },
+            { 1, 0 }, // radius 1
+            { -1, -1 },
+            { -1, 1 },
+            { 1, -1 },
+            { 1, 1 }, // diagonals
+            { 0, -2 },
+            { 0, 2 },
+            { -2, 0 },
+            { 2, 0 }, // straight radius 2
+        };
 
         for (int[] dir : directions) {
             int nx = x + dir[0];
@@ -179,7 +229,7 @@ public class Generator extends Node3D {
             if (nx >= 0 && nx < grid.length && nz >= 0 && nz < grid[0].length) {
                 if (grid[nx][nz].getTile().walkable) {
                     gd.print("set " + x + " " + z);
-                    grid[x][z].setTile(Tile.Shore);
+                    grid[nx][nz].setTile(Tile.Shore);
                 }
             }
         }
@@ -216,8 +266,7 @@ public class Generator extends Node3D {
      */
     private void spawnTile(GridCell cell) {
         String tileName = cell.getTile().nodePath;
-        if (tileName.equals("Shore")) gd.print("SHORE!!!");
-        if (tileName.equals("Empty")) return;
+        if (tileName.equals("Empty") || tileName.equals("Shore")) return;
         String tilePath = "res://components/tiles/" + tileName + ".tscn";
 
         PackedScene tileScene = (PackedScene) ResourceLoader.load(tilePath);
@@ -408,5 +457,14 @@ public class Generator extends Node3D {
 
         debugMesh = meshInstance;
         addChild(debugMesh);
+    }
+
+    @RegisterFunction
+    public boolean checkWalkable(Vector3 pos) {
+        Vector2 realPos = new Vector2(pos.getX(), pos.getZ());
+        return (
+            coordToGrid(realPos).getTile().walkable &&
+            coordToGrid(realPos).getTile().cost == 1
+        );
     }
 }
