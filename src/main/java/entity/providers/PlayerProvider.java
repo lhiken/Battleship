@@ -60,17 +60,31 @@ public class PlayerProvider extends InputProvider {
             "right",
             "left"
         );
-        if (inputDirection.isZeroApprox()) {
+        if (inputDirection.getX() != 0) {
+            velocity += inputDirection.getX() * VELOCITY_STEP * delta;
+            velocity = gd.clamp(velocity, -0.5, 1);
+        } else {
             if (velocity > 0) {
                 velocity -= (VELOCITY_STEP / 5) * delta;
             } else if (velocity < 0) {
                 velocity += (VELOCITY_STEP / 5) * delta;
             }
-        } else {
-            rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
-            velocity += inputDirection.getX() * VELOCITY_STEP * delta;
-            velocity = gd.clamp(velocity, -0.5, 1);
         }
+        if (inputDirection.getY() != 0) {
+            rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
+        }
+
+//        if (inputDirection.isZeroApprox()) {
+//            if (velocity > 0) {
+//                velocity -= (VELOCITY_STEP / 5) * delta;
+//            } else if (velocity < 0) {
+//                velocity += (VELOCITY_STEP / 5) * delta;
+//            }
+//        } else {
+//            rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
+//            velocity += inputDirection.getX() * VELOCITY_STEP * delta;
+//            velocity = gd.clamp(velocity, -0.5, 1);
+//        }
 
         if (Input.isActionJustPressed("one")) {
             selectedAction = 1;

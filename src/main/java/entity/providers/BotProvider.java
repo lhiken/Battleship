@@ -134,9 +134,8 @@ public class BotProvider extends InputProvider {
     }
 
     public void smoothOutPath(ArrayList<Coordinate> path) {
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 5; j++) {
             path.add(0, path.get(0));
-            path.add(path.get(path.size() - 1));
             for (int i = 0; i < path.size() - 1; i++) {
                 double averageX =
                     (path.get(i).getX() + path.get(i + 1).getX()) / 2;
@@ -172,18 +171,37 @@ public class BotProvider extends InputProvider {
     }
 
     public void moveToPoint() {
+        gd.print(path.size());
         if (path.size() == 0) path = gen.navigate(
             getGlobalPosition(),
             getRandomPosition()
         );
+
+
         Coordinate temp = path.get(0);
         Vector3 target = temp.toVec3();
-        Vector3 difference = target.minus(this.getGlobalPosition());
+        Vector3 target2 = target;
 
-        if (difference.length() < 0.33 || time > 2) {
+        if (path.size() >= 2) {
+            target2 = path.get(1).toVec3();
+        }
+
+        Vector3 difference = target.minus(this.getGlobalPosition()).normalized();
+        Vector3 difference2 = target2.minus(this.getGlobalPosition()).normalized();
+        Vector3 currentDirection = new Vector3(Math.cos(rotation), 0, Math.sin(rotation));
+
+        double dotprod1 = currentDirection.getX() * difference.getX() + currentDirection.getZ() * difference.getZ();
+        double dotprod2 = currentDirection.getX() * difference2.getX() + currentDirection.getZ() * difference2.getZ();;
+
+        if ((dotprod2 - dotprod1) > 0.2 || difference.length() < 0.33 || time > 2) {
             path.remove(0);
             time = 0;
         }
+
+//        if (difference.length() < 0.5 || time > 1) {
+//            path.remove(0);
+//            time = 0;
+//        }
 
         double ExpectedRotation = Math.atan2(
             difference.getX(),
@@ -199,7 +217,7 @@ public class BotProvider extends InputProvider {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
         //        currentState.emitAction = emitAction ? selectedAction : -1;
-        currentState.emitAction = 1;
+        currentState.emitAction = -1;
         currentState.power = Math.min(14, power * 3);
         currentState.turretYaw = turretYaw;
         currentState.turretPitch = turretPitch;
