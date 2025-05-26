@@ -35,6 +35,7 @@ public class BotProvider extends InputProvider {
     private Vector3 targetPos;
     private Vector3 startPos;
     private double time;
+    private double delta2;
 
     private ArrayList<Coordinate> path;
 
@@ -71,6 +72,7 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        delta2 = delta;
         time += delta;
         if (!enemyWithinRadius) {
             wander();
@@ -157,7 +159,12 @@ public class BotProvider extends InputProvider {
             time = 0;
         }
 
-        rotation = Math.atan2(difference.getX(), difference.getZ());
+        double ExpectedRotation = Math.atan2(difference.getX(), difference.getZ());
+        if (ExpectedRotation > 0 && rotation < ExpectedRotation && rotation <= 1) {
+            rotation += ROTATION_STEP * delta2;
+        } else if (ExpectedRotation < 0 && rotation > ExpectedRotation && rotation >= -1) {
+            rotation -= ROTATION_STEP * delta2;
+        }
         gd.print("Rotation: " + rotation);
         velocity = 0.5; // this might be right
     }
@@ -165,7 +172,8 @@ public class BotProvider extends InputProvider {
     private void updateState() {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
-        currentState.emitAction = emitAction ? selectedAction : -1;
+//        currentState.emitAction = emitAction ? selectedAction : -1;
+        currentState.emitAction = 1;
         currentState.power = Math.min(14, power * 3);
         currentState.turretYaw = turretYaw;
         currentState.turretPitch = turretPitch;
