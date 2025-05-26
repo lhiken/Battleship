@@ -55,7 +55,7 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-        targetPos = new Vector3(0, 0, 60);
+        targetPos = getRandomPosition();
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
         for (Coordinate i : path) {
@@ -129,25 +129,43 @@ public class BotProvider extends InputProvider {
 
     public void chase() {}
 
+    private Vector3 getRandomPosition() {
+        Vector3 position = null;
+
+        while (position == null) {
+            double direction = Math.random() * 2 * Math.PI;
+            double distance = Math.random() * 60;
+
+            Vector3 pos = new Vector3(
+                Math.cos(direction),
+                0,
+                Math.sin(direction)
+            );
+
+            pos = pos.times(distance);
+
+            if (gen.checkWalkable(pos)) position = pos;
+            gd.print(position);
+        }
+
+        return position;
+    }
+
     public void moveToPoint() {
+        if (path.size() == 0) path = gen.navigate(
+            getGlobalPosition(),
+            getRandomPosition()
+        );
         Coordinate temp = path.get(0);
         Vector3 target = temp.toVec3();
-        gd.print("Going to: " + target);
-        gd.print("Pos: " + this.getGlobalPosition());
-
         Vector3 difference = target.minus(this.getGlobalPosition());
-        gd.print("Distance between: " + difference);
 
         if (difference.length() < 0.25) {
-            for (int i = 0; i < 10; i++) {
-                gd.print("NEXT POINT");
-            }
             path.remove(0);
         }
 
         Vector2 vector = new Vector2(difference.getZ(), difference.getX());
         rotation = vector.angle(); // this is definitely not right
-        gd.print("Rotation: " + rotation);
         velocity = 0.5; // this might be right
     }
 
