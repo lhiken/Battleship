@@ -123,9 +123,8 @@ public class BotProvider extends InputProvider {
                     Math.sin(Math.toRadians(randomAngle)) * distance
                 );
                 path = gen.navigate(this.getGlobalPosition(), targetPos);
-                for (int i = 0; i < 5; i++) {
-                    smoothOutPath(path);
-                }
+                smoothOutPath(path);
+
             } while (path != null); // random coordinate generated is on the island
 
             startPos = this.getGlobalPosition();
@@ -134,10 +133,14 @@ public class BotProvider extends InputProvider {
     }
 
     public void smoothOutPath(ArrayList<Coordinate> path) {
-        for (int i = 0; i < path.size() - 1; i++) {
-            double averageX = (path.get(i).getX() + path.get(i + 1).getX()) / 2;
-            double averageZ = (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
-            path.set(i, new Coordinate(averageX, averageZ, i, i));
+        for (int j = 0; j < 10; j++) {
+            path.add(0, path.get(0));
+            path.add(path.get(path.size()-1));
+            for (int i = 0; i < path.size() - 1; i++) {
+                double averageX = (path.get(i).getX() + path.get(i + 1).getX()) / 2;
+                double averageZ = (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
+                path.set(i, new Coordinate(averageX, averageZ, i, i));
+            }
         }
     }
 
@@ -180,11 +183,12 @@ public class BotProvider extends InputProvider {
         }
 
         double ExpectedRotation = Math.atan2(difference.getX(), difference.getZ());
-        if (ExpectedRotation > 0 && rotation < ExpectedRotation && rotation <= 1) {
-            rotation += ROTATION_STEP * delta2;
-        } else if (ExpectedRotation < 0 && rotation > ExpectedRotation && rotation >= -1) {
-            rotation -= ROTATION_STEP * delta2;
-        }
+        rotation = Math.atan2(difference.getX(), difference.getZ());
+//        if (ExpectedRotation > 0 && rotation < ExpectedRotation && rotation <= 1) {
+//            rotation += ROTATION_STEP * delta2;
+//        } else if (ExpectedRotation < 0 && rotation > ExpectedRotation && rotation >= -1) {
+//            rotation -= ROTATION_STEP * delta2;
+//        }
         velocity = 0.5; // this might be right
     }
 
