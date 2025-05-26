@@ -102,6 +102,8 @@ public class BotProvider extends InputProvider {
         emitAction = true;
         selectedAction = 1;
 
+        gen.visualizePath(path);
+
         updateState();
     }
 
