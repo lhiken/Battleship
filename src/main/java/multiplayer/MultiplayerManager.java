@@ -1,5 +1,6 @@
 package multiplayer;
 
+import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterSignal;
@@ -203,5 +204,20 @@ public class MultiplayerManager extends Node {
     @RegisterFunction
     public boolean hasPlayer(int peerId) {
         return playerData.containsKey(peerId);
+    }
+
+    @RegisterFunction
+    public void invokeBulletDamage(
+        int ownerId,
+        Ship targetShip,
+        double damage
+    ) {
+        if (multiplayer.isServer()) {
+            targetShip.setHealth(targetShip.getHealth() - damage);
+            PlayerData data = playerData.get(ownerId);
+            if (data != null) {
+                data.setPoints(data.getPoints() + 50);
+            }
+        }
     }
 }

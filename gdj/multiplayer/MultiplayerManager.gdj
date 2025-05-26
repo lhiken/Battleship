@@ -35,5 +35,6 @@ functions = [
 	get_peer_id,
 	is_server,
 	cleanup,
-	has_player
+	has_player,
+	invoke_bullet_damage
 ]

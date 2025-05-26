@@ -1,30 +1,17 @@
 package entity;
 
-import entity.weapon.Weapon;
 import godot.annotation.Export;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
+import godot.annotation.Rpc;
+import godot.annotation.RpcMode;
+import godot.annotation.Sync;
 import godot.api.*;
-import godot.api.BaseMaterial3D.DepthDrawMode;
-import godot.api.BaseMaterial3D.ShadingMode;
-import godot.api.GeometryInstance3D.ShadowCastingSetting;
-import godot.api.Mesh.PrimitiveType;
-import godot.core.Color;
-import godot.core.NodePath;
-import godot.core.PackedInt32Array;
-import godot.core.PackedVector3Array;
-import godot.core.StringName;
 import godot.core.StringNames;
-import godot.core.VariantArray;
-import godot.core.VariantType;
-import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import main.MatchManager;
-import map.gen.Coordinate;
 import map.gen.Generator;
 
 /** Ship
@@ -59,12 +46,14 @@ public class Ship extends CharacterBody3D {
 
     private int frameCounter = 0;
 
-    public double cooldownTime = 2;
-    public double cooldownPercent = 1;
+    private double cooldownTime = 2;
+    private double cooldownPercent = 1;
 
     // only for visualization
-    public double projectilePathTimestep = 0.1;
-    public double projectilePathSpeed = 25.0;
+    private double projectilePathTimestep = 0.1;
+    private double projectilePathSpeed = 25.0;
+
+    private double health;
 
     // private MeshInstance3D trajectoryMesh;
 
@@ -72,6 +61,7 @@ public class Ship extends CharacterBody3D {
     @Override
     public void _ready() {
         setMultiplayerAuthority(Integer.parseInt(getName().toString()));
+        health = 100;
         // instantiateNewCannon();
         // boom = (AudioStreamPlayer3D) getNode(new NodePath("CannonFire"));
     }
@@ -132,80 +122,17 @@ public class Ship extends CharacterBody3D {
         // drawProjectilePath();
     }
 
-    // @RegisterFunction
-    // public void drawProjectilePath() {
-    //     ArrayList<Vector3> points = new ArrayList<>();
+    @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.SYNC)
+    @RegisterFunction
+    public void setHealth(double health) {
+        this.health = health;
+        rpc(StringNames.toGodotName("setHealth"), health);
+    }
 
-    //     if (trajectoryMesh != null) {
-    //         trajectoryMesh.queueFree();
-    //         trajectoryMesh = null;
-    //     }
-
-    //     for (double t = 0; t < 5.0; t += projectilePathTimestep) {
-    //         Vector3 newPoint = getProjectilePosition(
-    //             ((Node3D) getNode(
-    //                     "Turret/Cannon/ProjectileOrigin"
-    //                 )).getGlobalPosition(),
-    //             new Vector3(
-    //                 Math.sin(turretYaw),
-    //                 Math.sin(turretPitch),
-    //                 Math.cos(turretYaw)
-    //             )
-    //                 .normalized()
-    //                 .times(projectilePathSpeed)
-    //                 .plus(velocityProperty()),
-    //             t
-    //         );
-    //         points.add(newPoint);
-    //     }
-
-    //     trajectoryMesh = createTrajectoryMesh(points);
-    //     getTree().getRoot().addChild(trajectoryMesh);
-    // }
-
-    // @RegisterFunction
-    // public Vector3 getProjectilePosition(
-    //     Vector3 shipPos,
-    //     Vector3 vi,
-    //     double time
-    // ) {
-    //     return vi
-    //         .times(time)
-    //         .plus(new Vector3(0, -9.8, 0).times(Math.pow(time, 2)).times(0.5))
-    //         .plus(shipPos);
-    // }
-
-    // @RegisterFunction
-    // public MeshInstance3D createTrajectoryMesh(ArrayList<Vector3> points) {
-    //     if (points.size() < 2) return null;
-
-    //     MeshInstance3D meshInstance = new MeshInstance3D();
-    //     SurfaceTool surfaceTool = new SurfaceTool();
-
-    //     surfaceTool.begin(Mesh.PrimitiveType.LINES);
-
-    //     for (int i = 0; i < points.size() - 1; i++) {
-    //         surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-    //         surfaceTool.addVertex(points.get(i));
-
-    //         surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-    //         surfaceTool.addVertex(points.get(i + 1));
-    //     }
-
-    //     ArrayMesh mesh = surfaceTool.commit();
-
-    //     ORMMaterial3D material = new ORMMaterial3D();
-    //     material.setShadingMode(ShadingMode.UNSHADED);
-    //     material.setAlbedo(
-    //         new Color(cooldownPercent, cooldownPercent, cooldownPercent, 1.0)
-    //     );
-
-    //     meshInstance.setMesh(mesh);
-    //     meshInstance.setMaterialOverride(material);
-    //     meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
-
-    //     return meshInstance;
-    // }
+    @RegisterFunction
+    public double getHealth() {
+        return health;
+    }
 
     @RegisterFunction
     public double getPitch() {

@@ -228,7 +228,6 @@ public class Generator extends Node3D {
 
             if (nx >= 0 && nx < grid.length && nz >= 0 && nz < grid[0].length) {
                 if (grid[nx][nz].getTile().walkable) {
-                    gd.print("set " + x + " " + z);
                     grid[nx][nz].setTile(Tile.Shore);
                 }
             }

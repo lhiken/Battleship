@@ -20,6 +20,7 @@ import godot.core.StringNames;
 import godot.core.Vector3;
 import godot.global.GD;
 import main.GameCamera;
+import multiplayer.MultiplayerManager;
 
 @RegisterClass
 public class Bullet extends RigidBody3D {
@@ -58,6 +59,8 @@ public class Bullet extends RigidBody3D {
         spawnExplosion();
         if (body instanceof Ship) {
             gd.print(ownerId + " hit " + ((Ship) body).getName());
+            MultiplayerManager manager = MultiplayerManager.Instance;
+            manager.invokeBulletDamage(ownerId, (Ship) body, 15);
         }
     }
 
