@@ -34,6 +34,7 @@ public class BotProvider extends InputProvider {
     private boolean enemyWithinRadius = false;
     private Vector3 targetPos;
     private Vector3 startPos;
+    private double time;
 
     private ArrayList<Coordinate> path;
 
@@ -55,11 +56,12 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-        targetPos = new Vector3(0, 0, 60);
+        targetPos = this.getGlobalPosition();
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
         for (Coordinate i : path) {
             gd.print(i.toVec3());
+            smoothOutPath(path);
         }
         //        selectedAction = 0;
         //        emitAction = false;
@@ -69,6 +71,7 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        time += delta;
         if (!enemyWithinRadius) {
             wander();
         }
@@ -108,8 +111,7 @@ public class BotProvider extends InputProvider {
     }
 
     public void wander() {
-        gd.print("WANDERING");
-        if (this.getGlobalPosition().isEqualApprox(targetPos)) {
+        if (path.isEmpty()) {
             do {
                 double randomAngle = Math.random() * 360;
                 double distance = Math.random() * 65;
@@ -118,15 +120,26 @@ public class BotProvider extends InputProvider {
                     0,
                     Math.sin(Math.toRadians(randomAngle)) * distance
                 );
-                gd.print("Target position:" + targetPos);
-            } while (!targetPos.equals(new Vector3(0, 0, 0))); // random coordinate generated is on the island
+                path = gen.navigate(this.getGlobalPosition(), targetPos);
+                for (int i = 0; i < 5; i++) {
+                    smoothOutPath(path);
+                }
+            } while (path != null); // random coordinate generated is on the island
 
             startPos = this.getGlobalPosition();
-            gd.print("Start Position:" + startPos);
             path = gen.navigate(startPos, targetPos);
         }
     }
 
+    public void smoothOutPath(ArrayList<Coordinate> path) {
+
+        for (int i = 0; i < path.size()-1; i++) {
+            double averageX = (path.get(i).getX() + path.get(i+1).getX())/2;
+            double averageZ = (path.get(i).getZ() + path.get(i+1).getZ())/2;
+            path.set(i, new Coordinate(averageX, averageZ, i, i));
+        }
+
+    }
     public void chase() {}
 
     public void moveToPoint() {
@@ -138,17 +151,15 @@ public class BotProvider extends InputProvider {
         Vector3 difference = target.minus(this.getGlobalPosition());
         gd.print("Distance between: " + difference);
 
-        if (difference.isZeroApprox()) {
-            for (int i = 0; i < 10; i++) {
-                gd.print("NEXT POINT");
-            }
+
+        if (difference.length() < 0.33 || time > 2) {
             path.remove(0);
+            time = 0;
         }
 
-        Vector2 vector = new Vector2(difference.getX(), difference.getZ());
-        rotation = -1 * vector.angle(); // this is definitely not right
+        rotation = Math.atan2(difference.getX(), difference.getZ());
         gd.print("Rotation: " + rotation);
-        velocity = 1; // this might be right
+        velocity = 0.5; // this might be right
     }
 
     private void updateState() {
