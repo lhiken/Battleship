@@ -36,19 +36,13 @@ shape = SubResource("CapsuleShape3D_q4e71")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 layers = 524288
 mesh = SubResource("CapsuleMesh_kdijx")
-skeleton = NodePath("../ShipArea")
+skeleton = NodePath("")
 
 [node name="ShipMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 layers = 524288
 mesh = SubResource("CapsuleMesh_kdijx")
-skeleton = NodePath("../ShipArea")
-
-[node name="ShipArea" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
-
-[node name="CollisionBox" type="CollisionShape3D" parent="ShipArea"]
-shape = SubResource("CapsuleShape3D_q4e71")
+skeleton = NodePath("")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_skmo2")

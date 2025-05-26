@@ -5,6 +5,7 @@ public class PlayerData {
     private String username;
     private int peerId;
     private int points;
+    private double health;
 
     public PlayerData(int peerId) {
         this.peerId = peerId;
@@ -12,6 +13,7 @@ public class PlayerData {
         String shortId = idStr.length() >= 3 ? idStr.substring(0, 3) : idStr;
         this.username = "Player" + shortId;
         this.points = 0;
+        this.health = 1;
     }
 
     public String getUsername() {
@@ -26,6 +28,10 @@ public class PlayerData {
         return points;
     }
 
+    public double getHealth() {
+        return health;
+    }
+
     public void setPoints(int points) {
         this.points = points;
     }
@@ -36,6 +42,18 @@ public class PlayerData {
 
     public void subtractPoints(int points) {
         this.points -= points;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public void addHealth(double health) {
+        this.health += health;
+    }
+
+    public void subtractHealth(double health) {
+        this.health -= health;
     }
 
     @Override
