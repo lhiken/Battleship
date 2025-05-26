@@ -146,7 +146,7 @@ public class BotProvider extends InputProvider {
         }
 
         Vector2 vector = new Vector2(difference.getX(), difference.getZ());
-        rotation = vector.angle(); // this is definitely not right
+        rotation = -1 * vector.angle(); // this is definitely not right
         gd.print("Rotation: " + rotation);
         velocity = 1; // this might be right
     }
