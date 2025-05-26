@@ -143,7 +143,8 @@ public class BotProvider extends InputProvider {
             path.remove(0);
         }
 
-        rotation = Math.tan(difference.getZ()/difference.getX()); // this is definitely not right
+        Vector2 vector = new Vector2(difference.getX(), difference.getZ());
+        rotation = vector.angle(); // this is definitely not right
         gd.print("Rotation: " + rotation);
         velocity = 1; // this might be right
     }
