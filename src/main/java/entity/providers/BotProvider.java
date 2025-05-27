@@ -19,8 +19,6 @@ public class BotProvider extends InputProvider {
 
     private static final GD gd = GD.INSTANCE;
 
-    private final double VELOCITY_STEP = 3.0;
-    private final double ROTATION_STEP = 4.0;
     private double rotation;
     private double velocity;
     private int selectedAction;
@@ -34,18 +32,12 @@ public class BotProvider extends InputProvider {
     private boolean enemyWithinRadius = false;
     private Vector3 targetPos;
     private Vector3 startPos;
-    private double time;
-    private double delta2;
 
     private ArrayList<Coordinate> path;
 
-    private int frameCounter;
-
-    private Coordinate currentNode;
-
     private Generator gen;
 
-    private double actualTargetRotation = 0.0;
+    private Ship targettedShip;
 
     /** _ready
      * runs upon being instantiated in the game world
@@ -62,73 +54,19 @@ public class BotProvider extends InputProvider {
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
         smoothOutPath(path);
-        selectedAction = 0;
         emitAction = false;
-        frameCounter = 0;
+        selectedAction = 1;
     }
 
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        delta2 = delta;
-        time += delta;
-
         if (!enemyWithinRadius) {
             wander();
         }
 
         moveToPoint();
-
-        //testing aim
-        Ship target = (Ship) getParent().getParent().getNode("1");
-        Ship thisShip = (Ship) getParent();
-
-        if (target == null) return;
-
-        setAimDirection(
-            target
-                .getGlobalPosition()
-                .plus(
-                    new Vector3(
-                        0,
-                        target
-                                .getGlobalPosition()
-                                .distanceTo(thisShip.getGlobalPosition()) /
-                            30.0 -
-                        1,
-                        0
-                    )
-                ),
-            thisShip.getGlobalPosition(),
-            target.velocityProperty(),
-            thisShip.velocityProperty(),
-            25.0
-        );
-
-        if (target != null) {
-            setAimDirection(
-                target
-                    .getGlobalPosition()
-                    .plus(
-                        new Vector3(
-                            0,
-                            target
-                                    .getGlobalPosition()
-                                    .distanceTo(thisShip.getGlobalPosition()) /
-                                30.0 -
-                            1,
-                            0
-                        )
-                    ),
-                thisShip.getGlobalPosition(),
-                target.velocityProperty(),
-                thisShip.velocityProperty(),
-                25.0
-            );
-        }
-
-        emitAction = true;
-        selectedAction = 1;
+        handleTargetting();
 
         gen.visualizePath(path);
 
@@ -146,6 +84,49 @@ public class BotProvider extends InputProvider {
             } while (path != null); // random coordinate generated is on the island
 
             startPos = this.getGlobalPosition();
+        }
+    }
+
+    private void handleTargetting() {
+        Ship thisShip = (Ship) getParent();
+        targettedShip = (Ship) getParent().getParent().getNode("1");
+
+        if (targettedShip != null) {
+            setAimDirection(
+                targettedShip
+                    .getGlobalPosition()
+                    .plus(
+                        new Vector3(
+                            0,
+                            targettedShip
+                                    .getGlobalPosition()
+                                    .distanceTo(
+                                        targettedShip.getGlobalPosition()
+                                    ) /
+                                30.0 -
+                            1,
+                            0
+                        )
+                    ),
+                thisShip.getGlobalPosition(),
+                targettedShip.velocityProperty(),
+                thisShip.velocityProperty(),
+                25.0
+            );
+            turretPitch = gd.clamp(
+                turretPitch,
+                gd.degToRad(-15),
+                gd.degToRad(25)
+            );
+
+            if (canShoot()) {
+                gd.print("shoot!");
+                emitAction = true;
+            } else {
+                emitAction = false;
+                turretYaw = getGlobalRotation().getY();
+                turretPitch = 0;
+            }
         }
     }
 
@@ -206,7 +187,6 @@ public class BotProvider extends InputProvider {
 
         // shows if the ship is past the current target
         double pastCurr = shipToCurr.dot(currToNext);
-        gd.print(pastCurr);
 
         if (curr.distanceTo(getGlobalPosition()) < 0.3 || pastCurr < 0.5) {
             path.remove(0);
@@ -220,7 +200,11 @@ public class BotProvider extends InputProvider {
         double rotationInput = normalizeAngle(
             expectedRotation - getGlobalRotation().getY()
         );
-        rotation += gd.clamp(rotationInput, gd.degToRad(-1), gd.degToRad(1));
+        rotation += gd.clamp(
+            rotationInput,
+            gd.degToRad(-1.5),
+            gd.degToRad(1.5)
+        );
 
         velocity = 1.0; // this might be right
     }
@@ -230,6 +214,16 @@ public class BotProvider extends InputProvider {
         if (angle > Math.PI) angle -= 2 * Math.PI;
         if (angle < -Math.PI) angle += 2 * Math.PI;
         return angle;
+    }
+
+    private boolean canShoot() {
+        double rot = getGlobalRotation().getY() - Math.PI;
+        double diff = normalizeAngle(rot - turretYaw);
+        return (
+            targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
+                20 &&
+            Math.abs(gd.radToDeg(diff)) > 30
+        );
     }
 
     private void updateState() {
