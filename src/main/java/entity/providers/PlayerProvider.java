@@ -4,10 +4,8 @@ import entity.InputProvider;
 import entity.InputState;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
-import godot.api.Input;
+import godot.api.*;
 import godot.api.Input.MouseMode;
-import godot.api.InputEvent;
-import godot.api.InputEventMouseMotion;
 import godot.core.Vector2;
 import godot.global.GD;
 import main.GameCameraFrame;
@@ -21,13 +19,16 @@ public class PlayerProvider extends InputProvider {
     private static final GD gd = GD.INSTANCE;
 
     private final double VELOCITY_STEP = 3.0;
-    private final double ROTATION_STEP = 4.0;
+    private final double ROTATION_STEP = 5.0;
     private double rotation;
     private double velocity;
     private int selectedAction;
     private boolean emitAction;
     private double power;
     private InputState currentState;
+
+    AudioStreamPlayer wind;
+    private double volume;
 
     private double turretPitch;
     private double turretYaw;
@@ -46,6 +47,10 @@ public class PlayerProvider extends InputProvider {
         power = 1;
         selectedAction = 1;
         emitAction = false;
+        wind = (AudioStreamPlayer) getParent().getNode("WindBlowing");
+        wind.autoplayProperty(true);
+        wind.play();
+        volume = 0;
     }
 
     /** _process
@@ -54,6 +59,28 @@ public class PlayerProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (!wind.isPlaying()) {
+            wind.play();
+        }
+
+        if (velocity == 1) {
+            Camera3D camera = (Camera3D) getParent()
+                .getParent()
+                .getParent()
+                .getNode("RenderTarget/Viewport/GameCamera");
+            float fov = camera.getFov();
+            float newFov = (float) gd.lerp(fov, 55f, 0.002);
+            camera.setFov(newFov);
+        } else {
+            Camera3D camera = (Camera3D) getParent()
+                .getParent()
+                .getParent()
+                .getNode("RenderTarget/Viewport/GameCamera");
+            float fov = camera.getFov();
+            float newFov = (float) gd.lerp(fov, 45f, 0.01);
+            camera.setFov(newFov);
+        }
+
         Vector2 inputDirection = Input.getVector(
             "backward",
             "forward",
@@ -61,6 +88,8 @@ public class PlayerProvider extends InputProvider {
             "left"
         );
         if (inputDirection.getX() != 0) {
+            volume = gd.lerp(wind.getVolumeDb(), -15, 0.01);
+            wind.setVolumeDb((float) volume);
             velocity += inputDirection.getX() * VELOCITY_STEP * delta;
             velocity = gd.clamp(velocity, -0.5, 1);
         } else {
@@ -69,22 +98,24 @@ public class PlayerProvider extends InputProvider {
             } else if (velocity < 0) {
                 velocity += (VELOCITY_STEP / 5) * delta;
             }
+            volume = gd.lerp(wind.getVolumeDb(), -80, 0.002);
+            wind.setVolumeDb((float) volume);
         }
         if (inputDirection.getY() != 0) {
             rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
         }
 
-//        if (inputDirection.isZeroApprox()) {
-//            if (velocity > 0) {
-//                velocity -= (VELOCITY_STEP / 5) * delta;
-//            } else if (velocity < 0) {
-//                velocity += (VELOCITY_STEP / 5) * delta;
-//            }
-//        } else {
-//            rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
-//            velocity += inputDirection.getX() * VELOCITY_STEP * delta;
-//            velocity = gd.clamp(velocity, -0.5, 1);
-//        }
+        //        if (inputDirection.isZeroApprox()) {
+        //            if (velocity > 0) {
+        //                velocity -= (VELOCITY_STEP / 5) * delta;
+        //            } else if (velocity < 0) {
+        //                velocity += (VELOCITY_STEP / 5) * delta;
+        //            }
+        //        } else {
+        //            rotation += (inputDirection.getY() * ROTATION_STEP * delta) / 3;
+        //            velocity += inputDirection.getX() * VELOCITY_STEP * delta;
+        //            velocity = gd.clamp(velocity, -0.5, 1);
+        //        }
 
         if (Input.isActionJustPressed("one")) {
             selectedAction = 1;

@@ -8,9 +8,12 @@ import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
 import godot.api.*;
+import godot.core.NodePath;
 import godot.core.StringNames;
 import godot.core.Vector3;
 import godot.global.GD;
+import main.Game;
+import main.GameCameraFrame;
 import main.MatchManager;
 import map.gen.Generator;
 
@@ -27,9 +30,8 @@ public class Ship extends CharacterBody3D {
     private double turretPitch;
     private InputState state;
 
-    @RegisterProperty
-    @Export
-    public AudioStreamPlayer3D boom;
+    public AudioStreamPlayer boom;
+    public AudioStreamPlayer emptyCannon;
 
     private double maxVelocity = 5.0;
 
@@ -62,14 +64,17 @@ public class Ship extends CharacterBody3D {
     public void _ready() {
         setMultiplayerAuthority(Integer.parseInt(getName().toString()));
         health = 100;
+        emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
         // instantiateNewCannon();
-        // boom = (AudioStreamPlayer3D) getNode(new NodePath("CannonFire"));
+        boom = (AudioStreamPlayer) getNode("CannonFire");
     }
 
     @RegisterFunction
     @Override
     public void _process(double delta) {
         frameCounter++;
+
+        gd.print(cooldownPercent);
 
         cooldownPercent += delta / cooldownTime;
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
@@ -111,12 +116,13 @@ public class Ship extends CharacterBody3D {
                 //     this.getRotation(),
                 //     velocity + state.getPower()
                 // );
-                if (boom != null) {
-                    gd.print(boom);
-                    boom.play();
-                }
 
+                // uncommenting this before fixing it will cause process to terminate early
+                // resulting in cooldown never being reset and firing forever!!
+                // boom.play();
                 cooldownPercent = 0;
+            } else if (state.getEmittedAction() != -1 && cooldownPercent < 1) {
+                // emptyCannon.play();
             }
         }
         // drawProjectilePath();

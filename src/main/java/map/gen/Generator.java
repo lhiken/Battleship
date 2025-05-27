@@ -282,14 +282,14 @@ public class Generator extends Node3D {
 
         Node3D tileInstance = (Node3D) tileScene.instantiate();
         float scale =
-            (float) (1.0f - ((Math.random() * 0.2))) *
+            (float) (1.0f - ((Math.random() * 0.15))) *
             (float) (cellWidth / tileWidth);
         tileInstance.setPosition(pos);
         tileInstance.setRotation(
             new Vector3(
                 0,
                 (Math.PI / 2.0) * Math.round((Math.random() * 4)) +
-                (Math.random() - 0.5) * 1.5,
+                (Math.random() - 0.5) * 0.4,
                 0
             )
         );

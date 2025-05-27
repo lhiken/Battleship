@@ -54,7 +54,6 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _ready() {
-        gd.print("STARTING POS: " + this.getGlobalPosition());
         gd.print("Loaded bot provider");
         currentState = new InputState();
         rotation = 0;
@@ -62,11 +61,9 @@ public class BotProvider extends InputProvider {
         targetPos = getRandomPosition();
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
-        for (Coordinate i : path) {
-            smoothOutPath(path);
-        }
-        //        selectedAction = 0;
-        //        emitAction = false;
+        smoothOutPath(path);
+        selectedAction = 0;
+        emitAction = false;
         frameCounter = 0;
     }
 
@@ -75,6 +72,7 @@ public class BotProvider extends InputProvider {
     public void _process(double delta) {
         delta2 = delta;
         time += delta;
+
         if (!enemyWithinRadius) {
             wander();
         }
@@ -107,8 +105,30 @@ public class BotProvider extends InputProvider {
             25.0
         );
 
-        // emitAction = true;
-        // selectedAction = 1;
+        if (target != null) {
+            setAimDirection(
+                target
+                    .getGlobalPosition()
+                    .plus(
+                        new Vector3(
+                            0,
+                            target
+                                    .getGlobalPosition()
+                                    .distanceTo(thisShip.getGlobalPosition()) /
+                                30.0 -
+                            1,
+                            0
+                        )
+                    ),
+                thisShip.getGlobalPosition(),
+                target.velocityProperty(),
+                thisShip.velocityProperty(),
+                25.0
+            );
+        }
+
+        emitAction = true;
+        selectedAction = 1;
 
         gen.visualizePath(path);
 
@@ -166,7 +186,6 @@ public class BotProvider extends InputProvider {
     }
 
     public void moveToPoint() {
-        gd.print(path.size());
         if (path.size() < 3) {
             path.addAll(gen.navigate(getGlobalPosition(), getRandomPosition()));
             smoothOutPath(path);
@@ -174,8 +193,9 @@ public class BotProvider extends InputProvider {
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
-        Vector3 shipVelocity = ((Ship) getParent()).velocityProperty();
         double shipYaw = ((Ship) getParent()).getGlobalRotation().getY();
+        Vector3 shipToCurr = getGlobalPosition().minus(curr);
+        Vector3 currToNext = curr.minus(next);
         Vector3 shipDirection = new Vector3(
             Math.sin(shipYaw),
             0,
@@ -184,10 +204,11 @@ public class BotProvider extends InputProvider {
         Vector3 currTargetDirection =
             this.getGlobalPosition().directionTo(curr);
 
-        double currDot = next.minus(curr).normalized().dot(shipDirection);
-        gd.print(currDot);
+        // shows if the ship is past the current target
+        double pastCurr = shipToCurr.dot(currToNext);
+        gd.print(pastCurr);
 
-        if (curr.distanceTo(getGlobalPosition()) < 0.3) {
+        if (curr.distanceTo(getGlobalPosition()) < 0.3 || pastCurr < 0.5) {
             path.remove(0);
         }
 
@@ -196,16 +217,25 @@ public class BotProvider extends InputProvider {
             currTargetDirection.getZ()
         );
 
-        rotation = gd.lerpAngle(rotation, expectedRotation, 0.05);
+        double rotationInput = normalizeAngle(
+            expectedRotation - getGlobalRotation().getY()
+        );
+        rotation += gd.clamp(rotationInput, gd.degToRad(-1), gd.degToRad(1));
 
         velocity = 1.0; // this might be right
+    }
+
+    private double normalizeAngle(double angle) {
+        angle = angle % (2 * Math.PI);
+        if (angle > Math.PI) angle -= 2 * Math.PI;
+        if (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
     }
 
     private void updateState() {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
-        //        currentState.emitAction = emitAction ? selectedAction : -1;
-        currentState.emitAction = -1;
+        currentState.emitAction = emitAction ? selectedAction : -1;
         currentState.power = Math.min(14, power * 3);
         currentState.turretYaw = turretYaw;
         currentState.turretPitch = turretPitch;

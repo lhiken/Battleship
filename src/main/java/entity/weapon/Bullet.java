@@ -8,14 +8,7 @@ import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
-import godot.api.Camera3D;
-import godot.api.MeshInstance3D;
-import godot.api.Node;
-import godot.api.Node3D;
-import godot.api.PackedScene;
-import godot.api.PhysicsBody3D;
-import godot.api.RigidBody3D;
-import godot.api.Timer;
+import godot.api.*;
 import godot.core.StringNames;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -33,6 +26,7 @@ public class Bullet extends RigidBody3D {
     private double timeElapsed = 0;
 
     private double maxLifetime = 6;
+    private AudioStreamPlayer3D explosionSound;
 
     private Node collisionBody;
 
@@ -72,6 +66,10 @@ public class Bullet extends RigidBody3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
+
+        explosionSound = (AudioStreamPlayer3D) getParent().getParent().getNode("Explosion");
+        explosionSound.play();
+
         Node3D explosionNode = (Node3D) explosion.instantiate();
         getParent().addChild(explosionNode);
         explosionNode.setRotation(getLinearVelocity().inverse().normalized());

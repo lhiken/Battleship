@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://components/main/volume.gd" id="1_1q15i"]
 [ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_v6yvm"]
 [ext_resource type="Script" uid="uid://c83w6at3ch6hd" path="res://gdj/ui/Settings.gdj" id="2_v6yvm"]
-[ext_resource type="AudioStream" uid="uid://bq0i2mfk48sdi" path="res://audio/2-02. Fortree City.mp3" id="3_8w2nc"]
+[ext_resource type="AudioStream" uid="uid://c4up1g1hpnnud" path="res://audio/Music.mp3" id="3_c3rsk"]
 [ext_resource type="Script" uid="uid://641abtp4j8gc" path="res://components/main/mute.gd" id="5_c3rsk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3rsk"]
@@ -27,7 +27,7 @@ script = ExtResource("2_v6yvm")
 metadata/_edit_horizontal_guides_ = [-146.0]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_8w2nc")
+stream = ExtResource("3_c3rsk")
 autoplay = true
 bus = &"Music"
 

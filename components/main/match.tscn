@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cdkpe7nflna3v"]
+[gd_scene load_steps=20 format=3 uid="uid://cdkpe7nflna3v"]
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://t7q151jqrwgn" path="res://components/ui/images/healthbarUnder.png" id="12_ivnly"]
 [ext_resource type="Texture2D" uid="uid://2u4p226njjmy" path="res://components/ui/images/healthbarProgress.png" id="13_2s1nh"]
 [ext_resource type="PackedScene" uid="uid://cnbmkpv8baiyy" path="res://components/zones/center_zone.tscn" id="13_ivnly"]
+[ext_resource type="AudioStream" uid="uid://b484syj63hp43" path="res://audio/Explosion.wav" id="14_2s1nh"]
 
 [sub_resource type="Gradient" id="Gradient_n8tfp"]
 interpolation_mode = 1
@@ -68,6 +69,9 @@ fov = 90.0
 script = ExtResource("5_2j7da")
 camera_parent = NodePath("..")
 metadata/_custom_type_script = "uid://cctjq18hkwk3h"
+
+[node name="AudioListener3D" type="AudioListener3D" parent="RenderTarget/GameCamera"]
+current = true
 
 [node name="Generator" type="Node3D" parent="."]
 script = ExtResource("7_cu54s")
@@ -138,5 +142,9 @@ texture_under = ExtResource("12_ivnly")
 texture_progress = ExtResource("13_2s1nh")
 
 [node name="CenterZone" parent="." instance=ExtResource("13_ivnly")]
+
+[node name="Explosion" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("14_2s1nh")
+volume_db = 80.0
 
 [editable path="Lobby"]
