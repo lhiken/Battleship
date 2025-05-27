@@ -63,7 +63,6 @@ public class BotProvider extends InputProvider {
         startPos = this.getGlobalPosition();
         path = gen.navigate(startPos, targetPos);
         for (Coordinate i : path) {
-            gd.print(i.toVec3());
             smoothOutPath(path);
         }
         //        selectedAction = 0;
@@ -85,6 +84,8 @@ public class BotProvider extends InputProvider {
         //testing aim
         Ship target = (Ship) getParent().getParent().getNode("1");
         Ship thisShip = (Ship) getParent();
+
+        if (target == null) return;
 
         setAimDirection(
             target
@@ -117,19 +118,14 @@ public class BotProvider extends InputProvider {
     public void wander() {
         if (path.isEmpty()) {
             do {
-                double randomAngle = Math.random() * 360;
-                double distance = Math.random() * 65;
-                targetPos = new Vector3(
-                    Math.cos(Math.toRadians(randomAngle)) * distance,
-                    0,
-                    Math.sin(Math.toRadians(randomAngle)) * distance
+                path = gen.navigate(
+                    this.getGlobalPosition(),
+                    getRandomPosition()
                 );
-                path = gen.navigate(this.getGlobalPosition(), targetPos);
                 smoothOutPath(path);
             } while (path != null); // random coordinate generated is on the island
 
             startPos = this.getGlobalPosition();
-            path = gen.navigate(startPos, targetPos);
         }
     }
 
@@ -164,7 +160,6 @@ public class BotProvider extends InputProvider {
             pos = pos.times(distance);
 
             if (gen.checkWalkable(pos)) position = pos;
-            gd.print(position);
         }
 
         return position;
@@ -172,45 +167,38 @@ public class BotProvider extends InputProvider {
 
     public void moveToPoint() {
         gd.print(path.size());
-        if (path.size() == 0) path = gen.navigate(
-            getGlobalPosition(),
-            getRandomPosition()
-        );
-
-
-        Coordinate temp = path.get(0);
-        Vector3 target = temp.toVec3();
-        Vector3 target2 = target;
-
-        if (path.size() >= 2) {
-            target2 = path.get(1).toVec3();
+        if (path.size() < 3) {
+            path.addAll(gen.navigate(getGlobalPosition(), getRandomPosition()));
+            smoothOutPath(path);
         }
 
-        Vector3 difference = target.minus(this.getGlobalPosition()).normalized();
-        Vector3 difference2 = target2.minus(this.getGlobalPosition()).normalized();
-        Vector3 currentDirection = new Vector3(Math.cos(rotation), 0, Math.sin(rotation));
+        Vector3 curr = path.get(0).toVec3();
+        Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
+        Vector3 shipVelocity = ((Ship) getParent()).velocityProperty();
+        double shipYaw = ((Ship) getParent()).getGlobalRotation().getY();
+        Vector3 shipDirection = new Vector3(
+            Math.sin(shipYaw),
+            0,
+            Math.cos(shipYaw)
+        );
+        Vector3 currTargetDirection =
+            this.getGlobalPosition().directionTo(curr);
 
-        double dotprod1 = currentDirection.getX() * difference.getX() + currentDirection.getZ() * difference.getZ();
-        double dotprod2 = currentDirection.getX() * difference2.getX() + currentDirection.getZ() * difference2.getZ();;
+        double currDot = next.minus(curr).normalized().dot(shipDirection);
+        gd.print(currDot);
 
-        if ((dotprod2 - dotprod1) > 0.2 || difference.length() < 0.33 || time > 2) {
+        if (curr.distanceTo(getGlobalPosition()) < 0.3) {
             path.remove(0);
-            time = 0;
         }
 
-//        if (difference.length() < 0.5 || time > 1) {
-//            path.remove(0);
-//            time = 0;
-//        }
-
-        double ExpectedRotation = Math.atan2(
-            difference.getX(),
-            difference.getZ()
+        double expectedRotation = Math.atan2(
+            currTargetDirection.getX(),
+            currTargetDirection.getZ()
         );
 
-        rotation = gd.lerpAngle(rotation, ExpectedRotation, 0.05);
+        rotation = gd.lerpAngle(rotation, expectedRotation, 0.05);
 
-        velocity = 1; // this might be right
+        velocity = 1.0; // this might be right
     }
 
     private void updateState() {
