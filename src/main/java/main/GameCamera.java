@@ -137,7 +137,7 @@ public class GameCamera extends Camera3D {
         Input.setMouseMode(MouseMode.CAPTURED);
 
         playerMode = true;
-        setFov(45f);
+        setFov(90f);
     }
 
     @RegisterFunction
@@ -145,7 +145,7 @@ public class GameCamera extends Camera3D {
         Input.setMouseMode(MouseMode.MAX);
 
         playerMode = false;
-        setFov(70f);
+        setFov(45f);
     }
 
     @RegisterFunction

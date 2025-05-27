@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://bo7hcc6it8x4n"]
+[gd_scene load_steps=26 format=4 uid="uid://bo7hcc6it8x4n"]
 
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="1_fkq6u"]
 [ext_resource type="ArrayMesh" uid="uid://n5aeqaf66e3a" path="res://assets/ships/pirate/components/ship_base.res" id="2_2j7l1"]
@@ -8,6 +8,9 @@
 [ext_resource type="Shader" uid="uid://b4w20nidwgv55" path="res://shaders/toon/fakesail.gdshader" id="5_pgt1k"]
 [ext_resource type="Script" uid="uid://nm45jsaanlok" path="res://gdj/entity/weapon/Turret.gdj" id="6_jiwl3"]
 [ext_resource type="ArrayMesh" uid="uid://qn4h2ohqxodv" path="res://assets/ships/pirate/components/cannon.res" id="6_pf812"]
+[ext_resource type="AudioStream" uid="uid://c7byb7v3ss2kb" path="res://audio/WindBlowing.wav" id="9_208i0"]
+[ext_resource type="AudioStream" uid="uid://b0k5pj5p27ejo" path="res://audio/EmptyCannon.wav" id="10_pf812"]
+[ext_resource type="AudioStream" uid="uid://ruxsrcl6hoa8" path="res://audio/CannonFire.wav" id="11_rfpwa"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_jiwl3"]
 
@@ -137,7 +140,7 @@ skeleton = NodePath("../..")
 mesh = ExtResource("4_pgt1k")
 skeleton = NodePath("../..")
 
-[node name="Turret" type="MeshInstance3D" parent="." index="9"]
+[node name="Turret" type="MeshInstance3D" parent="." index="8"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.430819, 0.599634)
 mesh = ExtResource("5_208i0")
 script = ExtResource("6_jiwl3")
@@ -156,3 +159,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.668624, 0.0392675)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Turret/Cannon/ProjectileOrigin" index="0"]
 material_override = SubResource("ORMMaterial3D_pgt1k")
+
+[node name="WindBlowing" type="AudioStreamPlayer" parent="." index="9"]
+stream = ExtResource("9_208i0")
+volume_db = -15.768
+autoplay = true
+
+[node name="EmptyCannon" type="AudioStreamPlayer" parent="." index="10"]
+stream = ExtResource("10_pf812")
+
+[node name="CannonFire" type="AudioStreamPlayer" parent="." index="11"]
+stream = ExtResource("11_rfpwa")
+volume_db = 7.429

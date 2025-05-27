@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cd4pndhcmny8k"]
+[gd_scene load_steps=7 format=3 uid="uid://cd4pndhcmny8k"]
 
 [ext_resource type="Script" uid="uid://cl8beghcl02js" path="res://gdj/entity/Ship.gdj" id="1_skmo2"]
 [ext_resource type="Script" uid="uid://dcfunomph1oie" path="res://gdj/entity/providers/PlayerProvider.gdj" id="2_33gvy"]
-[ext_resource type="AudioStream" uid="uid://d6x5c6kwa566" path="res://audio/cannon-shot-14799.wav" id="3_33gvy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_q4e71"]
 
@@ -49,7 +48,3 @@ skeleton = NodePath("")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_skmo2")
-
-[node name="CannonFire" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("3_33gvy")
-autoplay = true

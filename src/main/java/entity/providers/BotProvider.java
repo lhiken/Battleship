@@ -5,6 +5,7 @@ import entity.InputState;
 import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
+import godot.api.Camera3D;
 import godot.api.Input;
 import godot.core.Vector2;
 import godot.core.Vector3;
@@ -74,6 +75,8 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+
+
         delta2 = delta;
         time += delta;
         if (!enemyWithinRadius) {
@@ -86,25 +89,27 @@ public class BotProvider extends InputProvider {
         Ship target = (Ship) getParent().getParent().getNode("1");
         Ship thisShip = (Ship) getParent();
 
-        setAimDirection(
-            target
-                .getGlobalPosition()
-                .plus(
-                    new Vector3(
-                        0,
-                        target
-                                .getGlobalPosition()
-                                .distanceTo(thisShip.getGlobalPosition()) /
-                            30.0 -
-                        1,
-                        0
-                    )
-                ),
-            thisShip.getGlobalPosition(),
-            target.velocityProperty(),
-            thisShip.velocityProperty(),
-            25.0
-        );
+        if (target != null) {
+            setAimDirection(
+                    target
+                            .getGlobalPosition()
+                            .plus(
+                                    new Vector3(
+                                            0,
+                                            target
+                                                    .getGlobalPosition()
+                                                    .distanceTo(thisShip.getGlobalPosition()) /
+                                                    30.0 -
+                                                    1,
+                                            0
+                                    )
+                            ),
+                    thisShip.getGlobalPosition(),
+                    target.velocityProperty(),
+                    thisShip.velocityProperty(),
+                    25.0
+            );
+        }
 
         // emitAction = true;
         // selectedAction = 1;
@@ -171,11 +176,14 @@ public class BotProvider extends InputProvider {
     }
 
     public void moveToPoint() {
-        gd.print(path.size());
-        if (path.size() == 0) path = gen.navigate(
-            getGlobalPosition(),
-            getRandomPosition()
-        );
+        // gd.print(path.size());
+        if (path.size() < 2) {
+            path = gen.navigate(
+                    getGlobalPosition(),
+                    getRandomPosition()
+            );
+            smoothOutPath(path);
+        }
 
 
         Coordinate temp = path.get(0);
@@ -193,7 +201,7 @@ public class BotProvider extends InputProvider {
         double dotprod1 = currentDirection.getX() * difference.getX() + currentDirection.getZ() * difference.getZ();
         double dotprod2 = currentDirection.getX() * difference2.getX() + currentDirection.getZ() * difference2.getZ();;
 
-        if ((dotprod2 - dotprod1) > 0.2 || difference.length() < 0.33 || time > 2) {
+        if ((dotprod2 - dotprod1) > 0.2 || difference.length() < 0.33 || time > 1) {
             path.remove(0);
             time = 0;
         }
@@ -210,7 +218,7 @@ public class BotProvider extends InputProvider {
 
         rotation = gd.lerpAngle(rotation, ExpectedRotation, 0.05);
 
-        velocity = 1; // this might be right
+        velocity = 0.66; // this might be right
     }
 
     private void updateState() {
