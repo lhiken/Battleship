@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://gw37dr3x5oit" path="res://shaders/toon/cel-shader-base-nocull.gdshader" id="2_i12eu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_g35xx"]
-render_priority = 0
+render_priority = -2
 shader = ExtResource("1_agbnu")
 shader_parameter/outline_color = Color(0.271543, 0.271543, 0.271543, 1)
 shader_parameter/edge_color = Color(0.178927, 0.178927, 0.178926, 1)

@@ -6,8 +6,8 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ro7o2"]
 render_priority = -2
 shader = ExtResource("1_61bar")
-shader_parameter/outline_color = Color(0.335175, 0.216146, 0.118274, 1)
-shader_parameter/edge_color = Color(0.322146, 0.195125, 0.0772772, 1)
+shader_parameter/outline_color = Color(0.524796, 0.351095, 0.209007, 1)
+shader_parameter/edge_color = Color(0.931318, 0.738762, 0.339075, 1)
 
 [resource]
 render_priority = 0

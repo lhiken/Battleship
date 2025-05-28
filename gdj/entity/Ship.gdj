@@ -33,5 +33,6 @@ functions = [
 	get_pitch,
 	get_yaw,
 	set_provider,
-	get_cooldown_percentage
+	get_cooldown_percentage,
+	is_sinking
 ]

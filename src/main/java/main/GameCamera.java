@@ -89,6 +89,8 @@ public class GameCamera extends Camera3D {
 
         shipPosition = shipNode.getGlobalPosition();
 
+        if (((Ship) shipNode).isSinking()) shipPosition.setY(0);
+
         Vector3 focusPoint = shipPosition.plus(
             new Vector3(0, cameraVerticalOffset, 0)
         );

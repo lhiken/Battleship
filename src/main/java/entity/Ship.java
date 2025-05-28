@@ -18,7 +18,7 @@ import main.MatchManager;
 import map.gen.Generator;
 
 /** Ship
- * base ship class nothing works rn please fix :pray:
+ * base ship class
  */
 @RegisterClass
 public class Ship extends CharacterBody3D {
@@ -76,6 +76,7 @@ public class Ship extends CharacterBody3D {
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 
         if (health <= 0 && !sinking) {
+            getNode("ShipMesh/Sails").queueFree();
             sinking = true;
         }
 
@@ -88,9 +89,9 @@ public class Ship extends CharacterBody3D {
                 )
             );
 
-            velocity = gd.lerp(velocity, 0, 0.05);
+            velocity = gd.lerp(velocity, 0, 0.02);
 
-            if (getGlobalPosition().getY() < -30) {
+            if (getGlobalPosition().getY() < -15) {
                 queueFree();
             }
 
@@ -177,6 +178,18 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     @Override
     public void _physicsProcess(double delta) {
+        if (sinking) {
+            // still apply forward movement (but fading out)
+            Vector3 direction = new Vector3(
+                Math.sin(rotation),
+                0,
+                Math.cos(rotation)
+            );
+            setVelocity(direction.times(velocity));
+            moveAndSlide();
+            return;
+        }
+
         if (isMultiplayerAuthority() && !sinking) {
             if (provider == null) return;
 
@@ -216,5 +229,10 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     public double getCooldownPercentage() {
         return cooldownPercent;
+    }
+
+    @RegisterFunction
+    public boolean isSinking() {
+        return sinking;
     }
 }
