@@ -100,7 +100,7 @@ _spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4r
 spawn_path = NodePath("../MapTiles")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://bqopxhv4l3nhu", "uid://bo7hcc6it8x4n")
+_spawnable_scenes = PackedStringArray("uid://bo7hcc6it8x4n")
 spawn_path = NodePath("../Ships")
 
 [node name="HUD" type="CanvasLayer" parent="."]

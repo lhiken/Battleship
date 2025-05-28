@@ -19,7 +19,7 @@ public class PlayerProvider extends InputProvider {
     private static final GD gd = GD.INSTANCE;
 
     private final double VELOCITY_STEP = 3.0;
-    private final double ROTATION_STEP = 5.0;
+    private final double ROTATION_STEP = 6.0;
     private double rotation;
     private double velocity;
     private int selectedAction;
