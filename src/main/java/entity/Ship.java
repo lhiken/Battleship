@@ -23,216 +23,216 @@ import map.gen.Generator;
 @RegisterClass
 public class Ship extends CharacterBody3D {
 
-    private static final GD gd = GD.INSTANCE;
-    private double velocity;
-    private double rotation;
-    private double turretYaw;
-    private double turretPitch;
-    private InputState state;
+	private static final GD gd = GD.INSTANCE;
+	private double velocity;
+	private double rotation;
+	private double turretYaw;
+	private double turretPitch;
+	private InputState state;
 
-    public AudioStreamPlayer boom;
-    public AudioStreamPlayer emptyCannon;
+	public AudioStreamPlayer boom;
+	public AudioStreamPlayer emptyCannon;
 
-    private double maxVelocity = 5.0;
+	private double maxVelocity = 5.0;
 
-    @RegisterProperty
-    @Export
-    public InputProvider provider;
+	@RegisterProperty
+	@Export
+	public InputProvider provider;
 
-    // pathfinding debug start
-    // everything below is useless lmao
+	// pathfinding debug start
+	// everything below is useless lmao
 
-    @RegisterProperty
-    @Export
-    public Generator gen;
+	@RegisterProperty
+	@Export
+	public Generator gen;
 
-    private int frameCounter = 0;
+	private int frameCounter = 0;
 
-    private double cooldownTime = 2;
-    private double cooldownPercent = 1;
+	private double cooldownTime = 2;
+	private double cooldownPercent = 1;
 
-    private double health = 100;
+	private double health = 100;
 
-    // private MeshInstance3D trajectoryMesh;
+	// private MeshInstance3D trajectoryMesh;
 
-    private boolean sinking = false;
+	private boolean sinking = false;
 
-    @RegisterFunction
-    @Override
-    public void _ready() {
-        setMultiplayerAuthority(Integer.parseInt(getName().toString()));
-        health = 100;
-        emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
-        // instantiateNewCannon();
-        boom = (AudioStreamPlayer) getNode("CannonFire");
-    }
+	@RegisterFunction
+	@Override
+	public void _ready() {
+		setMultiplayerAuthority(Integer.parseInt(getName().toString()));
+		health = 100;
+		// instantiateNewCannon();
+	}
 
-    @RegisterFunction
-    @Override
-    public void _process(double delta) {
-        frameCounter++;
+	@RegisterFunction
+	@Override
+	public void _process(double delta) {
+		frameCounter++;
 
-        cooldownPercent += delta / cooldownTime;
-        cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
+		cooldownPercent += delta / cooldownTime;
+		cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 
-        if (health <= 0 && !sinking) {
-            getNode("ShipMesh/Sails").queueFree();
-            sinking = true;
-        }
+		if (health <= 0 && !sinking) {
+			getNode("ShipMesh/Sails").queueFree();
+			sinking = true;
+		}
 
-        if (sinking) {
-            globalTranslate(
-                new Vector3(
-                    0,
-                    (getGlobalPosition().getY() * 0.1 - 0.5) * delta * 0.25,
-                    0
-                )
-            );
+		if (sinking) {
+			globalTranslate(
+				new Vector3(
+					0,
+					(getGlobalPosition().getY() * 0.1 - 0.5) * delta * 0.25,
+					0
+				)
+			);
 
-            velocity = gd.lerp(velocity, 0, 0.02);
+			velocity = gd.lerp(velocity, 0, 0.02);
 
-            if (getGlobalPosition().getY() < -15) {
-                queueFree();
-            }
+			if (getGlobalPosition().getY() < -15) {
+				queueFree();
+			}
 
-            sinking = true;
+			sinking = true;
 
-            return;
-        }
+			return;
+		}
 
-        if (!isMultiplayerAuthority()) {
-            return;
-        }
+		if (!isMultiplayerAuthority()) {
+			return;
+		}
 
-        turretYaw = gd.lerpAngle(turretYaw, state.getYaw(), 0.1);
-        turretPitch = gd.lerpAngle(turretPitch, state.getPitch(), 0.1);
+		turretYaw = gd.lerpAngle(turretYaw, state.getYaw(), 0.1);
+		turretPitch = gd.lerpAngle(turretPitch, state.getPitch(), 0.1);
 
-        Vector3 position = this.getGlobalPosition();
-        position.setY(position.getY() + 3);
+		Vector3 position = this.getGlobalPosition();
+		position.setY(position.getY() + 3);
 
-        if (provider != null) {
-            state = provider.getState();
+		if (provider != null) {
+			state = provider.getState();
 
-            if (state.getEmittedAction() != -1 && cooldownPercent == 1) {
-                MatchManager matchManager = (MatchManager) getParent()
-                    .getParent();
-                Vector3 origin =
-                    ((Node3D) getNode(
-                            "Turret/Cannon/ProjectileOrigin"
-                        )).getGlobalPosition();
+			if (state.getEmittedAction() != -1 && cooldownPercent == 1) {
+				MatchManager matchManager = (MatchManager) getParent()
+					.getParent();
+				Vector3 origin =
+					((Node3D) getNode(
+							"Turret/Cannon/ProjectileOrigin"
+						)).getGlobalPosition();
 
-                matchManager.rpc(
-                    StringNames.toGodotName("spawnBullet"),
-                    getMultiplayer().getUniqueId(),
-                    new Vector3(
-                        Math.sin(state.getYaw()),
-                        Math.sin(state.getPitch()),
-                        Math.cos(state.getYaw())
-                    ).normalized(),
-                    origin,
-                    getVelocity()
-                );
-                // gd.print(state.getPower());
-                // cannon.instantiateNewBullet(
-                //     this.getRotation(),
-                //     velocity + state.getPower()
-                // );
+				matchManager.rpc(
+					StringNames.toGodotName("spawnBullet"),
+					getMultiplayer().getUniqueId(),
+					new Vector3(
+						Math.sin(state.getYaw()),
+						Math.sin(state.getPitch()),
+						Math.cos(state.getYaw())
+					).normalized(),
+					origin,
+					getVelocity()
+				);
+				// gd.print(state.getPower());
+				// cannon.instantiateNewBullet(
+				//     this.getRotation(),
+				//     velocity + state.getPower()
+				// );
 
-                // uncommenting this before fixing it will cause process to terminate early
-                // resulting in cooldown never being reset and firing forever!!
-                cooldownPercent = 0;
-                boom.play();
-            } else if (state.getEmittedAction() != -1 && cooldownPercent < 1) {
-                emptyCannon.play();
-            }
-        }
-        // drawProjectilePath();
-    }
+				// uncommenting this before fixing it will cause process to terminate early
+				// resulting in cooldown never being reset and firing forever!!
+				cooldownPercent = 0;
+				boom = (AudioStreamPlayer) getNode("CannonFire");
+				boom.play();
+			} else if (state.getEmittedAction() != -1 && cooldownPercent < 1) {
+				emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
+				emptyCannon.play();
+			}
+		}
+		// drawProjectilePath();
+	}
 
-    @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
-    @RegisterFunction
-    public void setHealth(double health) {
-        this.health = health;
-        rpc(StringNames.toGodotName("setHealth"), health);
-    }
+	@Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
+	@RegisterFunction
+	public void setHealth(double health) {
+		this.health = health;
+		rpc(StringNames.toGodotName("setHealth"), health);
+	}
 
-    @RegisterFunction
-    public double getHealth() {
-        return health;
-    }
+	@RegisterFunction
+	public double getHealth() {
+		return health;
+	}
 
-    @RegisterFunction
-    public double getPitch() {
-        return turretPitch;
-    }
+	@RegisterFunction
+	public double getPitch() {
+		return turretPitch;
+	}
 
-    @RegisterFunction
-    public double getYaw() {
-        return turretYaw;
-    }
+	@RegisterFunction
+	public double getYaw() {
+		return turretYaw;
+	}
 
-    public InputState getState() {
-        return provider.getState();
-    }
+	public InputState getState() {
+		return provider.getState();
+	}
 
-    @RegisterFunction
-    @Override
-    public void _physicsProcess(double delta) {
-        if (sinking) {
-            // still apply forward movement (but fading out)
-            Vector3 direction = new Vector3(
-                Math.sin(rotation),
-                0,
-                Math.cos(rotation)
-            );
-            setVelocity(direction.times(velocity));
-            moveAndSlide();
-            return;
-        }
+	@RegisterFunction
+	@Override
+	public void _physicsProcess(double delta) {
+		if (sinking) {
+			// still apply forward movement (but fading out)
+			Vector3 direction = new Vector3(
+				Math.sin(rotation),
+				0,
+				Math.cos(rotation)
+			);
+			setVelocity(direction.times(velocity));
+			moveAndSlide();
+			return;
+		}
 
-        if (isMultiplayerAuthority() && !sinking) {
-            if (provider == null) return;
+		if (isMultiplayerAuthority() && !sinking) {
+			if (provider == null) return;
 
-            state = provider.getState();
+			state = provider.getState();
 
-            double targetVelocity = state.getVelocity() * maxVelocity;
-            double targetRotation = state.getRotation();
+			double targetVelocity = state.getVelocity() * maxVelocity;
+			double targetRotation = state.getRotation();
 
-            velocity = gd.lerp(velocity, targetVelocity, 0.1);
-            rotation = gd.lerpAngle(rotation, targetRotation, 0.1);
+			velocity = gd.lerp(velocity, targetVelocity, 0.1);
+			rotation = gd.lerpAngle(rotation, targetRotation, 0.1);
 
-            Vector3 direction = new Vector3(
-                Math.sin(rotation),
-                0,
-                Math.cos(rotation)
-            );
+			Vector3 direction = new Vector3(
+				Math.sin(rotation),
+				0,
+				Math.cos(rotation)
+			);
 
-            double time = frameCounter / 40.0;
-            double rockX = Math.sin(time * 0.7) * 0.025;
-            double rockZ = Math.sin(time * 0.9) * 0.015;
-            Vector3 rockingOffset = new Vector3(rockX, 0, rockZ);
+			double time = frameCounter / 40.0;
+			double rockX = Math.sin(time * 0.7) * 0.025;
+			double rockZ = Math.sin(time * 0.9) * 0.015;
+			Vector3 rockingOffset = new Vector3(rockX, 0, rockZ);
 
-            setPosition(
-                new Vector3(getPosition().getX(), 0, getPosition().getZ())
-            );
-            setVelocity(direction.times(velocity));
-            setRotation(new Vector3(0, rotation, 0).plus(rockingOffset));
-        }
-        moveAndSlide();
-    }
+			setPosition(
+				new Vector3(getPosition().getX(), 0, getPosition().getZ())
+			);
+			setVelocity(direction.times(velocity));
+			setRotation(new Vector3(0, rotation, 0).plus(rockingOffset));
+		}
+		moveAndSlide();
+	}
 
-    @RegisterFunction
-    public void setProvider(InputProvider provider) {
-        this.provider = provider;
-    }
+	@RegisterFunction
+	public void setProvider(InputProvider provider) {
+		this.provider = provider;
+	}
 
-    @RegisterFunction
-    public double getCooldownPercentage() {
-        return cooldownPercent;
-    }
+	@RegisterFunction
+	public double getCooldownPercentage() {
+		return cooldownPercent;
+	}
 
-    @RegisterFunction
-    public boolean isSinking() {
-        return sinking;
-    }
+	@RegisterFunction
+	public boolean isSinking() {
+		return sinking;
+	}
 }

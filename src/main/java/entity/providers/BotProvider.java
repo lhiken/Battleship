@@ -168,11 +168,11 @@ public class BotProvider extends InputProvider {
         }
 
         targettedShip = trackedShip;
-        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 20) {
-            if (closestShipLoc.minus(targetPos).length() > 5) {
+        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
+            if (closestShipLoc.minus(targetPos).length() > 10) {
                 path = gen.navigate(
                     this.getGlobalPosition(),
-                    trackedShip.getGlobalPosition()
+                    getRandomPosition(this.getGlobalPosition() ,trackedShip.getGlobalPosition(), 5)
                 );
                 smoothOutPath(path);
                 targetPos = path.get(path.size() - 1).toVec3();
@@ -255,6 +255,28 @@ public class BotProvider extends InputProvider {
             );
 
             pos = pos.times(distance);
+
+            if (gen.checkWalkable(pos)) position = pos;
+        }
+
+        return position;
+    }
+
+    private Vector3 getRandomPosition(Vector3 myShip, Vector3 trackedShip, double radius) {
+        Vector3 position = null;
+
+        while (position == null) {
+            double direction = Math.random() * 2 * Math.PI;
+            double distance = Math.random() * 2 + radius - 1;
+
+            Vector3 pos = new Vector3(
+                    Math.cos(direction),
+                    0,
+                    Math.sin(direction)
+            );
+
+            pos = trackedShip.plus(pos.times(distance));
+
 
             if (gen.checkWalkable(pos)) position = pos;
         }
