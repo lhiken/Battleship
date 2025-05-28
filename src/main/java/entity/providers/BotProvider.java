@@ -138,28 +138,35 @@ public class BotProvider extends InputProvider {
 
     public boolean enemyWithinRadius() {
 
+        Ship ownShip = (Ship) getParent();
+
         Node3D ships = (Node3D) getParent().getParent().getParent().getNode("Ships");
         VariantArray<Node> temp = ships.getChildren();
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
         for (Node ship : temp) {
-            shipInfo.add((Ship) ship);
-        }
-
-        double smallestDistance = 100;
-        Ship trackedShip = new Ship();
-        for (Ship ship : shipInfo) {
-            if ((this.getGlobalPosition().minus(ship.getGlobalPosition())).length() < smallestDistance && ship.getGlobalPosition() != this.getGlobalPosition()) {
-                trackedShip = ship;
-                smallestDistance = trackedShip.getGlobalPosition().length();
+            if (!(ship.equals(ownShip))) {
+                shipInfo.add((Ship) ship);
             }
         }
 
-        if (smallestDistance < 10) {
-            path = gen.navigate(this.getGlobalPosition(), trackedShip.getGlobalPosition());
-            smoothOutPath(path);
-            targetPos = path.get(path.size() - 1).toVec3();
-            startPos = path.get(0).toVec3();
+        Vector3 closestShipLoc = new Vector3(1000, 0, 1000);
+        Ship trackedShip = new Ship();
+        for (Ship ship : shipInfo) {
+            if ((this.getGlobalPosition().minus(ship.getGlobalPosition())).length() <
+                    (this.getGlobalPosition().minus(closestShipLoc)).length() && ship.getGlobalPosition() != ownShip.getGlobalPosition()) {
+                trackedShip = ship;
+                closestShipLoc = ship.getGlobalPosition();
+            }
+        }
+
+        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 20) {
+            if (closestShipLoc.minus(targetPos).length() > 5) {
+                path = gen.navigate(this.getGlobalPosition(), trackedShip.getGlobalPosition());
+                smoothOutPath(path);
+                targetPos = path.get(path.size() - 1).toVec3();
+                startPos = path.get(0).toVec3();
+            }
             return true;
         }
         else {
