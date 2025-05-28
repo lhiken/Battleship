@@ -14,7 +14,6 @@ import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
 import java.util.List;
-
 import main.MatchManager;
 import map.gen.Coordinate;
 import map.gen.Generator;
@@ -45,6 +44,8 @@ public class BotProvider extends InputProvider {
 
     private Ship targettedShip;
 
+    private double time;
+
     /** _ready
      * runs upon being instantiated in the game world
      * acts as a constructor
@@ -68,13 +69,14 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        time += delta;
+
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
 
         if (!enemyWithinRadius()) {
             wander();
-        }
-        else {
+        } else {
             chase();
         }
 
@@ -131,16 +133,17 @@ public class BotProvider extends InputProvider {
             path.addAll(newPath);
             smoothOutPath(path);
 
-            targetPos = path.get(path.size()-1).toVec3();
-
+            targetPos = path.get(path.size() - 1).toVec3();
         }
     }
 
     public boolean enemyWithinRadius() {
-
         Ship ownShip = (Ship) getParent();
 
-        Node3D ships = (Node3D) getParent().getParent().getParent().getNode("Ships");
+        Node3D ships = (Node3D) getParent()
+            .getParent()
+            .getParent()
+            .getNode("Ships");
         VariantArray<Node> temp = ships.getChildren();
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
@@ -153,30 +156,36 @@ public class BotProvider extends InputProvider {
         Vector3 closestShipLoc = new Vector3(1000, 0, 1000);
         Ship trackedShip = new Ship();
         for (Ship ship : shipInfo) {
-            if ((this.getGlobalPosition().minus(ship.getGlobalPosition())).length() <
-                    (this.getGlobalPosition().minus(closestShipLoc)).length() && ship.getGlobalPosition() != ownShip.getGlobalPosition()) {
+            if (
+                (this.getGlobalPosition()
+                            .minus(ship.getGlobalPosition())).length() <
+                    (this.getGlobalPosition().minus(closestShipLoc)).length() &&
+                ship.getGlobalPosition() != ownShip.getGlobalPosition()
+            ) {
                 trackedShip = ship;
                 closestShipLoc = ship.getGlobalPosition();
             }
         }
 
-        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 20) {
-            if (closestShipLoc.minus(targetPos).length() > 5) {
-                path = gen.navigate(this.getGlobalPosition(), trackedShip.getGlobalPosition());
+        targettedShip = trackedShip;
+        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
+            if (closestShipLoc.minus(targetPos).length() > 10) {
+                path = gen.navigate(
+                    this.getGlobalPosition(),
+                    getRandomPosition(this.getGlobalPosition() ,trackedShip.getGlobalPosition(), 5)
+                );
                 smoothOutPath(path);
                 targetPos = path.get(path.size() - 1).toVec3();
                 startPos = path.get(0).toVec3();
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     private void handleTargetting() {
         Ship thisShip = (Ship) getParent();
-        targettedShip = (Ship) getParent().getParent().getNode("1");
 
         if (targettedShip != null) {
             setAimDirection(
@@ -226,14 +235,11 @@ public class BotProvider extends InputProvider {
                     (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
                 path.set(i, new Coordinate(averageX, averageZ, i, i));
             }
-
         }
-        targetPos = path.get(path.size()-1).toVec3();
+        targetPos = path.get(path.size() - 1).toVec3();
     }
 
-    public void chase() {
-
-    }
+    public void chase() {}
 
     private Vector3 getRandomPosition() {
         Vector3 position = null;
@@ -256,7 +262,31 @@ public class BotProvider extends InputProvider {
         return position;
     }
 
+    private Vector3 getRandomPosition(Vector3 myShip, Vector3 trackedShip, double radius) {
+        Vector3 position = null;
+
+        while (position == null) {
+            double direction = Math.random() * 2 * Math.PI;
+            double distance = Math.random() * 2 + radius - 1;
+
+            Vector3 pos = new Vector3(
+                    Math.cos(direction),
+                    0,
+                    Math.sin(direction)
+            );
+
+            pos = trackedShip.plus(pos.times(distance));
+
+
+            if (gen.checkWalkable(pos)) position = pos;
+        }
+
+        return position;
+    }
+
     public void moveToPoint() {
+        if (path.size() == 0) return;
+
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
         double shipYaw = ((Ship) getParent()).getGlobalRotation().getY();
@@ -312,7 +342,7 @@ public class BotProvider extends InputProvider {
         );
         rotation = gd.lerpAngle(rotation, expectedRotation, lerpFactor * 0.05);
 
-        velocity = 1.0;
+        velocity = 0.9;
     }
 
     private double normalizeAngle(double angle) {
@@ -381,9 +411,11 @@ public class BotProvider extends InputProvider {
         ).normalized();
 
         // convert direction into yaw and pitch input
-        turretPitch = Math.asin(direction.getY() / direction.length());
+        turretPitch =
+            Math.asin(direction.getY() / direction.length()) +
+            Math.random() * 0.15;
         double yaw = Math.atan2(direction.getX(), direction.getZ());
-        turretYaw = yaw;
+        turretYaw = yaw + Math.random() * 0.3 - 0.15;
     }
 
     private Vector3 getProjectileVelocity(
@@ -423,7 +455,6 @@ public class BotProvider extends InputProvider {
     ) {
         Vector3 u_t = u_t(P_t, P_s, V_t, V_s, S_p, t);
         Vector3 u_pt = u_pt(V_t, V_s, t);
-        Vector3 g = new Vector3(0, -9.8, 0);
         return u_t.dot(u_pt) / u_t.length() - S_p;
     }
 

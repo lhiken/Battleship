@@ -18,7 +18,7 @@ import main.MatchManager;
 import map.gen.Generator;
 
 /** Ship
- * base ship class nothing works rn please fix :pray:
+ * base ship class
  */
 @RegisterClass
 public class Ship extends CharacterBody3D {
@@ -51,22 +51,18 @@ public class Ship extends CharacterBody3D {
 	private double cooldownTime = 2;
 	private double cooldownPercent = 1;
 
-	// only for visualization
-	private double projectilePathTimestep = 0.1;
-	private double projectilePathSpeed = 25.0;
-
-	private double health;
+	private double health = 100;
 
 	// private MeshInstance3D trajectoryMesh;
+
+	private boolean sinking = false;
 
 	@RegisterFunction
 	@Override
 	public void _ready() {
 		setMultiplayerAuthority(Integer.parseInt(getName().toString()));
 		health = 100;
-		emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
 		// instantiateNewCannon();
-		boom = (AudioStreamPlayer) getNode("CannonFire");
 	}
 
 	@RegisterFunction
@@ -76,6 +72,31 @@ public class Ship extends CharacterBody3D {
 
 		cooldownPercent += delta / cooldownTime;
 		cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
+
+		if (health <= 0 && !sinking) {
+			getNode("ShipMesh/Sails").queueFree();
+			sinking = true;
+		}
+
+		if (sinking) {
+			globalTranslate(
+				new Vector3(
+					0,
+					(getGlobalPosition().getY() * 0.1 - 0.5) * delta * 0.25,
+					0
+				)
+			);
+
+			velocity = gd.lerp(velocity, 0, 0.02);
+
+			if (getGlobalPosition().getY() < -15) {
+				queueFree();
+			}
+
+			sinking = true;
+
+			return;
+		}
 
 		if (!isMultiplayerAuthority()) {
 			return;
@@ -117,16 +138,18 @@ public class Ship extends CharacterBody3D {
 
 				// uncommenting this before fixing it will cause process to terminate early
 				// resulting in cooldown never being reset and firing forever!!
-				// boom.play();
 				cooldownPercent = 0;
+				boom = (AudioStreamPlayer) getNode("CannonFire");
+				boom.play();
 			} else if (state.getEmittedAction() != -1 && cooldownPercent < 1) {
-				// emptyCannon.play();
+				emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
+				emptyCannon.play();
 			}
 		}
 		// drawProjectilePath();
 	}
 
-	@Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.SYNC)
+	@Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
 	@RegisterFunction
 	public void setHealth(double health) {
 		this.health = health;
@@ -155,7 +178,19 @@ public class Ship extends CharacterBody3D {
 	@RegisterFunction
 	@Override
 	public void _physicsProcess(double delta) {
-		if (isMultiplayerAuthority()) {
+		if (sinking) {
+			// still apply forward movement (but fading out)
+			Vector3 direction = new Vector3(
+				Math.sin(rotation),
+				0,
+				Math.cos(rotation)
+			);
+			setVelocity(direction.times(velocity));
+			moveAndSlide();
+			return;
+		}
+
+		if (isMultiplayerAuthority() && !sinking) {
 			if (provider == null) return;
 
 			state = provider.getState();
@@ -194,5 +229,10 @@ public class Ship extends CharacterBody3D {
 	@RegisterFunction
 	public double getCooldownPercentage() {
 		return cooldownPercent;
+	}
+
+	@RegisterFunction
+	public boolean isSinking() {
+		return sinking;
 	}
 }

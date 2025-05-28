@@ -2,11 +2,27 @@ package map.gen;
 
 import java.util.Objects;
 
+/**
+ * a pair for a hashmap
+ * @param <K> the first type
+ * @param <V> the second type
+ */
 public class Pair<K, V> {
 
+    /**
+     * first value in pair
+     */
     private final K first;
+    /**
+     * second value in pair
+     */
     private final V second;
 
+    /**
+     *
+     * @param first
+     * @param second
+     */
     public Pair(K first, V second) {
         this.first = first;
         this.second = second;

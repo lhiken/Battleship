@@ -30,10 +30,11 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import multiplayer.MultiplayerManager;
-
-// enum to keep track of tile types and their costs
-// costs are for pathfinding, nodepaths are to get the right
-// tile when spawning them
+/**
+ * An enum to keep track of tile types and their costs, which
+ * are for pathfinding with nodepaths to get the node path
+ * for spawning them
+ */
 enum Tile {
     GrassTile(10, false, "GrassTile1"),
     RockTile(10, false, "RockTile"),
@@ -56,13 +57,14 @@ enum Tile {
 }
 
 /** generator
- * handles map generation and stuff
- * ts is actually really simple and lowk kinda lame
- * my favorite class :heart:
+ * handles generating the map and provides a pathfinding api
  */
 @RegisterClass
 public class Generator extends Node3D {
 
+    /**
+     *
+     */
     private static final GD gd = GD.INSTANCE;
 
     // change this
@@ -86,7 +88,7 @@ public class Generator extends Node3D {
     private MeshInstance3D debugMesh;
 
     /** _ready
-     * godot built in function, runs on spawn
+     * godot built-in function, runs on spawn
      * generates the map
      */
     @RegisterFunction
@@ -99,9 +101,11 @@ public class Generator extends Node3D {
         }
     }
 
-    /** _process
-     * godot built in function, runs every frame
+    /**
+     * godot built-in function, runs every frame
      * adds new child every frame if there are tiles that have not spawned
+     *
+     * @param delta provided by godot, time passed since last frame
      */
     @RegisterFunction
     @Override
@@ -114,7 +118,7 @@ public class Generator extends Node3D {
         }
     }
 
-    /** populateGrid
+    /**
      * populates the grid array with representations of map tiles
      */
     private void populateGrid() {
@@ -171,6 +175,14 @@ public class Generator extends Node3D {
         }
     }
 
+    /**
+     * a helper method to clear a circle from the world for
+     * objects/spawn points
+     *
+     * @param cx index of center of circle in x
+     * @param cz index of center of circle in z
+     * @param radius the radius of the circle
+     */
     private void removeCircle(int cx, int cz, double radius) {
         int startX = (int) Math.max(0, cx - radius);
         int endX = (int) Math.min(mapWidth - 1, cx + radius);
@@ -201,8 +213,10 @@ public class Generator extends Node3D {
         }
     }
 
-    /** applyShore
-     * generates shore for ai pathfinding
+    /**
+     * generates shore tiles for a tile to prevent AI from pathing to land
+     * @param x the x index of the tile
+     * @param z the z index of the tile
      */
     private void applyShore(int x, int z) {
         if (grid[x][z].getTile().walkable) return;
@@ -234,16 +248,23 @@ public class Generator extends Node3D {
         }
     }
 
-    /** sampleNoise
-     * samples the noise texture to get tile height
+    /**
+     * samples a noise texture
+     * @param noise the noise texture object
+     * @param x the x position being sampled
+     * @param z the z position being sampled
+     * @return the value of the noise at the sampled point
      */
     private double sampleNoise(FastNoiseLite noise, int x, int z) {
         double val = noise.getNoise2d(x, z);
         return val;
     }
 
-    /** getCoord
-     * converts array indices into a Coordinate object
+    /**
+     * converts array indices into a coordinate object
+     * @param xIndex x index in array
+     * @param zIndex z index in array
+     * @return Coordinate object with real positions
      */
     private Coordinate getCoord(int xIndex, int zIndex) {
         // position of each axis, scaled to -w to w and -h to h
@@ -253,15 +274,20 @@ public class Generator extends Node3D {
         return newCoord;
     }
 
-    /** getTileType
-     * gets the tile type for the biome
+    /**
+     * gets the tile type for a particular tile
+     *
+     * @param x x position
+     * @param z z position
+     * @return tile type
      */
     private Tile getTileType(int x, int z) {
         return Tile.GrassTile;
     }
 
-    /** spawnTile
-     * makes the tile exist
+    /**
+     * spawns the tile into the world
+     * @param cell the GridCell to spawn
      */
     private void spawnTile(GridCell cell) {
         String tileName = cell.getTile().nodePath;
@@ -289,7 +315,7 @@ public class Generator extends Node3D {
             new Vector3(
                 0,
                 (Math.PI / 2.0) * Math.round((Math.random() * 4)) +
-                (Math.random() - 0.5) * 0.4,
+                (Math.random() - 0.5) * 1.5,
                 0
             )
         );
@@ -298,9 +324,12 @@ public class Generator extends Node3D {
         spawnedTiles.add(tileInstance);
     }
 
-    /** navigate
-     * a* pathfinding, takes a start and end position and generates
-     * a path between the two positions
+    /**
+     * A* algorithm for pathfinding
+     *
+     * @param startPos starting position in world space
+     * @param endPos ending position in world space
+     * @return array of coordinates with path positions, in world space
      */
     @Rpc(
         rpcMode = RpcMode.ANY,
@@ -377,8 +406,11 @@ public class Generator extends Node3D {
         return path;
     }
 
-    /** getHeuristic
-     * a* pathfinding heuristic
+    /**
+     * A* pathfinding heuristic, euler distance (pythagorean theorem)
+     * @param a start
+     * @param b end
+     * @return heuristic (how much we want to go there)
      */
     private double getHeuristic(GridCell a, GridCell b) {
         int dx = a.getCoords().getXIndex() - b.getCoords().getXIndex();
@@ -386,15 +418,19 @@ public class Generator extends Node3D {
         return Math.sqrt(dx * dx + dz * dz);
     }
 
-    /** getCost
-     * gets cost to move to a tile
+    /**
+     * the cost of a tile
+     * @param next gridTile being tested
+     * @return the cost of the tile
      */
     private double getCost(GridCell next) {
         return next.getTile().cost;
     }
 
-    /** coordTogrid
-     * takes a Vector2 world position and converts it to a GridCell object
+    /**
+     * takes a coordinate vector and gets the associated gridCell
+     * @param coords the coordinate in world space
+     * @return the associated cell
      */
     private GridCell coordToGrid(Vector2 coords) {
         int xi = (int) ((coords.getX() + (mapWidth * cellWidth) / 2) /
@@ -404,8 +440,11 @@ public class Generator extends Node3D {
         return grid[xi][zi];
     }
 
-    /** getNeighbors
-     * takes an array index and returns the neighbors
+    /**
+     * gets the neighbors of a cell, helper method for A*
+     * @param x x index being checked
+     * @param z z index being checked
+     * @return array of neighboring GridCells
      */
     private ArrayList<GridCell> getNeighbors(int x, int z) {
         ArrayList<GridCell> arr = new ArrayList<>(4);
@@ -420,8 +459,9 @@ public class Generator extends Node3D {
         return arr;
     }
 
-    /** visualizePath
-     * debug function for visualizing a generated path
+    /**
+     * debug function for visualizing a generated path, used by bots in
+     * visualization
      */
     public void visualizePath(ArrayList<Coordinate> path) {
         if (debugMesh != null) {
@@ -458,6 +498,11 @@ public class Generator extends Node3D {
         addChild(debugMesh);
     }
 
+    /**
+     * checks if a certain position is walkable or has a low cost
+     * @param pos position in world space
+     * @return whether the tile is walkable/has a low cost or not
+     */
     @RegisterFunction
     public boolean checkWalkable(Vector3 pos) {
         Vector2 realPos = new Vector2(pos.getX(), pos.getZ());
