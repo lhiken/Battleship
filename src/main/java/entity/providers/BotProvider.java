@@ -79,20 +79,19 @@ public class BotProvider extends InputProvider {
     }
 
     public void wander() {
-//        if (path.isEmpty()) {
-//            do {
-//                path = gen.navigate(
-//                    this.getGlobalPosition(),
-//                    getRandomPosition()
-//                );
-//                smoothOutPath(path);
-//            } while (path != null); // random coordinate generated is on the island
-//
-//            startPos = this.getGlobalPosition();
-//        }
-//            startPos = this.getGlobalPosition();
+        //        if (path.isEmpty()) {
+        //            do {
+        //                path = gen.navigate(
+        //                    this.getGlobalPosition(),
+        //                    getRandomPosition()
+        //                );
+        //                smoothOutPath(path);
+        //            } while (path != null); // random coordinate generated is on the island
+        //
+        //            startPos = this.getGlobalPosition();
+        //        }
+        //            startPos = this.getGlobalPosition();
 
-        gd.print("Path size" + path.size());
         if (path.size() < 10) {
             gd.print("Finding new path");
             ArrayList<Coordinate> newPath = new ArrayList<Coordinate>();
@@ -100,32 +99,31 @@ public class BotProvider extends InputProvider {
 
             newPath = gen.navigate(previousTargetPos, getRandomPosition());
 
-//            boolean validPath = false;
-//            int iterations = 0;
-//
-//            while (!validPath) {
-//
-//                newPath = gen.navigate(previousTargetPos, getRandomPosition());
-//
-//                Vector3 point1 = path.get(path.size() - 2).toVec3();
-//                Vector3 point2 = path.get(path.size() - 1).toVec3();
-//                Vector3 point3 = newPath.get(0).toVec3();
-//
-//                if (!(point2.minus(point1).angleTo(point3.minus(point2)) < (Math.PI) / 2) || iterations > 20) {
-//
-//                    validPath = true;
-//
-//                }
-//
-//                iterations++;
-//
-//            }
+            //            boolean validPath = false;
+            //            int iterations = 0;
+            //
+            //            while (!validPath) {
+            //
+            //                newPath = gen.navigate(previousTargetPos, getRandomPosition());
+            //
+            //                Vector3 point1 = path.get(path.size() - 2).toVec3();
+            //                Vector3 point2 = path.get(path.size() - 1).toVec3();
+            //                Vector3 point3 = newPath.get(0).toVec3();
+            //
+            //                if (!(point2.minus(point1).angleTo(point3.minus(point2)) < (Math.PI) / 2) || iterations > 20) {
+            //
+            //                    validPath = true;
+            //
+            //                }
+            //
+            //                iterations++;
+            //
+            //            }
 
             path.addAll(newPath);
             smoothOutPath(path);
 
-            targetPos = path.get(path.size()-1).toVec3();
-
+            targetPos = path.get(path.size() - 1).toVec3();
         }
     }
 
@@ -208,11 +206,6 @@ public class BotProvider extends InputProvider {
     }
 
     public void moveToPoint() {
-//        if (path.size() < 3) {
-//            path.addAll(gen.navigate(getGlobalPosition(), getRandomPosition()));
-//            smoothOutPath(path);
-//        }
-
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
         double shipYaw = ((Ship) getParent()).getGlobalRotation().getY();
@@ -225,6 +218,8 @@ public class BotProvider extends InputProvider {
         );
         Vector3 currTargetDirection =
             this.getGlobalPosition().directionTo(curr);
+        Vector3 nextTargetDirection =
+            this.getGlobalPosition().directionTo(next);
 
         // shows if the ship is past the current target
         double pastCurr = shipToCurr.dot(currToNext);
@@ -233,19 +228,40 @@ public class BotProvider extends InputProvider {
             path.remove(0);
         }
 
+        Vector3 finalDirection = currTargetDirection.dot(shipDirection) <
+            nextTargetDirection.dot(shipDirection)
+            ? nextTargetDirection
+            : currTargetDirection;
+
         double expectedRotation = Math.atan2(
-            currTargetDirection.getX(),
-            currTargetDirection.getZ()
+            finalDirection.getX(),
+            finalDirection.getZ()
         );
 
-
-
-        double rotationInput = normalizeAngle(
-            expectedRotation - getGlobalRotation().getY()
+        // double rotationInput = normalizeAngle(
+        //     expectedRotation - getGlobalRotation().getY()
+        // );
+        // rotation += gd.clamp(rotationInput, gd.degToRad(-2), gd.degToRad(2));
+        double lerpFactor = gd.lerp(
+            0.6,
+            1.0,
+            gd.smoothstep(
+                0.8,
+                1.0,
+                gd.clamp(
+                    (currTargetDirection
+                            .normalized()
+                            .dot(shipDirection.normalized()) /
+                        2) +
+                    0.5,
+                    0,
+                    1
+                )
+            )
         );
-        rotation += gd.clamp(rotationInput, gd.degToRad(-2), gd.degToRad(2));
+        rotation = gd.lerpAngle(rotation, expectedRotation, lerpFactor * 0.05);
 
-        velocity = 1.0; // this might be right
+        velocity = 1.0;
     }
 
     private double normalizeAngle(double angle) {
@@ -283,12 +299,6 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     public void setGenerator(Generator gen) {
         this.gen = gen;
-    }
-
-    private void adjustCurrentNode() {}
-
-    private Vector3 getAverageNode(int nodes) {
-        return new Vector3();
     }
 
     private void setAimDirection(
