@@ -136,16 +136,53 @@ public class BotProvider extends InputProvider {
     }
 
     public void wander() {
-        if (path.isEmpty()) {
-            do {
-                path = gen.navigate(
-                    this.getGlobalPosition(),
-                    getRandomPosition()
-                );
-                smoothOutPath(path);
-            } while (path != null); // random coordinate generated is on the island
+//        if (path.isEmpty()) {
+//            do {
+//                path = gen.navigate(
+//                    this.getGlobalPosition(),
+//                    getRandomPosition()
+//                );
+//                smoothOutPath(path);
+//            } while (path != null); // random coordinate generated is on the island
+//
+//            startPos = this.getGlobalPosition();
+//        }
+//            startPos = this.getGlobalPosition();
 
-            startPos = this.getGlobalPosition();
+        gd.print("Path size" + path.size());
+        if (path.size() < 10) {
+            gd.print("Finding new path");
+            ArrayList<Coordinate> newPath = new ArrayList<Coordinate>();
+            Vector3 previousTargetPos = targetPos;
+
+            newPath = gen.navigate(previousTargetPos, getRandomPosition());
+
+//            boolean validPath = false;
+//            int iterations = 0;
+//
+//            while (!validPath) {
+//
+//                newPath = gen.navigate(previousTargetPos, getRandomPosition());
+//
+//                Vector3 point1 = path.get(path.size() - 2).toVec3();
+//                Vector3 point2 = path.get(path.size() - 1).toVec3();
+//                Vector3 point3 = newPath.get(0).toVec3();
+//
+//                if (!(point2.minus(point1).angleTo(point3.minus(point2)) < (Math.PI) / 2) || iterations > 20) {
+//
+//                    validPath = true;
+//
+//                }
+//
+//                iterations++;
+//
+//            }
+
+            path.addAll(newPath);
+            smoothOutPath(path);
+
+            targetPos = path.get(path.size()-1).toVec3();
+
         }
     }
 
@@ -186,10 +223,10 @@ public class BotProvider extends InputProvider {
     }
 
     public void moveToPoint() {
-        if (path.size() < 3) {
-            path.addAll(gen.navigate(getGlobalPosition(), getRandomPosition()));
-            smoothOutPath(path);
-        }
+//        if (path.size() < 3) {
+//            path.addAll(gen.navigate(getGlobalPosition(), getRandomPosition()));
+//            smoothOutPath(path);
+//        }
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
@@ -216,6 +253,8 @@ public class BotProvider extends InputProvider {
             currTargetDirection.getX(),
             currTargetDirection.getZ()
         );
+
+
 
         double rotationInput = normalizeAngle(
             expectedRotation - getGlobalRotation().getY()
