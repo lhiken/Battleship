@@ -6,11 +6,16 @@ import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.Input;
+import godot.api.Node;
+import godot.api.Node3D;
+import godot.core.VariantArray;
 import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
 import java.util.List;
+
+import main.MatchManager;
 import map.gen.Coordinate;
 import map.gen.Generator;
 
@@ -73,8 +78,11 @@ public class BotProvider extends InputProvider {
         delta2 = delta;
         time += delta;
 
-        if (!enemyWithinRadius) {
+        if (!enemyWithinRadius()) {
             wander();
+        }
+        else {
+            chase();
         }
 
         moveToPoint();
@@ -186,6 +194,38 @@ public class BotProvider extends InputProvider {
         }
     }
 
+    public boolean enemyWithinRadius() {
+
+        Node3D ships = (Node3D) getParent().getParent().getParent().getNode("Ships");
+        VariantArray<Node> temp = ships.getChildren();
+        ArrayList<Ship> shipInfo = new ArrayList<Ship>();
+
+        for (Node ship : temp) {
+            shipInfo.add((Ship) ship);
+        }
+
+        double smallestDistance = 100;
+        Ship trackedShip = new Ship();
+        for (Ship ship : shipInfo) {
+            if ((this.getGlobalPosition().minus(ship.getGlobalPosition())).length() < smallestDistance && ship.getGlobalPosition() != this.getGlobalPosition()) {
+                trackedShip = ship;
+                smallestDistance = trackedShip.getGlobalPosition().length();
+            }
+        }
+
+        if (smallestDistance < 10) {
+            path = gen.navigate(this.getGlobalPosition(), trackedShip.getGlobalPosition());
+            smoothOutPath(path);
+            targetPos = path.get(path.size() - 1).toVec3();
+            startPos = path.get(0).toVec3();
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
     public void smoothOutPath(ArrayList<Coordinate> path) {
         for (int j = 0; j < 5; j++) {
             path.add(0, path.get(0));
@@ -196,10 +236,14 @@ public class BotProvider extends InputProvider {
                     (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
                 path.set(i, new Coordinate(averageX, averageZ, i, i));
             }
+
         }
+        targetPos = path.get(path.size()-1).toVec3();
     }
 
-    public void chase() {}
+    public void chase() {
+
+    }
 
     private Vector3 getRandomPosition() {
         Vector3 position = null;
@@ -254,8 +298,6 @@ public class BotProvider extends InputProvider {
             currTargetDirection.getZ()
         );
 
-
-
         double rotationInput = normalizeAngle(
             expectedRotation - getGlobalRotation().getY()
         );
@@ -275,6 +317,7 @@ public class BotProvider extends InputProvider {
         currentState.velocity = velocity;
         currentState.rotation = rotation;
         currentState.emitAction = emitAction ? selectedAction : -1;
+        currentState.emitAction = -1;
         currentState.power = Math.min(14, power * 3);
         currentState.turretYaw = turretYaw;
         currentState.turretPitch = turretPitch;
