@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import map.gen.Coordinate;
 import map.gen.Generator;
+import multiplayer.MultiplayerManager;
 
 @RegisterClass
 public class BotProvider extends InputProvider {
@@ -56,11 +57,15 @@ public class BotProvider extends InputProvider {
         smoothOutPath(path);
         emitAction = false;
         selectedAction = 1;
+        setMultiplayerAuthority(1);
     }
 
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        MultiplayerManager manager = MultiplayerManager.Instance;
+        if (!manager.isServer()) return;
+
         if (!enemyWithinRadius) {
             wander();
         }
@@ -120,7 +125,6 @@ public class BotProvider extends InputProvider {
             );
 
             if (canShoot()) {
-                gd.print("shoot!");
                 emitAction = true;
             } else {
                 emitAction = false;
@@ -200,11 +204,7 @@ public class BotProvider extends InputProvider {
         double rotationInput = normalizeAngle(
             expectedRotation - getGlobalRotation().getY()
         );
-        rotation += gd.clamp(
-            rotationInput,
-            gd.degToRad(-1.5),
-            gd.degToRad(1.5)
-        );
+        rotation += gd.clamp(rotationInput, gd.degToRad(-2), gd.degToRad(2));
 
         velocity = 1.0; // this might be right
     }

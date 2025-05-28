@@ -74,8 +74,6 @@ public class Ship extends CharacterBody3D {
     public void _process(double delta) {
         frameCounter++;
 
-        gd.print(cooldownPercent);
-
         cooldownPercent += delta / cooldownTime;
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 

@@ -139,7 +139,7 @@ public class Generator extends Node3D {
             }
         }
 
-        removeCircle(35, 35, 10);
+        removeCircle(35, 35, 6);
 
         coordToGrid(new Vector2(0, 0)).setTile(Tile.Shore);
         for (int x = 0; x < mapWidth; x++) {

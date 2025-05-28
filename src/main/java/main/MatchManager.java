@@ -45,6 +45,9 @@ public class MatchManager extends Node {
         gd.print("loaded match manager");
         gameCamera.setSpectatorMode();
 
+        MultiplayerManager manager = MultiplayerManager.Instance;
+        if (!manager.isServer()) return;
+
         instantiateNewBot();
         // MultiplayerAPI multiplayer = getMultiplayer();
         // var peerIds = multiplayer.getPeers();
@@ -71,7 +74,7 @@ public class MatchManager extends Node {
             new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
         );
 
-        getNode("Ships").addChild(shipNode);
+        getNode("Ships").addChild(shipNode, true);
 
         return shipNode;
     }
