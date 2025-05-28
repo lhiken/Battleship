@@ -212,12 +212,12 @@ public class MultiplayerManager extends Node {
         Ship targetShip,
         double damage
     ) {
-        // if (multiplayer.isServer()) {
-        //     targetShip.setHealth(targetShip.getHealth() - damage);
-        //     PlayerData data = playerData.get(ownerId);
-        //     if (data != null) {
-        //         data.setPoints(data.getPoints() + 50);
-        //     }
-        // }
+        if (multiplayer.isServer()) {
+            targetShip.setHealth(targetShip.getHealth() - damage);
+            PlayerData data = playerData.get(ownerId);
+            if (data != null) {
+                data.setPoints(data.getPoints() + 50);
+            }
+        }
     }
 }

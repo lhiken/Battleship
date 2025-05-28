@@ -289,7 +289,7 @@ public class Generator extends Node3D {
             new Vector3(
                 0,
                 (Math.PI / 2.0) * Math.round((Math.random() * 4)) +
-                (Math.random() - 0.5) * 0.4,
+                (Math.random() - 0.5) * 1.5,
                 0
             )
         );

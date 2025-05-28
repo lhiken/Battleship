@@ -53,8 +53,8 @@ public class Bullet extends RigidBody3D {
         spawnExplosion();
         if (body instanceof Ship) {
             gd.print(ownerId + " hit " + ((Ship) body).getName());
-            // MultiplayerManager manager = MultiplayerManager.Instance;
-            // manager.invokeBulletDamage(ownerId, (Ship) body, 15);
+            MultiplayerManager manager = MultiplayerManager.Instance;
+            manager.invokeBulletDamage(ownerId, (Ship) body, 15);
         }
     }
 
@@ -66,8 +66,9 @@ public class Bullet extends RigidBody3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
-
-        explosionSound = (AudioStreamPlayer3D) getParent().getParent().getNode("Explosion");
+        explosionSound = (AudioStreamPlayer3D) getParent()
+            .getParent()
+            .getNode("Explosion");
         explosionSound.play();
 
         Node3D explosionNode = (Node3D) explosion.instantiate();
