@@ -167,6 +167,7 @@ public class BotProvider extends InputProvider {
             }
         }
 
+        targettedShip = trackedShip;
         if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 20) {
             if (closestShipLoc.minus(targetPos).length() > 5) {
                 path = gen.navigate(
@@ -185,7 +186,6 @@ public class BotProvider extends InputProvider {
 
     private void handleTargetting() {
         Ship thisShip = (Ship) getParent();
-        targettedShip = (Ship) getParent().getParent().getNode("1");
 
         if (targettedShip != null) {
             setAimDirection(
@@ -433,7 +433,6 @@ public class BotProvider extends InputProvider {
     ) {
         Vector3 u_t = u_t(P_t, P_s, V_t, V_s, S_p, t);
         Vector3 u_pt = u_pt(V_t, V_s, t);
-        Vector3 g = new Vector3(0, -9.8, 0);
         return u_t.dot(u_pt) / u_t.length() - S_p;
     }
 
