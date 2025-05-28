@@ -69,7 +69,7 @@ public class PlayerProvider extends InputProvider {
                 .getParent()
                 .getNode("RenderTarget/Viewport/GameCamera");
             float fov = camera.getFov();
-            float newFov = (float) gd.lerp(fov, 55f, 0.002);
+            float newFov = (float) gd.lerp(fov, 55f, 0.005);
             camera.setFov(newFov);
         } else {
             Camera3D camera = (Camera3D) getParent()

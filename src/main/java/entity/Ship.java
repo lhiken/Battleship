@@ -139,10 +139,10 @@ public class Ship extends CharacterBody3D {
 
                 // uncommenting this before fixing it will cause process to terminate early
                 // resulting in cooldown never being reset and firing forever!!
-                // boom.play();
                 cooldownPercent = 0;
+                boom.play();
             } else if (state.getEmittedAction() != -1 && cooldownPercent < 1) {
-                // emptyCannon.play();
+                emptyCannon.play();
             }
         }
         // drawProjectilePath();
