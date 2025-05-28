@@ -170,4 +170,4 @@ stream = ExtResource("10_pf812")
 
 [node name="CannonFire" type="AudioStreamPlayer" parent="." index="11"]
 stream = ExtResource("11_rfpwa")
-volume_db = 7.429
+volume_db = -2.971

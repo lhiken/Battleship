@@ -10,6 +10,7 @@ import godot.annotation.RpcMode;
 import godot.annotation.Sync;
 import godot.api.*;
 import godot.core.StringNames;
+import godot.core.VariantArray;
 import godot.core.Vector3;
 import godot.global.GD;
 import main.GameCamera;
@@ -26,7 +27,7 @@ public class Bullet extends RigidBody3D {
     private double timeElapsed = 0;
 
     private double maxLifetime = 6;
-    private AudioStreamPlayer3D explosionSound;
+    private AudioStreamPlayer explosionSound;
 
     private Node collisionBody;
 
@@ -67,7 +68,9 @@ public class Bullet extends RigidBody3D {
     @RegisterFunction
     public void spawnExplosion() {
 
-        explosionSound = (AudioStreamPlayer3D) getParent().getParent().getNode("Explosion");
+        explosionSound = (AudioStreamPlayer) getParent().getParent().getNode("Explosion");
+//        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
+        explosionSound.setVolumeDb((float) (-15));
         explosionSound.play();
 
         Node3D explosionNode = (Node3D) explosion.instantiate();

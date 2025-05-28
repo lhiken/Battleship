@@ -312,7 +312,7 @@ public class BotProvider extends InputProvider {
         );
         rotation = gd.lerpAngle(rotation, expectedRotation, lerpFactor * 0.05);
 
-        velocity = 1.0;
+        velocity = 0.9;
     }
 
     private double normalizeAngle(double angle) {
