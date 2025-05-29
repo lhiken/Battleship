@@ -57,22 +57,30 @@ public class Ship extends CharacterBody3D {
 
     private boolean sinking = false;
 
-    @RegisterFunction
-    @Override
-    public void _ready() {
-        setMultiplayerAuthority(Integer.parseInt(getName().toString()));
-        health = 100;
-        // instantiateNewCannon();
-    }
+	/**
+	 * Sets up multiplayer id and gives ship full health when program runs
+	 */
+	@RegisterFunction
+	@Override
+	public void _ready() {
+		setMultiplayerAuthority(Integer.parseInt(getName().toString()));
+		health = 100;
+		// instantiateNewCannon();
+	}
 
-    @RegisterFunction
-    @Override
-    public void _process(double delta) {
-        if (!isMultiplayerAuthority()) {
-            return;
-        }
 
-        frameCounter++;
+	/**
+	 * Runs every single frame and provided by Godot
+	 *
+	 * Uses inputState and inputProvider in order to calculate each ships respective velocity, rotation, shooting, etc
+	 * in order to calculate its current orientation and if its shooting
+	 *
+	 * @param delta
+	 */
+	@RegisterFunction
+	@Override
+	public void _process(double delta) {
+		frameCounter++;
 
         cooldownPercent += delta / cooldownTime;
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
