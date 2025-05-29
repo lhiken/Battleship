@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://c4t5yn8wk4gps"]
+[gd_scene load_steps=9 format=3 uid="uid://c4t5yn8wk4gps"]
 
 [ext_resource type="Script" path="res://components/main/volume.gd" id="1_1q15i"]
 [ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="1_v6yvm"]
 [ext_resource type="Script" uid="uid://c83w6at3ch6hd" path="res://gdj/ui/Settings.gdj" id="2_v6yvm"]
 [ext_resource type="AudioStream" uid="uid://c4up1g1hpnnud" path="res://audio/Music.mp3" id="3_c3rsk"]
 [ext_resource type="Script" uid="uid://641abtp4j8gc" path="res://components/main/mute.gd" id="5_c3rsk"]
+[ext_resource type="AudioStream" uid="uid://dse4rxugyh84j" path="res://audio/Music2.mp3" id="6_oidxn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3rsk"]
 bg_color = Color(0.511968, 0.754543, 0.551349, 1)
@@ -28,6 +29,7 @@ metadata/_edit_horizontal_guides_ = [-146.0]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_c3rsk")
+volume_db = -80.0
 autoplay = true
 bus = &"Music"
 
@@ -142,6 +144,10 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 45
 text = "Return"
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_oidxn")
+autoplay = true
 
 [connection signal="value_changed" from="Options/Panel/Volume" to="." method="_on_volume_value_changed"]
 [connection signal="toggled" from="Options/Panel/Mute" to="Options/Panel/Mute" method="_on_mute_toggled"]

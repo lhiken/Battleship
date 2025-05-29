@@ -46,10 +46,13 @@ public class BotProvider extends InputProvider {
     private Vector3 targetPos;
     private Vector3 startPos;
 
+    private Ship myShip;
     private ArrayList<Coordinate> path;
     private Generator gen;
     private Ship targettedShip;
-    private double time;
+    private double timeToNextPoint;
+    private Coordinate nextPointOnPath;
+    private boolean scared;
 
     /**
      * Overrides Godot's internal built-in _ready function
@@ -82,23 +85,31 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        time += delta;
+        timeToNextPoint += delta;
+        myShip = (Ship) getParent();
 
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
 
-        if (!enemyWithinRadius()) {
-            wander();
-        } else {
-            chase();
+        if (myShip.isSinking()) {
+            path.clear();
         }
+        else {
+            if (!enemyWithinRadius()) {
+                wander();
+            } else if (!confident()) {
+                run();
+            } else {
+                chase();
+            }
 
-        moveToPoint();
-        handleTargetting();
+            moveToPoint();
+            handleTargetting();
 
-        gen.visualizePath(path);
+            gen.visualizePath(path);
 
-        updateState();
+            updateState();
+        }
     }
 
     /**
@@ -198,19 +209,19 @@ public class BotProvider extends InputProvider {
         }
 
         if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
-            if (closestShipLoc.minus(targetPos).length() > 10) {
-                path = gen.navigate(
-                    this.getGlobalPosition(),
-                    getRandomPosition(
-                        this.getGlobalPosition(),
-                        trackedShip.getGlobalPosition(),
-                        5
-                    )
-                );
-                smoothOutPath(path);
-                targetPos = path.get(path.size() - 1).toVec3();
-                startPos = path.get(0).toVec3();
-            }
+//            if (closestShipLoc.minus(targetPos).length() > 10) {
+//                path = gen.navigate(
+//                    this.getGlobalPosition(),
+//                    getRandomPosition(
+//                        this.getGlobalPosition(),
+//                        trackedShip.getGlobalPosition(),
+//                        5
+//                    )
+//                );
+//                smoothOutPath(path);
+//                targetPos = path.get(path.size() - 1).toVec3();
+//                startPos = path.get(0).toVec3();
+//            }
             return true;
         } else {
             return false;
@@ -381,12 +392,67 @@ public class BotProvider extends InputProvider {
     }
 
     /**
+     * The RUN state
+     * <p>
+     * When the bot is not confident to fight, will run away
+     */
+    public void run() {
+
+        if (!scared && path.size() < 10) {
+            gd.print("Entering run state");
+
+            Vector3 direction = targettedShip.getGlobalPosition().minus(myShip.getGlobalPosition());
+
+            Vector3 goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
+
+            while (direction.angleTo(goingTo) < Math.PI / 2) {
+                goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
+            }
+
+            path = gen.navigate(myShip.getGlobalPosition(), goingTo);
+            smoothOutPath(path);
+            targetPos = path.get(path.size() - 1).toVec3();
+            startPos = path.get(0).toVec3();
+        }
+        scared = true;
+
+    }
+
+    /**
+     * Returns if the ship is confident to fight the enemy within radius or enter the RUN state
+     * @return ship's confidence in a boolean
+     */
+    public boolean confident() {
+
+//        return true;
+
+        Ship ownShip = (Ship) getParent();
+
+        if (ownShip.getHealth() < 50 && targettedShip.getHealth() > ownShip.getHealth() + 10) {
+            scared = false;
+            return false;
+        }
+        return true;
+
+
+    }
+    /**
      * Given a path that the ship has:
      * a) Calculates the rotation and velocity needed in order to travel to the next point
      * b) Skips points if suitable (based on dot products and angle differences)
      */
     public void moveToPoint() {
         if (path.size() == 0) return;
+
+//        if (path.get(0) != nextPointOnPath) {
+//            timeToNextPoint = 0;
+//            nextPointOnPath = path.get(0);
+//        }
+//        if (timeToNextPoint > 2) {
+//            path.clear();
+//            timeToNextPoint = 0;
+//            return;
+//        }
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
