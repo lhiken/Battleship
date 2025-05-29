@@ -189,7 +189,7 @@ public class BotProvider extends InputProvider {
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
         for (Node ship : temp) {
-            if (!(ship.equals(ownShip))) {
+            if (!(ship.equals(ownShip)) && !((Ship) ship).isSinking()) {
                 shipInfo.add((Ship) ship);
             }
         }
@@ -305,7 +305,7 @@ public class BotProvider extends InputProvider {
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
         for (Node ship : temp) {
-            if (!(ship.equals(ownShip))) {
+            if (!(ship.equals(ownShip)) && !((Ship) ship).isSinking()) {
                 shipInfo.add((Ship) ship);
             }
         }
