@@ -5,16 +5,12 @@ import entity.InputState;
 import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
-import godot.api.Input;
 import godot.api.Node;
 import godot.api.Node3D;
 import godot.core.VariantArray;
-import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
-import java.util.List;
-import main.MatchManager;
 import map.gen.Coordinate;
 import map.gen.Generator;
 import multiplayer.MultiplayerManager;
@@ -428,7 +424,7 @@ public class BotProvider extends InputProvider {
         return (
                 targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
                         20 &&
-                        Math.abs(gd.radToDeg(diff)) > 30
+                        Math.abs(gd.radToDeg(diff)) > 30 && turretPitch > gd.degToRad(-5)
         );
     }
 
