@@ -28,6 +28,16 @@ import multiplayer.MultiplayerManager;
 import multiplayer.PlayerData;
 import ui.lobby.Lobby;
 
+/**
+ * The MatchManager class
+ * The match scene
+ * <p>
+ * Manages its players and their actions
+ * <p>
+ * Contains methods to instantiate either a bot or a player ship
+ * Contains method to start match and create a new bullet
+ * And various other miscellaneous methods
+ */
 @RegisterClass
 public class MatchManager extends Node {
 
@@ -35,10 +45,18 @@ public class MatchManager extends Node {
 
     private Vector3[] spawnLocations;
 
+    /**
+     * Reference to the gameCamera that is displayed
+     */
     @Export
     @RegisterProperty
     public GameCamera gameCamera;
 
+    /**
+     * Overrides Godot's built-in _ready function
+     * Acts as a constructor
+     * Instantiates bots and whatever is needed to make MatchManager function properly
+     */
     @RegisterFunction
     @Override
     public void _ready() {
@@ -57,6 +75,11 @@ public class MatchManager extends Node {
         // }
     }
 
+    /**
+     * Instantiates a new human player ship
+     * @param playerId The playerId for the ship to be instantiated
+     * @return the Ship that was instantiated
+     */
     public Ship instantiateNewPlayer(int playerId) {
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene playerProvider = gd.load(
@@ -79,6 +102,11 @@ public class MatchManager extends Node {
         return shipNode;
     }
 
+    /**
+     * Instantiates a new bot player ship
+     * Does not require an id
+     * @return the Ship that was instantiated
+     */
     public Ship instantiateNewBot() {
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene botProvider = gd.load(
@@ -102,6 +130,12 @@ public class MatchManager extends Node {
         return shipNode;
     }
 
+    /**
+     * At the start of a match, creates
+     * A collection of both bot and human player ships
+     * Sets the camera and playerShip
+     * And takes the player from the lobby to the actual match
+     */
     @Rpc
     @RegisterFunction
     public void startMatch() {
@@ -126,6 +160,14 @@ public class MatchManager extends Node {
         ((Lobby) getNode("Lobby")).setVisible(false);
     }
 
+    /**
+     * Spawns a bullet and moves it in a certain direction depending on
+     * Its direction, position, and ship velocity
+     * @param peerOrigin The unique peerId of a ship
+     * @param direction The direction that the bullet was shot in (yaw)
+     * @param position The position at which it was shot from
+     * @param shipVelocity The ship velocity when the bullet was shot
+     */
     @Rpc(rpcMode = RpcMode.ANY, sync = Sync.SYNC)
     @RegisterFunction
     public void spawnBullet(
