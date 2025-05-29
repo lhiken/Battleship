@@ -6,7 +6,7 @@ fqName = ui.HealthBar
 relativeSourcePath = src/main/java/ui/HealthBar.java
 baseType = TextureProgressBar
 supertypes = [
-	godot.api.TextureProgressBar,
+    godot.api.TextureProgressBar,
 	godot.api.Range,
 	godot.api.Control,
 	godot.api.CanvasItem,
@@ -18,12 +18,11 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	
+    
 ]
 functions = [
     _process
-	_ready
 ]
