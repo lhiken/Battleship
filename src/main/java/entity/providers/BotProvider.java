@@ -15,6 +15,18 @@ import map.gen.Coordinate;
 import map.gen.Generator;
 import multiplayer.MultiplayerManager;
 
+/**
+ * BotProvider that extends InputProvider
+ * A version of InputProvider that handles inputs for a bot ship (usually in the form of environmental factors)
+ * <p>
+ * In its process method, BotProvider uses environmental factors to find it's current state
+ * Either WANDER, CHASE, or RUN
+ * and then generates a movement path to follow depending on it's state
+ * Will also calculate the predicted movement of a ship and shoot when possible (and depending on it's state)
+ * <p>
+ * Also contains getter and setter methods
+ * As well as helper methods such as Newton's Method calculator and more
+ */
 @RegisterClass
 public class BotProvider extends InputProvider {
 
@@ -35,16 +47,15 @@ public class BotProvider extends InputProvider {
     private Vector3 startPos;
 
     private ArrayList<Coordinate> path;
-
     private Generator gen;
-
     private Ship targettedShip;
-
     private double time;
 
-    /** _ready
-     * runs upon being instantiated in the game world
-     * acts as a constructor
+    /**
+     * Overrides Godot's internal built-in _ready function
+     * Runs upon being instantiated in the game world
+     * And acts as a constructor
+     * Automatically creating a path for the bot to follow and setting up multiplayer status
      */
     @RegisterFunction
     @Override
@@ -62,6 +73,12 @@ public class BotProvider extends InputProvider {
         setMultiplayerAuthority(1);
     }
 
+    /**
+     * Overrides Godot's internal built-in ready function
+     * Calls its various helper methods in order to determine the path it needs to take during each frame
+     * As well as where it should aim in order to hit other ships
+     * @param delta the time elapsed between each call to _process
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -84,6 +101,12 @@ public class BotProvider extends InputProvider {
         updateState();
     }
 
+    /**
+     * The WANDER state
+     * <p>
+     * If it's current path size is less than ten, generate a new path
+     * Append the new path to the previous path (so it always has somewhere to move to)
+     */
     public void wander() {
         //        if (path.isEmpty()) {
         //            do {
@@ -133,6 +156,17 @@ public class BotProvider extends InputProvider {
         }
     }
 
+    /**
+     * Helper method for the CHASE state
+     * <p>
+     * Gets an ArrayList of all ships in the match and finds the closest ship
+     * If the distance from its own ship to the closest ship is less than a certain amount
+     * Then enter CHASE state
+     * <p>
+     * If previous path is nearby to ship, does not make a new path to avoid
+     * Messy rotation inputs
+     * @return a boolean determining if an enemy ship is within tracking radius
+     */
     public boolean enemyWithinRadius() {
         Ship ownShip = (Ship) getParent();
 
@@ -241,6 +275,11 @@ public class BotProvider extends InputProvider {
         }
     }
 
+    /**
+     * Takes a path and smooths it out into more of a curve
+     * In order to prevent sharp angles and turns for the ship to move in
+     * @param path the path to smooth out
+     */
     public void smoothOutPath(ArrayList<Coordinate> path) {
         for (int j = 0; j < 5; j++) {
             path.add(0, path.get(0));
@@ -255,6 +294,12 @@ public class BotProvider extends InputProvider {
         targetPos = path.get(path.size() - 1).toVec3();
     }
 
+    /**
+     * The CHASE state
+     *
+     * Gets an ArrayList of all ships
+     * And generates a path that goes to a place near the closest enemy ship (but not directly to it)
+     */
     public void chase() {
 
         Ship ownShip = (Ship) getParent();
@@ -349,6 +394,11 @@ public class BotProvider extends InputProvider {
         return position;
     }
 
+    /**
+     * Given a path that the ship has:
+     * a) Calculates the rotation and velocity needed in order to travel to the next point
+     * b) Skips points if suitable (based on dot products and angle differences)
+     */
     public void moveToPoint() {
 
         if (path.size() == 0) return;
@@ -437,12 +487,20 @@ public class BotProvider extends InputProvider {
         currentState.turretPitch = turretPitch;
     }
 
+    /**
+     * Getter method for the InputState
+     * @return The InputState
+     */
     @RegisterFunction
     @Override
     public InputState getState() {
         return currentState;
     }
 
+    /**
+     * Setter method for the generator
+     * @param gen The generator to be set
+     */
     @RegisterFunction
     public void setGenerator(Generator gen) {
         this.gen = gen;

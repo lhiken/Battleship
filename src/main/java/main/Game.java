@@ -15,7 +15,8 @@ import java.util.HashMap;
 import multiplayer.MultiplayerManager;
 
 /** Game
- * the class for the main scene
+ * The class for the main scene
+ * Includes method to spawn match
  */
 @RegisterClass
 public class Game extends Node3D {
@@ -24,6 +25,11 @@ public class Game extends Node3D {
     private static final GD gd = GD.INSTANCE;
 
     // ready runs when this object is loaded
+
+    /**
+     * Overrides Godot's built-in _ready function
+     * Loads necessary scenes and acts as a constructor
+     */
     @RegisterFunction
     @Override
     public void _ready() {
@@ -42,6 +48,10 @@ public class Game extends Node3D {
         );
     }
 
+    /**
+     * Spawns a new match
+     * @param success boolean depending on if a new match can successfully be created
+     */
     @RegisterFunction
     public void spawnMatch(boolean success) {
         if (getNode("Match") != null || !success) return;

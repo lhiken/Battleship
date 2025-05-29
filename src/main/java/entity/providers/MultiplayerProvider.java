@@ -9,8 +9,9 @@ import godot.api.Input;
 import godot.core.Vector2;
 import godot.global.GD;
 
-/** MultiplayerProvider
- * a version of inputprovider for the local player's input
+/**
+ * MultiplayerProvider
+ * A version of InputProvider for the local player's input
  */
 @RegisterClass
 public class MultiplayerProvider extends InputProvider {
@@ -27,9 +28,9 @@ public class MultiplayerProvider extends InputProvider {
     private boolean emitAction;
     private InputState currentState;
 
-    /** _ready
-     * runs upon being instantiated in the game world
-     * acts as a constructor
+    /**
+     * Overrides Godot's internal built-in _ready function
+     * Runs upon being instantiated in the game world and acts as a constructor
      */
     @RegisterFunction
     @Override
@@ -42,8 +43,10 @@ public class MultiplayerProvider extends InputProvider {
         emitAction = false;
     }
 
-    /** _process
-     * runs every frame to process user input
+    /**
+     * Overrides Godot's internal built-in _process function
+     * Runs every frame to process user input
+     * @param delta the time elapsed between each call to _process
      */
     @RegisterFunction
     @Override
@@ -74,6 +77,10 @@ public class MultiplayerProvider extends InputProvider {
         currentState.emitAction = emitAction ? selectedAction : -1;
     }
 
+    /**
+     * Getter method for it's inputState
+     * @return the inputState
+     */
     @RegisterFunction
     @Override
     public InputState getState() {

@@ -15,15 +15,29 @@ import godot.core.EulerOrder;
 import godot.core.Vector3;
 import godot.global.GD;
 
+/**
+ * The GameCamera class
+ * Displays a different camera depending on which ship it is
+ * <p>
+ * Includes methods for certain conditions where the camera behavior changes such as shaking
+ * Updates its position based on certain values
+ * Contains its respective setter and getter methods
+ */
 @RegisterClass
 public class GameCamera extends Camera3D {
 
     private GD gd = GD.INSTANCE;
 
+    /**
+     * A reference Node to its respective ship
+     */
     @RegisterProperty
     @Export
     public Node3D shipNode;
 
+    /**
+     * Determines the pixelation of the camera
+     */
     @RegisterProperty
     @Export
     public TextureRect cameraParent;
@@ -46,12 +60,22 @@ public class GameCamera extends Camera3D {
     private Vector3 shakeOffset = new Vector3();
     private double shakeFrequency = 30.0;
 
+    /**
+     * Overrides Godot's built-in _ready function
+     * Sets the current value to true
+     * Acts as a constructor
+     */
     @RegisterFunction
     @Override
     public void _ready() {
         setCurrent(true);
     }
 
+    /**
+     * Overrides Godot's built-in _process function
+     * Changes the camera's view based on certain conditions
+     * @param delta the time elapsed between each call to _process
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -106,6 +130,11 @@ public class GameCamera extends Camera3D {
         updatePosition(focusPoint, offset);
     }
 
+    /**
+     * Update the position of the camera depending on the values in the parameters
+     * @param focusPoint The focus point of the camera
+     * @param offset The offset of the camera
+     */
     private void updatePosition(Vector3 focusPoint, Vector3 offset) {
         Vector3 finalPosition = focusPoint.plus(offset);
 
@@ -134,6 +163,9 @@ public class GameCamera extends Camera3D {
         lookAt(focusPoint, new Vector3(0, 1, 0));
     }
 
+    /**
+     * Sets the mouse to be captured in the middle of the screen
+     */
     @RegisterFunction
     public void setPlayerMode() {
         Input.setMouseMode(MouseMode.CAPTURED);
@@ -142,6 +174,9 @@ public class GameCamera extends Camera3D {
         setFov(90f);
     }
 
+    /**
+     * Sets the mouse to be in spectator mode
+     */
     @RegisterFunction
     public void setSpectatorMode() {
         Input.setMouseMode(MouseMode.MAX);
@@ -150,11 +185,19 @@ public class GameCamera extends Camera3D {
         setFov(45f);
     }
 
+    /**
+     * Setter method for which ship the camera follows
+     * @param ship the ship for the camera to follow
+     */
     @RegisterFunction
     public void setShip(Ship ship) {
         this.shipNode = ship;
     }
 
+    /**
+     * Shaking of the camera during collision with cannonball
+     * @param strength The severity of the shake
+     */
     @RegisterFunction
     public void invokeShake(double strength) {
         this.shakeStrength = strength;

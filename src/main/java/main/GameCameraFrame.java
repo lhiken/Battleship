@@ -17,8 +17,9 @@ import godot.core.Vector2;
 import godot.core.Vector2i;
 import godot.global.GD;
 
-/** Frame
- * the class for the textureRect that renders the main scene
+/**
+ * The GameCameraFrame class
+ * The class for the textureRect that renders the main scene
  */
 @RegisterClass
 public class GameCameraFrame extends TextureRect {
@@ -29,14 +30,23 @@ public class GameCameraFrame extends TextureRect {
     private Vector2 windowSize;
     private double aspectRatio;
 
+    /**
+     * The camera that needs to be rendered for the main scene
+     */
     @Export
     @RegisterProperty
     public Camera3D camera;
 
+    /**
+     * The max height
+     */
     @Export
     @RegisterProperty
     public int maxHeight;
 
+    /**
+     * The minimum height
+     */
     @Export
     @RegisterProperty
     public int minHeight;
@@ -54,6 +64,11 @@ public class GameCameraFrame extends TextureRect {
     private double minCameraDistance = 6.0;
     private double cameraDistance = 10.0;
 
+    /**
+     * Overrides Godot's built-in _ready function
+     * Acts as a constructor
+     * Sets texture and current, prepares for the camera
+     */
     @RegisterFunction
     @Override
     public void _ready() {
@@ -68,6 +83,11 @@ public class GameCameraFrame extends TextureRect {
         camera.setCurrent(true);
     }
 
+    /**
+     * Overrides Godot's built-in _input function
+     * Determines the mouse visibility and movement depending on input by the player
+     * @param event the key that was pressed or event that occurred
+     */
     @RegisterFunction
     @Override
     public void _input(InputEvent event) {
@@ -78,6 +98,11 @@ public class GameCameraFrame extends TextureRect {
         }
     }
 
+    /**
+     * Overrides Godot's built-in _unhandledInput function
+     * Determines more orientation of the camera depending on input
+     * @param event the key that was pressed or event that occurred
+     */
     @RegisterFunction
     @Override
     public void _unhandledInput(InputEvent event) {
@@ -116,6 +141,11 @@ public class GameCameraFrame extends TextureRect {
         }
     }
 
+    /**
+     * Overrides Godot's built-in _process function
+     * Re-renders a viewpoint
+     * @param delta the time elapsed between each call to _process
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -137,14 +167,26 @@ public class GameCameraFrame extends TextureRect {
 
     // incredibly funny functions to get around funny bug that im too lazy to google
 
+    /**
+     * Getter method for the pitch of the camera
+     * @return The rotation of the camera around the x-axis
+     */
     public double getPitch() {
         return pitch;
     }
 
+    /**
+     * Getter method for the yaw of the camera
+     * @return The rotation of the camera around the y-axis
+     */
     public double getYaw() {
         return yaw;
     }
 
+    /**
+     * Getter method for the zoom of the camera
+     * @return The zoom of the camera
+     */
     public double getZoom() {
         return cameraDistance;
     }
