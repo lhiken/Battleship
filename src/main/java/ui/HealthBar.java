@@ -26,13 +26,6 @@ public class HealthBar extends TextureProgressBar {
 
     @RegisterFunction
     @Override
-    public void _ready() {
-        gd.print("Hello");
-        health = ourShip.getHealth();
-    }
-
-    @RegisterFunction
-    @Override
     public void _process(double delta) {
         if (ourShip == null) {
             ships = getParent().getParent().getNode("Ships").getChildren();
@@ -45,8 +38,10 @@ public class HealthBar extends TextureProgressBar {
                 }
             }
         }
+        if (ourShip != null) {
+            health = gd.lerp(health, ourShip.getHealth(), 0.1);
+            setValue(health);
+        }
 
-        health = gd.lerp(health, ourShip.getHealth(), 0.1);
-        setValue(health);
     }
 }

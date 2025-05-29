@@ -5,20 +5,28 @@ import entity.InputState;
 import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
-import godot.api.Input;
 import godot.api.Node;
 import godot.api.Node3D;
 import godot.core.VariantArray;
-import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
-import java.util.List;
-import main.MatchManager;
 import map.gen.Coordinate;
 import map.gen.Generator;
 import multiplayer.MultiplayerManager;
 
+/**
+ * BotProvider that extends InputProvider
+ * A version of InputProvider that handles inputs for a bot ship (usually in the form of environmental factors)
+ * <p>
+ * In its process method, BotProvider uses environmental factors to find it's current state
+ * Either WANDER, CHASE, or RUN
+ * and then generates a movement path to follow depending on it's state
+ * Will also calculate the predicted movement of a ship and shoot when possible (and depending on it's state)
+ * <p>
+ * Also contains getter and setter methods
+ * As well as helper methods such as Newton's Method calculator and more
+ */
 @RegisterClass
 public class BotProvider extends InputProvider {
 
@@ -38,17 +46,19 @@ public class BotProvider extends InputProvider {
     private Vector3 targetPos;
     private Vector3 startPos;
 
+    private Ship myShip;
     private ArrayList<Coordinate> path;
-
     private Generator gen;
-
     private Ship targettedShip;
+    private double timeToNextPoint;
+    private Coordinate nextPointOnPath;
+    private boolean scared;
 
-    private double time;
-
-    /** _ready
-     * runs upon being instantiated in the game world
-     * acts as a constructor
+    /**
+     * Overrides Godot's internal built-in _ready function
+     * Runs upon being instantiated in the game world
+     * And acts as a constructor
+     * Automatically creating a path for the bot to follow and setting up multiplayer status
      */
     @RegisterFunction
     @Override
@@ -66,28 +76,48 @@ public class BotProvider extends InputProvider {
         setMultiplayerAuthority(1);
     }
 
+    /**
+     * Overrides Godot's internal built-in ready function
+     * Calls its various helper methods in order to determine the path it needs to take during each frame
+     * As well as where it should aim in order to hit other ships
+     * @param delta the time elapsed between each call to _process
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        time += delta;
+        timeToNextPoint += delta;
+        myShip = (Ship) getParent();
 
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
 
-        if (!enemyWithinRadius()) {
-            wander();
-        } else {
-            chase();
+        if (myShip.isSinking()) {
+            path.clear();
         }
+        else {
+            if (!enemyWithinRadius()) {
+                wander();
+            } else if (!confident()) {
+                run();
+            } else {
+                chase();
+            }
 
-        moveToPoint();
-        handleTargetting();
+            moveToPoint();
+            handleTargetting();
 
-        gen.visualizePath(path);
+            gen.visualizePath(path);
 
-        updateState();
+            updateState();
+        }
     }
 
+    /**
+     * The WANDER state
+     * <p>
+     * If it's current path size is less than ten, generate a new path
+     * Append the new path to the previous path (so it always has somewhere to move to)
+     */
     public void wander() {
         //        if (path.isEmpty()) {
         //            do {
@@ -137,6 +167,17 @@ public class BotProvider extends InputProvider {
         }
     }
 
+    /**
+     * Helper method for the CHASE state
+     * <p>
+     * Gets an ArrayList of all ships in the match and finds the closest ship
+     * If the distance from its own ship to the closest ship is less than a certain amount
+     * Then enter CHASE state
+     * <p>
+     * If previous path is nearby to ship, does not make a new path to avoid
+     * Messy rotation inputs
+     * @return a boolean determining if an enemy ship is within tracking radius
+     */
     public boolean enemyWithinRadius() {
         Ship ownShip = (Ship) getParent();
 
@@ -157,27 +198,30 @@ public class BotProvider extends InputProvider {
         Ship trackedShip = new Ship();
         for (Ship ship : shipInfo) {
             if (
+                !ship.isSinking() &&
                 (this.getGlobalPosition()
-                            .minus(ship.getGlobalPosition())).length() <
-                    (this.getGlobalPosition().minus(closestShipLoc)).length() &&
-                ship.getGlobalPosition() != ownShip.getGlobalPosition()
+                        .minus(ship.getGlobalPosition())).length() <
+                (this.getGlobalPosition().minus(closestShipLoc)).length()
             ) {
                 trackedShip = ship;
                 closestShipLoc = ship.getGlobalPosition();
             }
         }
 
-        targettedShip = trackedShip;
         if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
-            if (closestShipLoc.minus(targetPos).length() > 10) {
-                path = gen.navigate(
-                    this.getGlobalPosition(),
-                    getRandomPosition(this.getGlobalPosition() ,trackedShip.getGlobalPosition(), 5)
-                );
-                smoothOutPath(path);
-                targetPos = path.get(path.size() - 1).toVec3();
-                startPos = path.get(0).toVec3();
-            }
+//            if (closestShipLoc.minus(targetPos).length() > 10) {
+//                path = gen.navigate(
+//                    this.getGlobalPosition(),
+//                    getRandomPosition(
+//                        this.getGlobalPosition(),
+//                        trackedShip.getGlobalPosition(),
+//                        5
+//                    )
+//                );
+//                smoothOutPath(path);
+//                targetPos = path.get(path.size() - 1).toVec3();
+//                startPos = path.get(0).toVec3();
+//            }
             return true;
         } else {
             return false;
@@ -225,6 +269,11 @@ public class BotProvider extends InputProvider {
         }
     }
 
+    /**
+     * Takes a path and smooths it out into more of a curve
+     * In order to prevent sharp angles and turns for the ship to move in
+     * @param path the path to smooth out
+     */
     public void smoothOutPath(ArrayList<Coordinate> path) {
         for (int j = 0; j < 5; j++) {
             path.add(0, path.get(0));
@@ -239,7 +288,62 @@ public class BotProvider extends InputProvider {
         targetPos = path.get(path.size() - 1).toVec3();
     }
 
-    public void chase() {}
+    /**
+     * The CHASE state
+     *
+     * Gets an ArrayList of all ships
+     * And generates a path that goes to a place near the closest enemy ship (but not directly to it)
+     */
+    public void chase() {
+        Ship ownShip = (Ship) getParent();
+
+        Node3D ships = (Node3D) getParent()
+            .getParent()
+            .getParent()
+            .getNode("Ships");
+        VariantArray<Node> temp = ships.getChildren();
+        ArrayList<Ship> shipInfo = new ArrayList<Ship>();
+
+        for (Node ship : temp) {
+            if (!(ship.equals(ownShip))) {
+                shipInfo.add((Ship) ship);
+            }
+        }
+
+        Vector3 closestShipLoc = new Vector3(1000, 0, 1000);
+        Ship trackedShip = new Ship();
+
+        for (Ship ship : shipInfo) {
+            if (
+                (this.getGlobalPosition()
+                            .minus(ship.getGlobalPosition())).length() <
+                    (this.getGlobalPosition().minus(closestShipLoc)).length() &&
+                ship.getGlobalPosition() != ownShip.getGlobalPosition()
+            ) {
+                trackedShip = ship;
+                closestShipLoc = ship.getGlobalPosition();
+            }
+        }
+
+        targettedShip = trackedShip;
+        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
+            if (
+                closestShipLoc.minus(targetPos).length() > 10 || path.size() < 1
+            ) {
+                path = gen.navigate(
+                    this.getGlobalPosition(),
+                    getRandomPosition(
+                        this.getGlobalPosition(),
+                        trackedShip.getGlobalPosition(),
+                        5
+                    )
+                );
+                smoothOutPath(path);
+                targetPos = path.get(path.size() - 1).toVec3();
+                startPos = path.get(0).toVec3();
+            }
+        }
+    }
 
     private Vector3 getRandomPosition() {
         Vector3 position = null;
@@ -262,7 +366,11 @@ public class BotProvider extends InputProvider {
         return position;
     }
 
-    private Vector3 getRandomPosition(Vector3 myShip, Vector3 trackedShip, double radius) {
+    private Vector3 getRandomPosition(
+        Vector3 myShip,
+        Vector3 trackedShip,
+        double radius
+    ) {
         Vector3 position = null;
 
         while (position == null) {
@@ -270,13 +378,12 @@ public class BotProvider extends InputProvider {
             double distance = Math.random() * 2 + radius - 1;
 
             Vector3 pos = new Vector3(
-                    Math.cos(direction),
-                    0,
-                    Math.sin(direction)
+                Math.cos(direction),
+                0,
+                Math.sin(direction)
             );
 
             pos = trackedShip.plus(pos.times(distance));
-
 
             if (gen.checkWalkable(pos)) position = pos;
         }
@@ -284,8 +391,68 @@ public class BotProvider extends InputProvider {
         return position;
     }
 
+    /**
+     * The RUN state
+     * <p>
+     * When the bot is not confident to fight, will run away
+     */
+    public void run() {
+
+        if (!scared && path.size() < 10) {
+            gd.print("Entering run state");
+
+            Vector3 direction = targettedShip.getGlobalPosition().minus(myShip.getGlobalPosition());
+
+            Vector3 goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
+
+            while (direction.angleTo(goingTo) < Math.PI / 2) {
+                goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
+            }
+
+            path = gen.navigate(myShip.getGlobalPosition(), goingTo);
+            smoothOutPath(path);
+            targetPos = path.get(path.size() - 1).toVec3();
+            startPos = path.get(0).toVec3();
+        }
+        scared = true;
+
+    }
+
+    /**
+     * Returns if the ship is confident to fight the enemy within radius or enter the RUN state
+     * @return ship's confidence in a boolean
+     */
+    public boolean confident() {
+
+//        return true;
+
+        Ship ownShip = (Ship) getParent();
+
+        if (ownShip.getHealth() < 50 && targettedShip.getHealth() > ownShip.getHealth() + 10) {
+            scared = false;
+            return false;
+        }
+        return true;
+
+
+    }
+    /**
+     * Given a path that the ship has:
+     * a) Calculates the rotation and velocity needed in order to travel to the next point
+     * b) Skips points if suitable (based on dot products and angle differences)
+     */
     public void moveToPoint() {
         if (path.size() == 0) return;
+
+//        if (path.get(0) != nextPointOnPath) {
+//            timeToNextPoint = 0;
+//            nextPointOnPath = path.get(0);
+//        }
+//        if (timeToNextPoint > 2) {
+//            path.clear();
+//            timeToNextPoint = 0;
+//            return;
+//        }
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
@@ -358,7 +525,8 @@ public class BotProvider extends InputProvider {
         return (
             targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
                 20 &&
-            Math.abs(gd.radToDeg(diff)) > 30
+            Math.abs(gd.radToDeg(diff)) > 30 &&
+            turretPitch > gd.degToRad(-10)
         );
     }
 
@@ -371,12 +539,20 @@ public class BotProvider extends InputProvider {
         currentState.turretPitch = turretPitch;
     }
 
+    /**
+     * Getter method for the InputState
+     * @return The InputState
+     */
     @RegisterFunction
     @Override
     public InputState getState() {
         return currentState;
     }
 
+    /**
+     * Setter method for the generator
+     * @param gen The generator to be set
+     */
     @RegisterFunction
     public void setGenerator(Generator gen) {
         this.gen = gen;
@@ -411,11 +587,9 @@ public class BotProvider extends InputProvider {
         ).normalized();
 
         // convert direction into yaw and pitch input
-        turretPitch =
-            Math.asin(direction.getY() / direction.length()) +
-            Math.random() * 0.15;
+        turretPitch = Math.asin(direction.getY() / direction.length());
         double yaw = Math.atan2(direction.getX(), direction.getZ());
-        turretYaw = yaw + Math.random() * 0.3 - 0.15;
+        turretYaw = yaw;
     }
 
     private Vector3 getProjectileVelocity(

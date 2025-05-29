@@ -16,6 +16,17 @@ import godot.global.GD;
 import main.GameCamera;
 import multiplayer.MultiplayerManager;
 
+/**
+ * The bullet class that manages cannonballs
+ * <p>
+ *     Is a RigidBody3D, meaning it's movement is controlled through applied forces, impulses, and more
+ * </p>
+ * <p>
+ *     Does not actually handle the movement of the cannonball, that is handled in
+ *     match manager in order for better functionality and practice
+ *     Handles certain conditions of a cannonball, i.e. a cannonball colliding with a ship/land
+ * </p>
+ */
 @RegisterClass
 public class Bullet extends RigidBody3D {
 
@@ -31,10 +42,21 @@ public class Bullet extends RigidBody3D {
 
     private Node collisionBody;
 
+    /**
+     * The explosion scene which creates particle effects during collisions
+     */
     @RegisterProperty
     @Export
     public PackedScene explosion;
 
+    /**
+     * Overriding Godot's built-in _process function
+     * If its position is more than a certain amount, turn off wave effector
+     * Spawns an explosion if its time passes more than a certain amount
+     * <p>
+     * No need to handle the movement of bullet's here, just use a call to the impulse method to move the bullet!
+     * @param delta the time passed between each call to _process
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -47,6 +69,11 @@ public class Bullet extends RigidBody3D {
         if (timeElapsed > maxLifetime) spawnExplosion();
     }
 
+    /**
+     * Is called when the cannonball is colliding with something (land, ship, etc)
+     * Invokes damage and spawns a collision
+     * @param body The body that the cannonball is colliding with
+     */
     @RegisterFunction
     public void onCollision(Node body) {
         if (!getMultiplayer().isServer()) return;
@@ -59,11 +86,18 @@ public class Bullet extends RigidBody3D {
         }
     }
 
+    /**
+     * Setter method that set's the id of whoever fired the cannonball
+     * @param id The id to be set
+     */
     @RegisterFunction
     public void setOwner(int id) {
         ownerId = id;
     }
 
+    /**
+     * Spawns an explosion through the explosion scene and shakes the camera
+     */
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {

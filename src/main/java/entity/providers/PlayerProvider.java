@@ -10,8 +10,15 @@ import godot.core.Vector2;
 import godot.global.GD;
 import main.GameCameraFrame;
 
-/** PlayerProvider
- * a version of inputprovider for the local player's input
+/**
+ * PlayerProvider class that extends InputProvider
+ * a version of InputProvider for the local player's input
+ * <p>
+ * Passes player input such as moving the camera, keyboard inputs, and more into an InputState which is
+ * eventually used by ship to determine it's orientation and actions
+ * <p>
+ * Process method finds input and calculates values for inputState
+ * Getter and setter methods for a ship's respective inputState
  */
 @RegisterClass
 public class PlayerProvider extends InputProvider {
@@ -27,15 +34,15 @@ public class PlayerProvider extends InputProvider {
     private double power;
     private InputState currentState;
 
-    AudioStreamPlayer wind;
+    private AudioStreamPlayer wind;
     private double volume;
 
     private double turretPitch;
     private double turretYaw;
 
-    /** _ready
-     * runs upon being instantiated in the game world
-     * acts as a constructor
+    /**
+     * Overrides Godot's internal built-in _ready function
+     * Runs upon being instantiated in the game world and acts as a constructor
      */
     @RegisterFunction
     @Override
@@ -53,8 +60,10 @@ public class PlayerProvider extends InputProvider {
         volume = 0;
     }
 
-    /** _process
-     * runs every frame to process user input
+    /**
+     * Overrides Godot's internal built-in _process function
+     * Runs every frame to process user input and turn it into values in inputState
+     * @param delta The time elapsed between each call to _process
      */
     @RegisterFunction
     @Override
@@ -163,6 +172,10 @@ public class PlayerProvider extends InputProvider {
         currentState.turretPitch = turretPitch;
     }
 
+    /**
+     * Getter method for the inputState
+     * @return it's inputState
+     */
     @RegisterFunction
     @Override
     public InputState getState() {
