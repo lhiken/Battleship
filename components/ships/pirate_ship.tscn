@@ -1,16 +1,17 @@
-[gd_scene load_steps=26 format=4 uid="uid://bo7hcc6it8x4n"]
+[gd_scene load_steps=29 format=4 uid="uid://bo7hcc6it8x4n"]
 
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="1_fkq6u"]
 [ext_resource type="ArrayMesh" uid="uid://n5aeqaf66e3a" path="res://assets/ships/pirate/components/ship_base.res" id="2_2j7l1"]
 [ext_resource type="ArrayMesh" uid="uid://gg21wmt7lfan" path="res://assets/ships/pirate/components/sails.res" id="3_jiwl3"]
 [ext_resource type="ArrayMesh" uid="uid://cyet6joloumlt" path="res://assets/ships/pirate/components/armor.res" id="4_pgt1k"]
 [ext_resource type="ArrayMesh" uid="uid://ciw5j2m7tldg1" path="res://assets/ships/pirate/components/turret.res" id="5_208i0"]
-[ext_resource type="Shader" uid="uid://b4w20nidwgv55" path="res://shaders/toon/fakesail.gdshader" id="5_pgt1k"]
+[ext_resource type="Shader" path="res://shaders/toon/fakesail.gdshader" id="5_pgt1k"]
 [ext_resource type="Script" uid="uid://nm45jsaanlok" path="res://gdj/entity/weapon/Turret.gdj" id="6_jiwl3"]
 [ext_resource type="ArrayMesh" uid="uid://qn4h2ohqxodv" path="res://assets/ships/pirate/components/cannon.res" id="6_pf812"]
 [ext_resource type="AudioStream" uid="uid://c7byb7v3ss2kb" path="res://audio/WindBlowing.wav" id="9_208i0"]
 [ext_resource type="AudioStream" uid="uid://b0k5pj5p27ejo" path="res://audio/EmptyCannon.wav" id="10_pf812"]
 [ext_resource type="AudioStream" uid="uid://ruxsrcl6hoa8" path="res://audio/CannonFire.wav" id="11_rfpwa"]
+[ext_resource type="FontFile" uid="uid://68rliu44w64e" path="res://assets/PixelifySans-Regular.ttf" id="12_x1kys"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_jiwl3"]
 
@@ -93,6 +94,15 @@ render_priority = 2
 transparency = 1
 shading_mode = 0
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rfpwa"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.337255)
+billboard_mode = 2
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_x1kys"]
+material = SubResource("StandardMaterial3D_rfpwa")
+
 [node name="Ship" instance=ExtResource("1_fkq6u")]
 
 [node name="ProjectilePath" type="MeshInstance3D" parent="." index="0"]
@@ -171,3 +181,16 @@ stream = ExtResource("10_pf812")
 [node name="CannonFire" type="AudioStreamPlayer" parent="." index="11"]
 stream = ExtResource("11_rfpwa")
 volume_db = -2.971
+
+[node name="Label3D" type="Label3D" parent="." index="12"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.01363, 0)
+billboard = 2
+no_depth_test = true
+text = "Name Tag"
+font = ExtResource("12_x1kys")
+font_size = 75
+outline_size = 0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Label3D" index="0"]
+transform = Transform3D(2.24, 0, 0, 0, 0.578, 0, 0, 0, 1.014, 0, 0, 0)
+mesh = SubResource("QuadMesh_x1kys")
