@@ -69,7 +69,6 @@ public class MatchManager extends Node {
         if (!manager.isServer()) return;
 
         instantiateNewBot();
-        instantiateNewBot();
         // MultiplayerAPI multiplayer = getMultiplayer();
         // var peerIds = multiplayer.getPeers();
 

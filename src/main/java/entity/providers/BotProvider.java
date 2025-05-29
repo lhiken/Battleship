@@ -460,7 +460,7 @@ public class BotProvider extends InputProvider {
             targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
                 20 &&
             Math.abs(gd.radToDeg(diff)) > 30 &&
-            turretPitch > gd.degToRad(-5)
+            turretPitch > gd.degToRad(-10)
         );
     }
 
@@ -521,11 +521,9 @@ public class BotProvider extends InputProvider {
         ).normalized();
 
         // convert direction into yaw and pitch input
-        turretPitch =
-            Math.asin(direction.getY() / direction.length()) +
-            Math.random() * 0.15;
+        turretPitch = Math.asin(direction.getY() / direction.length());
         double yaw = Math.atan2(direction.getX(), direction.getZ());
-        turretYaw = yaw + Math.random() * 0.3 - 0.15;
+        turretYaw = yaw;
     }
 
     private Vector3 getProjectileVelocity(
