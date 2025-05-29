@@ -61,8 +61,8 @@ z_index = -2
 mouse_filter = 2
 texture = SubResource("ViewportTexture_wgkvx")
 camera = NodePath("GameCamera")
-max_height = 800
-min_height = 600
+max_height = 400
+min_height = 300
 
 [node name="GameCamera" type="Camera3D" parent="RenderTarget" node_paths=PackedStringArray("camera_parent")]
 transform = Transform3D(-0.707107, -0.19929, 0.678442, -2.98023e-08, 0.959462, 0.281839, -0.707107, 0.19929, -0.678442, 37.0089, 12.7697, -33.1402)
