@@ -2,13 +2,11 @@
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
 registeredName = Hud
-fqName = entity.Hud
-relativeSourcePath = src/main/java/entity/Hud.java
-baseType = Panel
+fqName = ui.Hud
+relativeSourcePath = src/main/java/ui/Hud.java
+baseType = CanvasLayer
 supertypes = [
-    godot.api.Panel,
-	godot.api.Control,
-	godot.api.CanvasItem,
+    godot.api.CanvasLayer,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,

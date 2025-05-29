@@ -1,12 +1,15 @@
 // THIS FILE IS GENERATED! DO NOT EDIT OR DELETE IT. EDIT OR DELETE THE ASSOCIATED SOURCE CODE FILE INSTEAD
 // Note: You can however freely move this file inside your godot project if you want. Keep in mind however, that if you rename the originating source code file, this file will be deleted and regenerated as a new file instead of being updated! Other modifications to the source file however, will result in this file being updated.
 
-registeredName = InputProvider
-fqName = entity.InputProvider
-relativeSourcePath = src/main/java/entity/InputProvider.java
-baseType = Node3D
+registeredName = HealthBar
+fqName = ui.HealthBar
+relativeSourcePath = src/main/java/ui/HealthBar.java
+baseType = TextureProgressBar
 supertypes = [
-    godot.api.Node3D,
+    godot.api.TextureProgressBar,
+	godot.api.Range,
+	godot.api.Control,
+	godot.api.CanvasItem,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
@@ -21,5 +24,6 @@ properties = [
     
 ]
 functions = [
-    get_state
+    _process,
+	_ready
 ]

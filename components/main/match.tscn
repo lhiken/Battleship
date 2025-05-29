@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cdkpe7nflna3v"]
+[gd_scene load_steps=23 format=3 uid="uid://cdkpe7nflna3v"]
 
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="1_4nox8"]
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="1_g6i2c"]
@@ -8,10 +8,13 @@
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_wgkvx"]
 [ext_resource type="Script" uid="uid://bnrlsjacg5jdb" path="res://gdj/map/gen/Generator.gdj" id="7_cu54s"]
 [ext_resource type="PackedScene" uid="uid://cwdninys4bmar" path="res://components/main/arena_border.tscn" id="8_p7m5x"]
-[ext_resource type="Texture2D" uid="uid://htod16fq2n06" path="res://components/ui/images/progress-bar-circle.png" id="9_su1xq"]
-[ext_resource type="Texture2D" uid="uid://g2xj24tmsxv5" path="res://components/ui/images/progress-bar-frame.png" id="10_cldnh"]
+[ext_resource type="Script" uid="uid://calmwlkab8qvt" path="res://gdj/entity/Hud.gdj" id="9_eqq1t"]
+[ext_resource type="Texture2D" uid="uid://b67md8lyifp4h" path="res://components/ui/images/skill_icons_by_quintino_pixels/24x24/skill_icons3.png" id="11_53dmp"]
+[ext_resource type="Script" path="res://gdj/ui/HealthBar.gdj" id="12_1356g"]
+[ext_resource type="Texture2D" uid="uid://ba6tdpecep7j3" path="res://components/ui/images/pixil-frame-0 (4).png" id="12_bjvx5"]
 [ext_resource type="Texture2D" uid="uid://t7q151jqrwgn" path="res://components/ui/images/healthbarUnder.png" id="12_ivnly"]
 [ext_resource type="Texture2D" uid="uid://2u4p226njjmy" path="res://components/ui/images/healthbarProgress.png" id="13_2s1nh"]
+[ext_resource type="Theme" uid="uid://calvfgqpgo5wg" path="res://components/ui/theme.tres" id="13_eqq1t"]
 [ext_resource type="PackedScene" uid="uid://cnbmkpv8baiyy" path="res://components/zones/center_zone.tscn" id="13_ivnly"]
 [ext_resource type="AudioStream" uid="uid://b484syj63hp43" path="res://audio/Explosion.wav" id="14_2s1nh"]
 
@@ -103,43 +106,77 @@ spawn_path = NodePath("../MapTiles")
 _spawnable_scenes = PackedStringArray("uid://bo7hcc6it8x4n")
 spawn_path = NodePath("../Ships")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("9_eqq1t")
 
-[node name="Cooldown Bar" type="TextureProgressBar" parent="HUD"]
-texture_filter = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -247.0
-offset_top = 77.0
-offset_right = -119.0
-offset_bottom = 205.0
-grow_horizontal = 0
-scale = Vector2(0.75, 0.75)
-value = 33.0
-fill_mode = 4
-nine_patch_stretch = true
-texture_under = ExtResource("9_su1xq")
-texture_over = ExtResource("10_cldnh")
-texture_progress = ExtResource("9_su1xq")
-tint_under = Color(0.23212, 0.23212, 0.23212, 1)
-tint_progress = Color(0.363902, 0.743912, 0.369408, 1)
-
-[node name="Health Bar" type="TextureProgressBar" parent="HUD"]
+[node name="HealthBar" type="TextureProgressBar" parent="Hud"]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -285.0
-offset_top = -87.0
-offset_right = 288.0
-offset_bottom = -31.0
+offset_left = -391.0
+offset_top = -80.0
+offset_right = 391.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
+value = 100.0
 nine_patch_stretch = true
 texture_under = ExtResource("12_ivnly")
 texture_progress = ExtResource("13_2s1nh")
+script = ExtResource("12_1356g")
+
+[node name="CannonButton" type="TextureButton" parent="Hud"]
+offset_left = 1720.0
+offset_top = 52.0
+offset_right = 1760.0
+offset_bottom = 92.0
+scale = Vector2(2.5, 2.5)
+texture_normal = ExtResource("11_53dmp")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Cooldown" type="TextureProgressBar" parent="Hud/CannonButton"]
+layout_mode = 0
+offset_left = 1720.0
+offset_top = 52.0
+offset_right = 1760.0
+offset_bottom = 92.0
+scale = Vector2(2.5, 2.5)
+step = 0.01
+value = 50.0
+fill_mode = 5
+nine_patch_stretch = true
+texture_progress = ExtResource("12_bjvx5")
+tint_progress = Color(0.0923971, 0.0923971, 0.0923971, 0.698039)
+
+[node name="Time" type="Label" parent="Hud/CannonButton"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("13_eqq1t")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 8
+text = "0.0"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="Timer" type="Timer" parent="Hud/CannonButton"]
+wait_time = 3.0
+
+[node name="Panel" type="Panel" parent="Hud/CannonButton"]
+show_behind_parent = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="CenterZone" parent="." instance=ExtResource("13_ivnly")]
 
