@@ -171,9 +171,9 @@ public class BotProvider extends InputProvider {
         Ship ownShip = (Ship) getParent();
 
         Node3D ships = (Node3D) getParent()
-                .getParent()
-                .getParent()
-                .getNode("Ships");
+            .getParent()
+            .getParent()
+            .getNode("Ships");
         VariantArray<Node> temp = ships.getChildren();
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
@@ -187,10 +187,10 @@ public class BotProvider extends InputProvider {
         Ship trackedShip = new Ship();
         for (Ship ship : shipInfo) {
             if (
-                    (this.getGlobalPosition()
-                            .minus(ship.getGlobalPosition())).length() <
-                            (this.getGlobalPosition().minus(closestShipLoc)).length() &&
-                            ship.getGlobalPosition() != ownShip.getGlobalPosition()
+                !ship.isSinking() &&
+                (this.getGlobalPosition()
+                        .minus(ship.getGlobalPosition())).length() <
+                (this.getGlobalPosition().minus(closestShipLoc)).length()
             ) {
                 trackedShip = ship;
                 closestShipLoc = ship.getGlobalPosition();
@@ -212,26 +212,9 @@ public class BotProvider extends InputProvider {
                 startPos = path.get(0).toVec3();
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
-
-//        targettedShip = trackedShip;
-//        if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
-//            if (closestShipLoc.minus(targetPos).length() > 10) {
-//                path = gen.navigate(
-//                        this.getGlobalPosition(),
-//                        getRandomPosition(this.getGlobalPosition() ,trackedShip.getGlobalPosition(), 5)
-//                );
-//                smoothOutPath(path);
-//                targetPos = path.get(path.size() - 1).toVec3();
-//                startPos = path.get(0).toVec3();
-//            }
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     private void handleTargetting() {
@@ -239,30 +222,30 @@ public class BotProvider extends InputProvider {
 
         if (targettedShip != null) {
             setAimDirection(
-                    targettedShip
-                            .getGlobalPosition()
-                            .plus(
-                                    new Vector3(
-                                            0,
-                                            targettedShip
-                                                    .getGlobalPosition()
-                                                    .distanceTo(
-                                                            targettedShip.getGlobalPosition()
-                                                    ) /
-                                                    30.0 -
-                                                    1,
-                                            0
-                                    )
-                            ),
-                    thisShip.getGlobalPosition(),
-                    targettedShip.velocityProperty(),
-                    thisShip.velocityProperty(),
-                    25.0
+                targettedShip
+                    .getGlobalPosition()
+                    .plus(
+                        new Vector3(
+                            0,
+                            targettedShip
+                                    .getGlobalPosition()
+                                    .distanceTo(
+                                        targettedShip.getGlobalPosition()
+                                    ) /
+                                30.0 -
+                            1,
+                            0
+                        )
+                    ),
+                thisShip.getGlobalPosition(),
+                targettedShip.velocityProperty(),
+                thisShip.velocityProperty(),
+                25.0
             );
             turretPitch = gd.clamp(
-                    turretPitch,
-                    gd.degToRad(-15),
-                    gd.degToRad(25)
+                turretPitch,
+                gd.degToRad(-15),
+                gd.degToRad(25)
             );
 
             if (canShoot()) {
@@ -285,9 +268,9 @@ public class BotProvider extends InputProvider {
             path.add(0, path.get(0));
             for (int i = 0; i < path.size() - 1; i++) {
                 double averageX =
-                        (path.get(i).getX() + path.get(i + 1).getX()) / 2;
+                    (path.get(i).getX() + path.get(i + 1).getX()) / 2;
                 double averageZ =
-                        (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
+                    (path.get(i).getZ() + path.get(i + 1).getZ()) / 2;
                 path.set(i, new Coordinate(averageX, averageZ, i, i));
             }
         }
@@ -301,13 +284,12 @@ public class BotProvider extends InputProvider {
      * And generates a path that goes to a place near the closest enemy ship (but not directly to it)
      */
     public void chase() {
-
         Ship ownShip = (Ship) getParent();
 
         Node3D ships = (Node3D) getParent()
-                .getParent()
-                .getParent()
-                .getNode("Ships");
+            .getParent()
+            .getParent()
+            .getNode("Ships");
         VariantArray<Node> temp = ships.getChildren();
         ArrayList<Ship> shipInfo = new ArrayList<Ship>();
 
@@ -322,10 +304,10 @@ public class BotProvider extends InputProvider {
 
         for (Ship ship : shipInfo) {
             if (
-                    (this.getGlobalPosition()
+                (this.getGlobalPosition()
                             .minus(ship.getGlobalPosition())).length() <
-                            (this.getGlobalPosition().minus(closestShipLoc)).length() &&
-                            ship.getGlobalPosition() != ownShip.getGlobalPosition()
+                    (this.getGlobalPosition().minus(closestShipLoc)).length() &&
+                ship.getGlobalPosition() != ownShip.getGlobalPosition()
             ) {
                 trackedShip = ship;
                 closestShipLoc = ship.getGlobalPosition();
@@ -334,18 +316,22 @@ public class BotProvider extends InputProvider {
 
         targettedShip = trackedShip;
         if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
-            if (closestShipLoc.minus(targetPos).length() > 10 || path.size() < 1) {
+            if (
+                closestShipLoc.minus(targetPos).length() > 10 || path.size() < 1
+            ) {
                 path = gen.navigate(
+                    this.getGlobalPosition(),
+                    getRandomPosition(
                         this.getGlobalPosition(),
-                        getRandomPosition(this.getGlobalPosition() ,trackedShip.getGlobalPosition(), 5)
+                        trackedShip.getGlobalPosition(),
+                        5
+                    )
                 );
                 smoothOutPath(path);
                 targetPos = path.get(path.size() - 1).toVec3();
                 startPos = path.get(0).toVec3();
             }
         }
-
-
     }
 
     private Vector3 getRandomPosition() {
@@ -356,9 +342,9 @@ public class BotProvider extends InputProvider {
             double distance = Math.random() * 60;
 
             Vector3 pos = new Vector3(
-                    Math.cos(direction),
-                    0,
-                    Math.sin(direction)
+                Math.cos(direction),
+                0,
+                Math.sin(direction)
             );
 
             pos = pos.times(distance);
@@ -400,7 +386,6 @@ public class BotProvider extends InputProvider {
      * b) Skips points if suitable (based on dot products and angle differences)
      */
     public void moveToPoint() {
-
         if (path.size() == 0) return;
 
         Vector3 curr = path.get(0).toVec3();
@@ -409,14 +394,14 @@ public class BotProvider extends InputProvider {
         Vector3 shipToCurr = getGlobalPosition().minus(curr);
         Vector3 currToNext = curr.minus(next);
         Vector3 shipDirection = new Vector3(
-                Math.sin(shipYaw),
-                0,
-                Math.cos(shipYaw)
+            Math.sin(shipYaw),
+            0,
+            Math.cos(shipYaw)
         );
         Vector3 currTargetDirection =
-                this.getGlobalPosition().directionTo(curr);
+            this.getGlobalPosition().directionTo(curr);
         Vector3 nextTargetDirection =
-                this.getGlobalPosition().directionTo(next);
+            this.getGlobalPosition().directionTo(next);
 
         // shows if the ship is past the current target
         double pastCurr = shipToCurr.dot(currToNext);
@@ -426,13 +411,13 @@ public class BotProvider extends InputProvider {
         }
 
         Vector3 finalDirection = currTargetDirection.dot(shipDirection) <
-                nextTargetDirection.dot(shipDirection)
-                ? nextTargetDirection
-                : currTargetDirection;
+            nextTargetDirection.dot(shipDirection)
+            ? nextTargetDirection
+            : currTargetDirection;
 
         double expectedRotation = Math.atan2(
-                finalDirection.getX(),
-                finalDirection.getZ()
+            finalDirection.getX(),
+            finalDirection.getZ()
         );
 
         // double rotationInput = normalizeAngle(
@@ -440,21 +425,21 @@ public class BotProvider extends InputProvider {
         // );
         // rotation += gd.clamp(rotationInput, gd.degToRad(-2), gd.degToRad(2));
         double lerpFactor = gd.lerp(
-                0.6,
+            0.6,
+            1.0,
+            gd.smoothstep(
+                0.8,
                 1.0,
-                gd.smoothstep(
-                        0.8,
-                        1.0,
-                        gd.clamp(
-                                (currTargetDirection
-                                        .normalized()
-                                        .dot(shipDirection.normalized()) /
-                                        2) +
-                                        0.5,
-                                0,
-                                1
-                        )
+                gd.clamp(
+                    (currTargetDirection
+                            .normalized()
+                            .dot(shipDirection.normalized()) /
+                        2) +
+                    0.5,
+                    0,
+                    1
                 )
+            )
         );
         rotation = gd.lerpAngle(rotation, expectedRotation, lerpFactor * 0.05);
 
@@ -472,9 +457,10 @@ public class BotProvider extends InputProvider {
         double rot = getGlobalRotation().getY() - Math.PI;
         double diff = normalizeAngle(rot - turretYaw);
         return (
-                targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
-                        20 &&
-                        Math.abs(gd.radToDeg(diff)) > 30 && turretPitch > gd.degToRad(-5)
+            targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
+                20 &&
+            Math.abs(gd.radToDeg(diff)) > 30 &&
+            turretPitch > gd.degToRad(-5)
         );
     }
 
@@ -507,11 +493,11 @@ public class BotProvider extends InputProvider {
     }
 
     private void setAimDirection(
-            Vector3 P_t,
-            Vector3 P_s,
-            Vector3 V_t,
-            Vector3 V_s,
-            double S_p
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p
     ) {
         double t = 2.0;
 
@@ -527,55 +513,55 @@ public class BotProvider extends InputProvider {
 
         // get direction based on solved t
         Vector3 direction = getProjectileVelocity(
-                P_t,
-                P_s,
-                V_t,
-                V_s,
-                t
+            P_t,
+            P_s,
+            V_t,
+            V_s,
+            t
         ).normalized();
 
         // convert direction into yaw and pitch input
         turretPitch =
-                Math.asin(direction.getY() / direction.length()) +
-                        Math.random() * 0.15;
+            Math.asin(direction.getY() / direction.length()) +
+            Math.random() * 0.15;
         double yaw = Math.atan2(direction.getX(), direction.getZ());
         turretYaw = yaw + Math.random() * 0.3 - 0.15;
     }
 
     private Vector3 getProjectileVelocity(
-            Vector3 P_t,
-            Vector3 P_s,
-            Vector3 V_t,
-            Vector3 V_s,
-            double t
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double t
     ) {
         Vector3 g = new Vector3(0, -9.8, 0);
         return P_t.plus(V_t.times(t))
-                .minus(P_s.plus(V_s.times(t)))
-                .minus(g.times(t * t * 0.5))
-                .div(t);
+            .minus(P_s.plus(V_s.times(t)))
+            .minus(g.times(t * t * 0.5))
+            .div(t);
     }
 
     // f(t) scalar
     private double f_t(
-            Vector3 P_t,
-            Vector3 P_s,
-            Vector3 V_t,
-            Vector3 V_s,
-            double S_p,
-            double t
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
     ) {
         return (u_t(P_t, P_s, V_t, V_s, S_p, t).length() - S_p * t);
     }
 
     // f'(t) scalar
     private double f_pt(
-            Vector3 P_t,
-            Vector3 P_s,
-            Vector3 V_t,
-            Vector3 V_s,
-            double S_p,
-            double t
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
     ) {
         Vector3 u_t = u_t(P_t, P_s, V_t, V_s, S_p, t);
         Vector3 u_pt = u_pt(V_t, V_s, t);
@@ -584,12 +570,12 @@ public class BotProvider extends InputProvider {
 
     // u(t) vector
     private Vector3 u_t(
-            Vector3 P_t,
-            Vector3 P_s,
-            Vector3 V_t,
-            Vector3 V_s,
-            double S_p,
-            double t
+        Vector3 P_t,
+        Vector3 P_s,
+        Vector3 V_t,
+        Vector3 V_s,
+        double S_p,
+        double t
     ) {
         Vector3 R = P_t.minus(P_s); // relative distance
         Vector3 g = new Vector3(0, -9.8, 0);
