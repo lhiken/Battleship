@@ -85,6 +85,8 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        long startTimeNano = System.nanoTime();
+
         timeToNextPoint += delta;
         myShip = (Ship) getParent();
 
@@ -93,8 +95,7 @@ public class BotProvider extends InputProvider {
 
         if (myShip.isSinking()) {
             path.clear();
-        }
-        else {
+        } else {
             if (!enemyWithinRadius()) {
                 wander();
             } else if (!confident()) {
@@ -106,10 +107,13 @@ public class BotProvider extends InputProvider {
             moveToPoint();
             handleTargetting();
 
-            gen.visualizePath(path);
-
             updateState();
         }
+
+        long endTimeNano = System.nanoTime();
+        long durationNano = endTimeNano - startTimeNano;
+
+        gd.print(durationNano / 1000000.0 + "ms");
     }
 
     /**
@@ -209,19 +213,19 @@ public class BotProvider extends InputProvider {
         }
 
         if ((this.getGlobalPosition().minus(closestShipLoc)).length() < 30) {
-//            if (closestShipLoc.minus(targetPos).length() > 10) {
-//                path = gen.navigate(
-//                    this.getGlobalPosition(),
-//                    getRandomPosition(
-//                        this.getGlobalPosition(),
-//                        trackedShip.getGlobalPosition(),
-//                        5
-//                    )
-//                );
-//                smoothOutPath(path);
-//                targetPos = path.get(path.size() - 1).toVec3();
-//                startPos = path.get(0).toVec3();
-//            }
+            //            if (closestShipLoc.minus(targetPos).length() > 10) {
+            //                path = gen.navigate(
+            //                    this.getGlobalPosition(),
+            //                    getRandomPosition(
+            //                        this.getGlobalPosition(),
+            //                        trackedShip.getGlobalPosition(),
+            //                        5
+            //                    )
+            //                );
+            //                smoothOutPath(path);
+            //                targetPos = path.get(path.size() - 1).toVec3();
+            //                startPos = path.get(0).toVec3();
+            //            }
             return true;
         } else {
             return false;
@@ -397,13 +401,15 @@ public class BotProvider extends InputProvider {
      * When the bot is not confident to fight, will run away
      */
     public void run() {
-
         if (!scared && path.size() < 10) {
             gd.print("Entering run state");
 
-            Vector3 direction = targettedShip.getGlobalPosition().minus(myShip.getGlobalPosition());
+            Vector3 direction = targettedShip
+                .getGlobalPosition()
+                .minus(myShip.getGlobalPosition());
 
-            Vector3 goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
+            Vector3 goingTo = getRandomPosition()
+                .minus(myShip.getGlobalPosition());
 
             while (direction.angleTo(goingTo) < Math.PI / 2) {
                 goingTo = getRandomPosition().minus(myShip.getGlobalPosition());
@@ -415,7 +421,6 @@ public class BotProvider extends InputProvider {
             startPos = path.get(0).toVec3();
         }
         scared = true;
-
     }
 
     /**
@@ -423,19 +428,20 @@ public class BotProvider extends InputProvider {
      * @return ship's confidence in a boolean
      */
     public boolean confident() {
-
-//        return true;
+        //        return true;
 
         Ship ownShip = (Ship) getParent();
 
-        if (ownShip.getHealth() < 50 && targettedShip.getHealth() > ownShip.getHealth() + 10) {
+        if (
+            ownShip.getHealth() < 50 &&
+            targettedShip.getHealth() > ownShip.getHealth() + 10
+        ) {
             scared = false;
             return false;
         }
         return true;
-
-
     }
+
     /**
      * Given a path that the ship has:
      * a) Calculates the rotation and velocity needed in order to travel to the next point
@@ -444,15 +450,15 @@ public class BotProvider extends InputProvider {
     public void moveToPoint() {
         if (path.size() == 0) return;
 
-//        if (path.get(0) != nextPointOnPath) {
-//            timeToNextPoint = 0;
-//            nextPointOnPath = path.get(0);
-//        }
-//        if (timeToNextPoint > 2) {
-//            path.clear();
-//            timeToNextPoint = 0;
-//            return;
-//        }
+        //        if (path.get(0) != nextPointOnPath) {
+        //            timeToNextPoint = 0;
+        //            nextPointOnPath = path.get(0);
+        //        }
+        //        if (timeToNextPoint > 2) {
+        //            path.clear();
+        //            timeToNextPoint = 0;
+        //            return;
+        //        }
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
@@ -526,7 +532,7 @@ public class BotProvider extends InputProvider {
             targettedShip.getGlobalPosition().distanceTo(getGlobalPosition()) <
                 20 &&
             Math.abs(gd.radToDeg(diff)) > 30 &&
-            turretPitch > gd.degToRad(-5)
+            turretPitch > gd.degToRad(-10)
         );
     }
 
@@ -587,11 +593,9 @@ public class BotProvider extends InputProvider {
         ).normalized();
 
         // convert direction into yaw and pitch input
-        turretPitch =
-            Math.asin(direction.getY() / direction.length()) +
-            Math.random() * 0.15;
+        turretPitch = Math.asin(direction.getY() / direction.length());
         double yaw = Math.atan2(direction.getX(), direction.getZ());
-        turretYaw = yaw + Math.random() * 0.3 - 0.15;
+        turretYaw = yaw;
     }
 
     private Vector3 getProjectileVelocity(

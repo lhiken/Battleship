@@ -67,9 +67,6 @@ public class MatchManager extends Node {
 
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
-
-        instantiateNewBot();
-        instantiateNewBot();
         // MultiplayerAPI multiplayer = getMultiplayer();
         // var peerIds = multiplayer.getPeers();
 
