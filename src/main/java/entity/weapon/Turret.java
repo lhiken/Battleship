@@ -14,6 +14,21 @@ import godot.global.GD;
 import java.util.ArrayList;
 import javax.sound.sampled.Line;
 
+/**
+ * The turret class which acts as the main weapon for the Ship class
+ * <p>
+ *     Uses it's ship class's inputState in order to get the turret's yaw and pitch (rotation)
+ *     Does not actually handle cannonballs, simply acts as a class to track aim
+ *     (Cannonballs need to made in match scene to work properly)
+ * </p>
+ * <p>
+ *     In the turret's process method, the turret uses it's pitch and yaw
+ *     in order to predict the projectile path of a cannonball being shot
+ *     Includes a method to showAim (which is determined through other classes)
+ *     On ready, the ship instantiates some of it's fields
+ * </p>
+ *
+ */
 @RegisterClass
 public class Turret extends MeshInstance3D {
 
@@ -25,6 +40,12 @@ public class Turret extends MeshInstance3D {
     private double yaw;
     private double pitch;
 
+    /**
+     * Overriding Godot's built-in ready function
+     * Automatically runs at the start of a match scene
+     * Gets its respective ship and cannon instances
+     * Sets showAim to be true
+     */
     @RegisterFunction
     @Override
     public void _ready() {
@@ -33,6 +54,14 @@ public class Turret extends MeshInstance3D {
         showAim = true;
     }
 
+    /**
+     * Overriding Godot's built-in _process function
+     * <p>
+     *     Depending on a turret's respective yaw and pitch,
+     *     calculates the expected projectile path of a cannonball being shot
+     * </p>
+     * @param delta the time passed in between each _process call
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {
@@ -98,6 +127,10 @@ public class Turret extends MeshInstance3D {
         }
     }
 
+    /**
+     * Setter method for the showAim field (should we show the expected projectile path?)
+     * @param var the value for showAim to be set to
+     */
     public void setShowAim(boolean var) {
         showAim = var;
     }
