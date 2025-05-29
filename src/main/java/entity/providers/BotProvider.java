@@ -53,7 +53,8 @@ public class BotProvider extends InputProvider {
     private ArrayList<Coordinate> path;
     private Generator gen;
     private Ship targettedShip;
-    private double time;
+    private double timeToNextPoint;
+    private Coordinate nextPointOnPath;
 
     /**
      * Overrides Godot's internal built-in _ready function
@@ -86,7 +87,7 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        time += delta;
+        timeToNextPoint += delta;
 
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
@@ -406,6 +407,16 @@ public class BotProvider extends InputProvider {
     public void moveToPoint() {
 
         if (path.size() == 0) return;
+
+//        if (path.get(0) != nextPointOnPath) {
+//            timeToNextPoint = 0;
+//            nextPointOnPath = path.get(0);
+//        }
+//        if (timeToNextPoint > 2) {
+//            path.clear();
+//            timeToNextPoint = 0;
+//            return;
+//        }
 
         Vector3 curr = path.get(0).toVec3();
         Vector3 next = path.size() >= 2 ? path.get(1).toVec3() : curr;
