@@ -52,6 +52,10 @@ public class Turret extends MeshInstance3D {
         ship = (Ship) getParent();
         cannon = (Node3D) getNode("Cannon");
         showAim = true;
+        if (
+            getParent().getName().toString().length() > 4 &&
+            getParent().getName().toString().startsWith("Bot")
+        ) showAim = false;
     }
 
     /**
