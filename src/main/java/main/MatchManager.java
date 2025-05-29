@@ -45,6 +45,8 @@ public class MatchManager extends Node {
 
     private Vector3[] spawnLocations;
 
+    private int botId = 0;
+
     /**
      * Reference to the gameCamera that is displayed
      */
@@ -66,6 +68,7 @@ public class MatchManager extends Node {
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
 
+        instantiateNewBot();
         instantiateNewBot();
         // MultiplayerAPI multiplayer = getMultiplayer();
         // var peerIds = multiplayer.getPeers();
@@ -119,13 +122,15 @@ public class MatchManager extends Node {
         provider.setGenerator((Generator) getNode("Generator"));
 
         shipNode.addChild(provider);
-        shipNode.setName("Bot");
+        shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
         shipNode.translate(
             new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
         );
 
         getNode("Ships").addChild(shipNode);
+
+        botId++;
 
         return shipNode;
     }
