@@ -11,12 +11,7 @@ import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
-import godot.api.Control;
-import godot.api.MultiplayerAPI;
-import godot.api.Node;
-import godot.api.Node3D;
-import godot.api.PackedScene;
-import godot.api.RigidBody3D;
+import godot.api.*;
 import godot.core.Signal1;
 import godot.core.StringName;
 import godot.core.StringNames;
@@ -46,6 +41,10 @@ public class MatchManager extends Node {
     private Vector3[] spawnLocations;
 
     private int botId = 0;
+
+    private boolean isStarted = false;
+
+    CanvasLayer hud;
 
     /**
      * Reference to the gameCamera that is displayed
@@ -160,6 +159,15 @@ public class MatchManager extends Node {
         gameCamera.setPlayerMode();
 
         ((Lobby) getNode("Lobby")).setVisible(false);
+
+    }
+
+    /**
+     * When called, returns if match has started
+     */
+    @RegisterFunction
+    public boolean isMatchStarted() {
+        return isStarted;
     }
 
     /**

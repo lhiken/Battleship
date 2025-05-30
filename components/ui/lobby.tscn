@@ -38,7 +38,7 @@ offset_bottom = 88.0
 grow_horizontal = 2
 mouse_filter = 1
 
-[node name="Button" type="Button" parent="LobbyMenu/Header"]
+[node name="StartGame" type="Button" parent="LobbyMenu/Header"]
 z_index = 5
 layout_mode = 2
 offset_left = 418.0
@@ -71,4 +71,4 @@ offset_bottom = 512.0
 [node name="PlayerEntry" parent="LobbyMenu/PlayerList" instance=ExtResource("3_n2f4k")]
 layout_mode = 2
 
-[connection signal="pressed" from="LobbyMenu/Header/Button" to="." method="start_match"]
+[connection signal="pressed" from="LobbyMenu/Header/StartGame" to="." method="start_match"]

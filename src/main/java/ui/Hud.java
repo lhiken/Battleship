@@ -10,7 +10,7 @@ public class Hud extends CanvasLayer {
 	@RegisterFunction
 	@Override
 	public void _ready() {
-		// Initialize logic
+		//this.setVisible(false);
 	}
 
 	@RegisterFunction
