@@ -185,4 +185,6 @@ offset_bottom = 40.0
 [node name="Explosion" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_2s1nh")
 
+[node name="SeaMines" type="Node3D" parent="."]
+
 [editable path="Lobby"]
