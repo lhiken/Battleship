@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=4 uid="uid://bo7hcc6it8x4n"]
+[gd_scene load_steps=30 format=4 uid="uid://bo7hcc6it8x4n"]
 
 [ext_resource type="PackedScene" uid="uid://cd4pndhcmny8k" path="res://components/ships/ship.tscn" id="1_fkq6u"]
 [ext_resource type="ArrayMesh" uid="uid://n5aeqaf66e3a" path="res://assets/ships/pirate/components/ship_base.res" id="2_2j7l1"]
@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://b0k5pj5p27ejo" path="res://audio/EmptyCannon.wav" id="10_pf812"]
 [ext_resource type="AudioStream" uid="uid://ruxsrcl6hoa8" path="res://audio/CannonFire.wav" id="11_rfpwa"]
 [ext_resource type="FontFile" uid="uid://68rliu44w64e" path="res://assets/PixelifySans-Regular.ttf" id="12_x1kys"]
+[ext_resource type="Script" uid="uid://7j3gted41rk0" path="res://gdj/entity/NameTag.gdj" id="13_u17r8"]
 
 [sub_resource type="ImmediateMesh" id="ImmediateMesh_jiwl3"]
 
@@ -182,7 +183,7 @@ stream = ExtResource("10_pf812")
 stream = ExtResource("11_rfpwa")
 volume_db = -2.971
 
-[node name="Label3D" type="Label3D" parent="." index="12"]
+[node name="NameTag" type="Label3D" parent="." index="12"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.01363, 0)
 billboard = 2
 no_depth_test = true
@@ -190,7 +191,8 @@ text = "Name Tag"
 font = ExtResource("12_x1kys")
 font_size = 75
 outline_size = 0
+script = ExtResource("13_u17r8")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Label3D" index="0"]
+[node name="NameBG" type="MeshInstance3D" parent="NameTag" index="0"]
 transform = Transform3D(2.24, 0, 0, 0, 0.578, 0, 0, 0, 1.014, 0, 0, 0)
 mesh = SubResource("QuadMesh_x1kys")
