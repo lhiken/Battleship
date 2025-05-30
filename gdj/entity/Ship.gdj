@@ -28,6 +28,7 @@ functions = [
 	_process,
 	_physics_process,
 	_ready,
+	set_spawn,
 	set_health,
 	get_health,
 	get_pitch,

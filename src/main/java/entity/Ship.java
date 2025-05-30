@@ -7,8 +7,10 @@ import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
+import godot.annotation.TransferMode;
 import godot.api.*;
 import godot.core.NodePath;
+import godot.core.StringName;
 import godot.core.StringNames;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -77,6 +79,8 @@ public class Ship extends CharacterBody3D {
 
     private boolean sinking = false;
 
+    private Vector3 spawnPosition;
+
     /**
      * Sets up multiplayer id and gives ship full health when program runs
      */
@@ -87,7 +91,20 @@ public class Ship extends CharacterBody3D {
             setMultiplayerAuthority(Integer.parseInt(getName().toString()));
         }
         health = 100;
+        gd.print(getName() + ": " + spawnPosition);
+        gd.print(getGlobalPosition());
+        setGlobalPosition(spawnPosition);
+        gd.print(getGlobalPosition());
         // instantiateNewCannon();
+    }
+
+    /**
+     * Sets up the spawn position for this ship instance
+     */
+    @RegisterFunction
+    public void setSpawn(Vector3 spawn) {
+        this.spawnPosition = spawn;
+        setGlobalPosition(spawn);
     }
 
     /**
@@ -113,6 +130,9 @@ public class Ship extends CharacterBody3D {
             ((CollisionShape3D) getNode("ShipCollider2")).setDisabled(true); // know
             ((CollisionShape3D) getNode("ShipCollider3")).setDisabled(true); // but!
             ((Label3D) getNode("NameTag")).setVisible(false);
+            if (getName().toString().startsWith("Bot")) {
+                ((MatchManager) getParent().getParent()).instantiateNewBot();
+            }
             sinking = true;
         }
 
@@ -196,11 +216,19 @@ public class Ship extends CharacterBody3D {
      * Setter method that sets health of ship
      * @param health health of the ship
      */
-    @Rpc(rpcMode = RpcMode.ANY, sync = Sync.NO_SYNC)
+    @Rpc(
+        rpcMode = RpcMode.ANY,
+        sync = Sync.NO_SYNC,
+        transferMode = TransferMode.RELIABLE
+    )
     @RegisterFunction
     public void setHealth(double health) {
         this.health = health;
-        rpc(StringNames.toGodotName("setHealth"), health);
+        gd.print(getName() + " health: " + this.health);
+        if (getMultiplayer().isServer()) rpc(
+            StringNames.toGodotName("setHealth"),
+            health
+        );
     }
 
     /**

@@ -30,7 +30,11 @@ public class HealthBar extends TextureProgressBar {
             for (Node ship : ships) {
                 Ship temp = (Ship) ship;
                 if (
-                    temp.getName().toString().equals(manager.getPeerId() + "")
+                    temp
+                        .getName()
+                        .toString()
+                        .equals(manager.getPeerId() + "") &&
+                    !temp.isSinking()
                 ) {
                     ourShip = (Ship) ship;
                 }

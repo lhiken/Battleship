@@ -96,10 +96,7 @@ public class GameCameraFrame extends TextureRect {
         if (event.isActionPressed("show_cursor")) {
             prevMode = Input.getMouseMode();
             Input.setMouseMode(MouseMode.VISIBLE);
-        } else if (
-            event.isActionReleased("show_cursor") &&
-            prevMode != Input.MouseMode.VISIBLE
-        ) {
+        } else if (event.isActionReleased("show_cursor")) {
             Input.setMouseMode(MouseMode.CAPTURED);
         }
     }

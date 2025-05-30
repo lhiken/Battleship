@@ -23,6 +23,7 @@ functions = [
     _ready,
 	instantiate_new_player,
 	start_match,
+	setup_camera,
 	spawn_bullet,
 	get_spawn_points
 ]

@@ -11,6 +11,8 @@ import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
+import godot.annotation.TransferMode;
+import godot.api.Button;
 import godot.api.Control;
 import godot.api.MultiplayerAPI;
 import godot.api.Node;
@@ -94,6 +96,7 @@ public class MatchManager extends Node {
     @Rpc(rpcMode = RpcMode.ANY, sync = Sync.SYNC)
     @RegisterFunction
     public Ship instantiateNewPlayer(int playerId) {
+        gd.print(MultiplayerManager.Instance.getPeerId() + "received rpc");
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene playerProvider = gd.load(
             "res://components/providers/player_provider.tscn"
@@ -104,21 +107,19 @@ public class MatchManager extends Node {
             (PlayerProvider) (playerProvider.instantiate());
 
         Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
+        gd.print(spawn);
 
         shipNode.addChild(provider);
-        shipNode.setName(playerId + "");
         shipNode.setProvider(provider);
-        shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.setName(playerId + "");
 
         getNode("Ships").addChild(shipNode, true);
 
         spawnIndex++;
 
-        // If this is for the local player, set up the camera
-        if (playerId == getMultiplayer().getUniqueId()) {
-            gameCamera.setShip(shipNode);
-            gameCamera.setPlayerMode();
-        }
+        rpcId(playerId, StringNames.toGodotName("setupCamera"));
+        gd.print(MultiplayerManager.Instance.getPeerId() + "called camera rpc");
 
         return shipNode;
     }
@@ -144,7 +145,7 @@ public class MatchManager extends Node {
         shipNode.addChild(provider);
         shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
-        shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode);
 
@@ -160,7 +161,11 @@ public class MatchManager extends Node {
      * Sets the camera and playerShip
      * And takes the player from the lobby to the actual match
      */
-    @Rpc
+    @Rpc(
+        rpcMode = RpcMode.AUTHORITY,
+        sync = Sync.NO_SYNC,
+        transferMode = TransferMode.RELIABLE
+    )
     @RegisterFunction
     public void startMatch() {
         if (MultiplayerManager.Instance.isServer() && !gameStarted) {
@@ -171,12 +176,14 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
-            for (int i = 0; i < 6 - players.size(); i++) {
+            for (int i = 0; i < 3; i++) {
                 instantiateNewBot();
             }
 
             rpc(StringNames.toGodotName("startMatch"));
         }
+
+        ((Button) getNode("Lobby/LobbyMenu/Header/Button")).setVisible(true);
 
         Ship playerShip = (Ship) getNode(
             "Ships/" + getMultiplayer().getUniqueId()
@@ -188,14 +195,34 @@ public class MatchManager extends Node {
                 StringNames.toGodotName("instantiateNewPlayer"),
                 MultiplayerManager.Instance.getPeerId()
             );
-        } else if (playerShip != null) {
-            gameCamera.setShip(playerShip);
-            gameCamera.setPlayerMode();
+            gd.print(MultiplayerManager.Instance.getPeerId() + "called rpc");
         }
 
         ((Lobby) getNode("Lobby")).setVisible(false);
 
         gameStarted = true;
+    }
+
+    @Rpc(
+        rpcMode = RpcMode.AUTHORITY,
+        transferMode = TransferMode.RELIABLE,
+        sync = Sync.SYNC
+    )
+    @RegisterFunction
+    public void setupCamera() {
+        Ship playerShip = (Ship) getNode(
+            "Ships/" + getMultiplayer().getUniqueId()
+        );
+        gd.print(
+            MultiplayerManager.Instance.getPeerId() + "received camera rpc"
+        );
+        if (playerShip != null) {
+            gameCamera.setShip(playerShip);
+            gameCamera.setPlayerMode();
+            gd.print(
+                MultiplayerManager.Instance.getPeerId() + "setting up camera"
+            );
+        }
     }
 
     /**

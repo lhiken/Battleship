@@ -5,6 +5,7 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
+import godot.annotation.RpcMode;
 import godot.api.Button;
 import godot.api.Control;
 import godot.api.Node;
@@ -113,11 +114,11 @@ public class Lobby extends Control {
         }
     }
 
+    @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
         gd.print("start match");
         matchManager.startMatch();
-        ((Button) getNode("LobbyMenu/Header/Button")).setVisible(true);
     }
 
     @Rpc
