@@ -64,6 +64,8 @@ public class GameCameraFrame extends TextureRect {
     private double minCameraDistance = 6.0;
     private double cameraDistance = 10.0;
 
+    private MouseMode prevMode;
+
     /**
      * Overrides Godot's built-in _ready function
      * Acts as a constructor
@@ -92,8 +94,12 @@ public class GameCameraFrame extends TextureRect {
     @Override
     public void _input(InputEvent event) {
         if (event.isActionPressed("show_cursor")) {
+            prevMode = Input.getMouseMode();
             Input.setMouseMode(MouseMode.VISIBLE);
-        } else if (event.isActionReleased("show_cursor")) {
+        } else if (
+            event.isActionReleased("show_cursor") &&
+            prevMode != Input.MouseMode.VISIBLE
+        ) {
             Input.setMouseMode(MouseMode.CAPTURED);
         }
     }

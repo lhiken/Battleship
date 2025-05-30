@@ -1,9 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://bo64a46tufuvx"]
+[gd_scene load_steps=4 format=3 uid="uid://bo64a46tufuvx"]
 
 [ext_resource type="Script" uid="uid://c0wueuar0grws" path="res://gdj/main/GameCameraFrame.gdj" id="1_c8opb"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_0bthb"]
 viewport_path = NodePath("Viewport")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c8opb"]
+bg_color = Color(0.0648178, 0.0648178, 0.0648177, 1)
 
 [node name="RenderTarget" type="TextureRect"]
 texture_filter = 1
@@ -16,6 +19,18 @@ texture = SubResource("ViewportTexture_0bthb")
 expand_mode = 3
 stretch_mode = 4
 script = ExtResource("1_c8opb")
+
+[node name="RespawnPanel" type="Panel" parent="."]
+visible = false
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c8opb")
 
 [node name="Viewport" type="SubViewport" parent="."]
 size = Vector2i(480, 300)

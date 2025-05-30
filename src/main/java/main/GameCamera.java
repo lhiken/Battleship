@@ -9,11 +9,14 @@ import godot.api.Camera3D;
 import godot.api.Input;
 import godot.api.Input.MouseMode;
 import godot.api.Node3D;
+import godot.api.Panel;
 import godot.api.TextureRect;
 import godot.core.Basis;
+import godot.core.Color;
 import godot.core.EulerOrder;
 import godot.core.Vector3;
 import godot.global.GD;
+import ui.lobby.Lobby;
 
 /**
  * The GameCamera class
@@ -33,7 +36,7 @@ public class GameCamera extends Camera3D {
      */
     @RegisterProperty
     @Export
-    public Node3D shipNode;
+    public Ship shipNode;
 
     /**
      * Determines the pixelation of the camera
@@ -60,6 +63,11 @@ public class GameCamera extends Camera3D {
     private Vector3 shakeOffset = new Vector3();
     private double shakeFrequency = 30.0;
 
+    private boolean sank = false;
+    private boolean refreshed = false;
+
+    private Panel panel = null;
+
     /**
      * Overrides Godot's built-in _ready function
      * Sets the current value to true
@@ -79,10 +87,59 @@ public class GameCamera extends Camera3D {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (panel == null) {
+            panel = (Panel) getParent().getParent().getNode("RespawnPanel");
+
+            panel.setVisible(false);
+        }
+
         time += delta;
 
         if (shakeTimer < shakeDuration) {
             shakeTimer += delta;
+        }
+
+        if (sank || (shipNode != null && shipNode.isSinking())) {
+            if (!sank) time = 0;
+            sank = true;
+
+            panel.setVisible(true);
+            panel.setZIndex(100);
+
+            double fadeDuration = 4.0;
+            double alpha = time < 1
+                ? gd.smoothstep(0, 1, time)
+                : time > fadeDuration - 1
+                    ? gd.smoothstep(1, 0, 1.0 - (fadeDuration - time))
+                    : 1;
+
+            panel.setModulate(new Color(panel.getModulate(), alpha));
+
+            if (time > fadeDuration / 2.0 && !refreshed) {
+                setSpectatorMode();
+                Lobby lobby =
+                    ((Lobby) getParent() // tung
+                            .getParent() // tung
+                            .getParent() // tung
+                            .getNode("Lobby")); // i hate this and id love to use signals but unfortunately we dont have time
+                lobby.setVisible(true);
+                shipNode = null;
+                Input.setMouseMode(MouseMode.VISIBLE);
+
+                refreshed = true;
+            } else if (time > fadeDuration) {
+                sank = false;
+                Lobby lobby =
+                    ((Lobby) getParent() // tung
+                            .getParent() // tung
+                            .getParent() // tung
+                            .getNode("Lobby"));
+                lobby.setZIndex(100);
+                panel.setZIndex(-100);
+                return;
+            }
+
+            return;
         }
 
         if (!playerMode) {
@@ -192,6 +249,15 @@ public class GameCamera extends Camera3D {
     @RegisterFunction
     public void setShip(Ship ship) {
         this.shipNode = ship;
+        if (ship != null) {
+            this.sank = false;
+            this.refreshed = false;
+            this.time = 0.0;
+            if (panel != null) {
+                panel.setVisible(false);
+                setPlayerMode();
+            }
+        }
     }
 
     /**

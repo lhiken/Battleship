@@ -21,6 +21,8 @@ properties = [
 ]
 functions = [
     _ready,
+	instantiate_new_player,
 	start_match,
-	spawn_bullet
+	spawn_bullet,
+	get_spawn_points
 ]

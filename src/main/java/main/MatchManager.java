@@ -20,6 +20,7 @@ import godot.api.RigidBody3D;
 import godot.core.Signal1;
 import godot.core.StringName;
 import godot.core.StringNames;
+import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
@@ -42,10 +43,9 @@ import ui.lobby.Lobby;
 public class MatchManager extends Node {
 
     private GD gd = GD.INSTANCE;
-
-    private Vector3[] spawnLocations;
-
+    private ArrayList<Vector2> spawnLocations = new ArrayList<>();
     private int botId = 0;
+    private int spawnIndex = 0;
 
     /**
      * Reference to the gameCamera that is displayed
@@ -53,6 +53,22 @@ public class MatchManager extends Node {
     @Export
     @RegisterProperty
     public GameCamera gameCamera;
+
+    private boolean gameStarted = false;
+
+    public MatchManager() {
+        int spawns = 6;
+        int spawnRadius = 45;
+        double angle = 0;
+        for (int i = 0; i < spawns; i++) {
+            Vector2 location = new Vector2(
+                Math.cos(angle) * spawnRadius,
+                Math.sin(angle) * spawnRadius
+            );
+            spawnLocations.add(location);
+            angle += (2 * Math.PI) / spawns;
+        }
+    }
 
     /**
      * Overrides Godot's built-in _ready function
@@ -66,13 +82,8 @@ public class MatchManager extends Node {
         gameCamera.setSpectatorMode();
 
         MultiplayerManager manager = MultiplayerManager.Instance;
-        if (!manager.isServer()) return;
-        // MultiplayerAPI multiplayer = getMultiplayer();
-        // var peerIds = multiplayer.getPeers();
 
-        // for (long peerId : peerIds) {
-        //     instantiateNewPlayer(peerId);
-        // }
+        if (!manager.isServer()) return;
     }
 
     /**
@@ -80,6 +91,8 @@ public class MatchManager extends Node {
      * @param playerId The playerId for the ship to be instantiated
      * @return the Ship that was instantiated
      */
+    @Rpc(rpcMode = RpcMode.ANY, sync = Sync.SYNC)
+    @RegisterFunction
     public Ship instantiateNewPlayer(int playerId) {
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene playerProvider = gd.load(
@@ -90,14 +103,22 @@ public class MatchManager extends Node {
         PlayerProvider provider =
             (PlayerProvider) (playerProvider.instantiate());
 
+        Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
+
         shipNode.addChild(provider);
         shipNode.setName(playerId + "");
         shipNode.setProvider(provider);
-        shipNode.translate(
-            new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
-        );
+        shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode, true);
+
+        spawnIndex++;
+
+        // If this is for the local player, set up the camera
+        if (playerId == getMultiplayer().getUniqueId()) {
+            gameCamera.setShip(shipNode);
+            gameCamera.setPlayerMode();
+        }
 
         return shipNode;
     }
@@ -118,16 +139,17 @@ public class MatchManager extends Node {
 
         provider.setGenerator((Generator) getNode("Generator"));
 
+        Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
+
         shipNode.addChild(provider);
         shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
-        shipNode.translate(
-            new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
-        );
+        shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode);
 
         botId++;
+        spawnIndex++;
 
         return shipNode;
     }
@@ -141,12 +163,16 @@ public class MatchManager extends Node {
     @Rpc
     @RegisterFunction
     public void startMatch() {
-        if (MultiplayerManager.Instance.isServer()) {
+        if (MultiplayerManager.Instance.isServer() && !gameStarted) {
             ArrayList<PlayerData> players =
                 MultiplayerManager.Instance.getSortedPlayerList();
 
             for (PlayerData player : players) {
                 instantiateNewPlayer(player.getPeerId());
+            }
+
+            for (int i = 0; i < 6 - players.size(); i++) {
+                instantiateNewBot();
             }
 
             rpc(StringNames.toGodotName("startMatch"));
@@ -156,10 +182,20 @@ public class MatchManager extends Node {
             "Ships/" + getMultiplayer().getUniqueId()
         );
 
-        gameCamera.setShip(playerShip);
-        gameCamera.setPlayerMode();
+        if (gameStarted && playerShip == null) {
+            rpcId(
+                1,
+                StringNames.toGodotName("instantiateNewPlayer"),
+                MultiplayerManager.Instance.getPeerId()
+            );
+        } else if (playerShip != null) {
+            gameCamera.setShip(playerShip);
+            gameCamera.setPlayerMode();
+        }
 
         ((Lobby) getNode("Lobby")).setVisible(false);
+
+        gameStarted = true;
     }
 
     /**
@@ -185,5 +221,10 @@ public class MatchManager extends Node {
         bulletNode.setPosition(position);
         getNode("Bullets").addChild(bulletNode, true);
         bulletNode.applyImpulse(direction.times(25.0));
+    }
+
+    @RegisterFunction
+    public ArrayList<Vector2> getSpawnPoints() {
+        return spawnLocations;
     }
 }
