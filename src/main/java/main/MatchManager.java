@@ -11,8 +11,8 @@ import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
-import godot.api.*;
 import godot.annotation.TransferMode;
+import godot.api.*;
 import godot.api.Button;
 import godot.api.Control;
 import godot.api.MultiplayerAPI;
@@ -188,7 +188,7 @@ public class MatchManager extends Node {
             rpc(StringNames.toGodotName("startMatch"));
         }
 
-        ((Button) getNode("Lobby/LobbyMenu/Header/Button")).setVisible(true);
+        ((Button) getNode("Lobby/LobbyMenu/Header/StartGame")).setVisible(true);
 
         Ship playerShip = (Ship) getNode(
             "Ships/" + getMultiplayer().getUniqueId()
@@ -204,7 +204,6 @@ public class MatchManager extends Node {
         }
 
         ((Lobby) getNode("Lobby")).setVisible(false);
-
     }
 
     /**
