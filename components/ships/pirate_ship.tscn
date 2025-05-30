@@ -187,12 +187,12 @@ volume_db = -2.971
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.01363, 0)
 billboard = 2
 no_depth_test = true
-text = "Name Tag"
+text = "please have the name here :pray:"
 font = ExtResource("12_x1kys")
 font_size = 75
 outline_size = 0
 script = ExtResource("13_u17r8")
 
 [node name="NameBG" type="MeshInstance3D" parent="NameTag" index="0"]
-transform = Transform3D(2.24, 0, 0, 0, 0.578, 0, 0, 0, 1.014, 0, 0, 0)
+transform = Transform3D(2.51795, 0, 0, 0, 0.545743, 0, 0, 0, 1.014, 0, 0, 0)
 mesh = SubResource("QuadMesh_x1kys")

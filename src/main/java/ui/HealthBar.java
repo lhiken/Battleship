@@ -5,10 +5,8 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.Node;
 import godot.api.TextureProgressBar;
-import godot.core.KtObject;
 import godot.core.VariantArray;
 import godot.global.GD;
-import java.util.ArrayList;
 import multiplayer.MultiplayerManager;
 
 @RegisterClass
@@ -42,6 +40,5 @@ public class HealthBar extends TextureProgressBar {
             health = gd.lerp(health, ourShip.getHealth(), 0.1);
             setValue(health);
         }
-
     }
 }

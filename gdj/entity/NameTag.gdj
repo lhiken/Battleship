@@ -4,11 +4,12 @@
 registeredName = NameTag
 fqName = entity.NameTag
 relativeSourcePath = src/main/java/entity/NameTag.java
-baseType = Label
+baseType = Label3D
 supertypes = [
-	godot.api.Label,
-	godot.api.Control,
-	godot.api.CanvasItem,
+	godot.api.Label3D,
+	godot.api.GeometryInstance3D,
+	godot.api.VisualInstance3D,
+	godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
@@ -23,5 +24,6 @@ properties = [
 	
 ]
 functions = [
+	_process,
 	_ready
 ]
