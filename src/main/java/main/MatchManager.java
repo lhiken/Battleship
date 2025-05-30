@@ -213,7 +213,6 @@ public class MatchManager extends Node {
     @RegisterFunction
     public boolean isMatchStarted() {
         return isStarted;
-        gameStarted = true;
     }
 
     @Rpc(
