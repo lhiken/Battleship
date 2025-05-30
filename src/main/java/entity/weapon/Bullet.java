@@ -80,7 +80,6 @@ public class Bullet extends RigidBody3D {
         collisionBody = body;
         spawnExplosion();
         if (body instanceof Ship) {
-            gd.print(ownerId + " hit " + ((Ship) body).getName());
             MultiplayerManager manager = MultiplayerManager.Instance;
             manager.invokeBulletDamage(ownerId, (Ship) body, 15);
         }

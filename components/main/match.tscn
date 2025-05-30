@@ -98,7 +98,7 @@ _spawnable_scenes = PackedStringArray("uid://dpxrjkp2sqdp")
 spawn_path = NodePath("../Bullets")
 
 [node name="MapSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt")
+_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt", "uid://c10vkkyxni84h")
 spawn_path = NodePath("../MapTiles")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
@@ -109,17 +109,15 @@ spawn_path = NodePath("../Ships")
 script = ExtResource("9_eqq1t")
 
 [node name="HealthBar" type="TextureProgressBar" parent="Hud"]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -185.0
-offset_top = -270.0
-offset_right = -121.0
-offset_bottom = 270.0
-grow_horizontal = 0
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 572.0
+offset_top = -90.0
+offset_right = 636.0
+offset_bottom = 450.0
+grow_vertical = 0
+rotation = 1.5708
 value = 100.0
 fill_mode = 3
 nine_patch_stretch = true
@@ -128,6 +126,7 @@ texture_progress = ExtResource("11_1356g")
 script = ExtResource("12_1356g")
 
 [node name="CannonButton" type="TextureButton" parent="Hud"]
+visible = false
 offset_left = 1720.0
 offset_top = 52.0
 offset_right = 1760.0
@@ -153,6 +152,7 @@ texture_progress = ExtResource("12_bjvx5")
 tint_progress = Color(0.0784314, 0.0784314, 0.0784314, 0.85098)
 
 [node name="Time" type="Label" parent="Hud/CannonButton"]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
