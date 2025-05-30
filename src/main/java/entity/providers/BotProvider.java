@@ -51,7 +51,7 @@ public class BotProvider extends InputProvider {
     private Generator gen;
     private Ship targettedShip;
     private double timeToNextPoint;
-    private Coordinate nextPointOnPath;
+    private Coordinate nextPoint;
     private boolean scared;
 
     /**
@@ -90,6 +90,16 @@ public class BotProvider extends InputProvider {
 
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
+
+        if (path.get(0) != null && path.get(0) != nextPoint) {
+            timeToNextPoint = 0;
+            nextPoint = path.get(0);
+        }
+
+        if (timeToNextPoint > 1) {
+            path.clear();
+        }
+
 
         if (myShip.isSinking()) {
             path.clear();

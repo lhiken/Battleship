@@ -259,6 +259,7 @@ public class MatchManager extends Node {
         bulletNode.setPosition(position);
         getNode("Bullets").addChild(bulletNode, true);
         bulletNode.applyImpulse(direction.times(25.0));
+
     }
 
     @RegisterFunction
