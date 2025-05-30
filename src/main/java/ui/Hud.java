@@ -12,11 +12,12 @@ import godot.api.Panel;
 public class Hud extends CanvasLayer {
 
 	/**
-	 * Does nothing
+	 * Hides HUD at the start of the game
 	 */
 	@RegisterFunction
 	@Override
 	public void _ready() {
+		this.setVisible(false);
 	}
 
 	/**
