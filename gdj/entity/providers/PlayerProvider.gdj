@@ -6,7 +6,7 @@ fqName = entity.providers.PlayerProvider
 relativeSourcePath = src/main/java/entity/providers/PlayerProvider.java
 baseType = Node3D
 supertypes = [
-	entity.InputProvider,
+    entity.InputProvider,
 	godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
@@ -16,13 +16,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	
+    
 ]
 functions = [
-	_process,
+    _process,
 	_ready,
 	get_state
 ]
