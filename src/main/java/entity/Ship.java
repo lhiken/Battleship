@@ -87,14 +87,20 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     @Override
     public void _ready() {
+        gd.print(
+            "_ready called for " +
+            getName() +
+            " by peer " +
+            getMultiplayer().getUniqueId()
+        );
+
         if (!getName().toString().startsWith("Bot")) {
             setMultiplayerAuthority(Integer.parseInt(getName().toString()));
         }
         health = 100;
         gd.print(getName() + ": " + spawnPosition);
-        gd.print(getGlobalPosition());
         setGlobalPosition(spawnPosition);
-        gd.print(getGlobalPosition());
+        gd.print("Real Position: " + getGlobalPosition());
         // instantiateNewCannon();
     }
 
@@ -124,15 +130,16 @@ public class Ship extends CharacterBody3D {
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 
         if (health <= 0 && !sinking) {
+            if (getName().toString().startsWith("Bot")) {
+                gd.print("instantiating new bot");
+                ((MatchManager) getParent().getParent()).instantiateNewBot();
+            }
             getNode("ShipMesh/Sails").queueFree();
             setName("S" + Math.random() * 100000 + getName());
             ((CollisionShape3D) getNode("ShipCollider")).setDisabled(true); // i
             ((CollisionShape3D) getNode("ShipCollider2")).setDisabled(true); // know
             ((CollisionShape3D) getNode("ShipCollider3")).setDisabled(true); // but!
             ((Label3D) getNode("NameTag")).setVisible(false);
-            if (getName().toString().startsWith("Bot")) {
-                ((MatchManager) getParent().getParent()).instantiateNewBot();
-            }
             sinking = true;
         }
 
@@ -224,7 +231,6 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     public void setHealth(double health) {
         this.health = health;
-        gd.print(getName() + " health: " + this.health);
         if (getMultiplayer().isServer()) rpc(
             StringNames.toGodotName("setHealth"),
             health

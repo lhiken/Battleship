@@ -65,7 +65,7 @@ public class MatchManager extends Node {
 
     public MatchManager() {
         int spawns = 6;
-        int spawnRadius = 45;
+        int spawnRadius = 50;
         double angle = 0;
         for (int i = 0; i < spawns; i++) {
             Vector2 location = new Vector2(
@@ -73,6 +73,7 @@ public class MatchManager extends Node {
                 Math.sin(angle) * spawnRadius
             );
             spawnLocations.add(location);
+
             angle += (2 * Math.PI) / spawns;
         }
     }
@@ -89,6 +90,16 @@ public class MatchManager extends Node {
         gameCamera.setSpectatorMode();
 
         MultiplayerManager manager = MultiplayerManager.Instance;
+
+        for (Vector2 position : spawnLocations) {
+            PackedScene node = gd.load(
+                "res://components/zones/spawn_zone.tscn"
+            );
+            Node3D spawnComponent = (Node3D) node.instantiate();
+            Vector3 pos = new Vector3(position.getX(), 0, position.getY());
+            spawnComponent.setGlobalPosition(pos);
+            addChild(spawnComponent);
+        }
 
         if (!manager.isServer()) return;
     }
@@ -135,6 +146,8 @@ public class MatchManager extends Node {
      * @return the Ship that was instantiated
      */
     public Ship instantiateNewBot() {
+        gd.print("actually instantiating new bot");
+
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene botProvider = gd.load(
             "res://components/providers/bot_provider.tscn"
@@ -174,6 +187,7 @@ public class MatchManager extends Node {
     @RegisterFunction
     public void startMatch() {
         if (MultiplayerManager.Instance.isServer() && !gameStarted) {
+            gameStarted = true;
             ArrayList<PlayerData> players =
                 MultiplayerManager.Instance.getSortedPlayerList();
 
@@ -181,7 +195,7 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
                 instantiateNewBot();
             }
 

@@ -76,6 +76,14 @@ public class GameCamera extends Camera3D {
     @RegisterFunction
     @Override
     public void _ready() {
+        setGlobalPosition(
+            new Vector3(
+                40 + Math.cos(time * 0.6 + 0.2) * 0.25,
+                8.0 + Math.sin(time * 1.25) * 0.25,
+                -40 + Math.sin(time + 0.75) * 0.25
+            )
+        );
+        lookAt(new Vector3(0, 0, 0), new Vector3(0, 1, 0));
         setCurrent(true);
     }
 
@@ -134,23 +142,11 @@ public class GameCamera extends Camera3D {
                             .getParent() // tung
                             .getParent() // tung
                             .getNode("Lobby"));
-                lobby.setZIndex(100);
+                lobby.setZIndex(1);
                 panel.setZIndex(-100);
                 return;
             }
 
-            return;
-        }
-
-        if (!playerMode) {
-            setGlobalPosition(
-                new Vector3(
-                    40 + Math.cos(time * 0.6 + 0.2) * 0.25,
-                    8.0 + Math.sin(time * 1.25) * 0.25,
-                    -40 + Math.sin(time + 0.75) * 0.25
-                )
-            );
-            lookAt(new Vector3(0, 0, 0), new Vector3(0, 1, 0));
             return;
         }
 
@@ -175,6 +171,7 @@ public class GameCamera extends Camera3D {
         Vector3 focusPoint = shipPosition.plus(
             new Vector3(0, cameraVerticalOffset, 0)
         );
+        
         Basis rotationBasis = Basis.Companion.fromEuler(
             new Vector3(pitch, yaw, 0.0),
             EulerOrder.YXZ
