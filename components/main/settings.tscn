@@ -148,6 +148,7 @@ text = "Return"
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_oidxn")
 autoplay = true
+bus = &"Music"
 
 [connection signal="value_changed" from="Options/Panel/Volume" to="." method="_on_volume_value_changed"]
 [connection signal="toggled" from="Options/Panel/Mute" to="Options/Panel/Mute" method="_on_mute_toggled"]
