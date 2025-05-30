@@ -5,10 +5,8 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.Node;
 import godot.api.TextureProgressBar;
-import godot.core.KtObject;
 import godot.core.VariantArray;
 import godot.global.GD;
-import java.util.ArrayList;
 import multiplayer.MultiplayerManager;
 
 @RegisterClass
@@ -32,7 +30,11 @@ public class HealthBar extends TextureProgressBar {
             for (Node ship : ships) {
                 Ship temp = (Ship) ship;
                 if (
-                    temp.getName().toString().equals(manager.getPeerId() + "")
+                    temp
+                        .getName()
+                        .toString()
+                        .equals(manager.getPeerId() + "") &&
+                    !temp.isSinking()
                 ) {
                     ourShip = (Ship) ship;
                 }
@@ -41,7 +43,7 @@ public class HealthBar extends TextureProgressBar {
         if (ourShip != null) {
             health = gd.lerp(health, ourShip.getHealth(), 0.1);
             setValue(health);
+            if (ourShip.isSinking()) ourShip = null;
         }
-
     }
 }

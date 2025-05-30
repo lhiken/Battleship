@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import main.MatchManager;
 import multiplayer.MultiplayerManager;
+
 /**
  * An enum to keep track of tile types and their costs, which
  * are for pathfinding with nodepaths to get the node path
@@ -144,6 +146,13 @@ public class Generator extends Node3D {
         }
 
         removeCircle(35, 35, 6);
+
+        MatchManager manager = (MatchManager) getParent();
+        for (Vector2 spawn : manager.getSpawnPoints()) {
+            gd.print("added spawn");
+            Coordinate coord = coordToGrid(spawn).getCoords();
+            removeCircle(coord.getXIndex(), coord.getZIndex(), 5);
+        }
 
         coordToGrid(new Vector2(0, 0)).setTile(Tile.Shore);
         for (int x = 0; x < mapWidth; x++) {

@@ -84,7 +84,6 @@ two={
 [physics]
 
 3d/run_on_separate_thread=true
-3d/physics_engine="Jolt Physics"
 
 [rendering]
 

@@ -12,9 +12,18 @@ import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
 import godot.annotation.Sync;
 import godot.api.*;
+import godot.annotation.TransferMode;
+import godot.api.Button;
+import godot.api.Control;
+import godot.api.MultiplayerAPI;
+import godot.api.Node;
+import godot.api.Node3D;
+import godot.api.PackedScene;
+import godot.api.RigidBody3D;
 import godot.core.Signal1;
 import godot.core.StringName;
 import godot.core.StringNames;
+import godot.core.Vector2;
 import godot.core.Vector3;
 import godot.global.GD;
 import java.util.ArrayList;
@@ -37,10 +46,9 @@ import ui.lobby.Lobby;
 public class MatchManager extends Node {
 
     private GD gd = GD.INSTANCE;
-
-    private Vector3[] spawnLocations;
-
+    private ArrayList<Vector2> spawnLocations = new ArrayList<>();
     private int botId = 0;
+    private int spawnIndex = 0;
 
     private boolean isStarted = false;
 
@@ -52,6 +60,22 @@ public class MatchManager extends Node {
     @Export
     @RegisterProperty
     public GameCamera gameCamera;
+
+    private boolean gameStarted = false;
+
+    public MatchManager() {
+        int spawns = 6;
+        int spawnRadius = 45;
+        double angle = 0;
+        for (int i = 0; i < spawns; i++) {
+            Vector2 location = new Vector2(
+                Math.cos(angle) * spawnRadius,
+                Math.sin(angle) * spawnRadius
+            );
+            spawnLocations.add(location);
+            angle += (2 * Math.PI) / spawns;
+        }
+    }
 
     /**
      * Overrides Godot's built-in _ready function
@@ -65,13 +89,8 @@ public class MatchManager extends Node {
         gameCamera.setSpectatorMode();
 
         MultiplayerManager manager = MultiplayerManager.Instance;
-        if (!manager.isServer()) return;
-        // MultiplayerAPI multiplayer = getMultiplayer();
-        // var peerIds = multiplayer.getPeers();
 
-        // for (long peerId : peerIds) {
-        //     instantiateNewPlayer(peerId);
-        // }
+        if (!manager.isServer()) return;
     }
 
     /**
@@ -79,7 +98,10 @@ public class MatchManager extends Node {
      * @param playerId The playerId for the ship to be instantiated
      * @return the Ship that was instantiated
      */
+    @Rpc(rpcMode = RpcMode.ANY, sync = Sync.SYNC)
+    @RegisterFunction
     public Ship instantiateNewPlayer(int playerId) {
+        gd.print(MultiplayerManager.Instance.getPeerId() + "received rpc");
         PackedScene ship = gd.load("res://components/ships/pirate_ship.tscn");
         PackedScene playerProvider = gd.load(
             "res://components/providers/player_provider.tscn"
@@ -89,14 +111,20 @@ public class MatchManager extends Node {
         PlayerProvider provider =
             (PlayerProvider) (playerProvider.instantiate());
 
+        Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
+        gd.print(spawn);
+
         shipNode.addChild(provider);
-        shipNode.setName(playerId + "");
         shipNode.setProvider(provider);
-        shipNode.translate(
-            new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
-        );
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.setName(playerId + "");
 
         getNode("Ships").addChild(shipNode, true);
+
+        spawnIndex++;
+
+        rpcId(playerId, StringNames.toGodotName("setupCamera"));
+        gd.print(MultiplayerManager.Instance.getPeerId() + "called camera rpc");
 
         return shipNode;
     }
@@ -117,16 +145,17 @@ public class MatchManager extends Node {
 
         provider.setGenerator((Generator) getNode("Generator"));
 
+        Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
+
         shipNode.addChild(provider);
         shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
-        shipNode.translate(
-            new Vector3(Math.random() * 10.0, 0, Math.random() * 10.0)
-        );
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode);
 
         botId++;
+        spawnIndex++;
 
         return shipNode;
     }
@@ -137,10 +166,14 @@ public class MatchManager extends Node {
      * Sets the camera and playerShip
      * And takes the player from the lobby to the actual match
      */
-    @Rpc
+    @Rpc(
+        rpcMode = RpcMode.AUTHORITY,
+        sync = Sync.NO_SYNC,
+        transferMode = TransferMode.RELIABLE
+    )
     @RegisterFunction
     public void startMatch() {
-        if (MultiplayerManager.Instance.isServer()) {
+        if (MultiplayerManager.Instance.isServer() && !gameStarted) {
             ArrayList<PlayerData> players =
                 MultiplayerManager.Instance.getSortedPlayerList();
 
@@ -148,15 +181,27 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
+            for (int i = 0; i < 3; i++) {
+                instantiateNewBot();
+            }
+
             rpc(StringNames.toGodotName("startMatch"));
         }
+
+        ((Button) getNode("Lobby/LobbyMenu/Header/Button")).setVisible(true);
 
         Ship playerShip = (Ship) getNode(
             "Ships/" + getMultiplayer().getUniqueId()
         );
 
-        gameCamera.setShip(playerShip);
-        gameCamera.setPlayerMode();
+        if (gameStarted && playerShip == null) {
+            rpcId(
+                1,
+                StringNames.toGodotName("instantiateNewPlayer"),
+                MultiplayerManager.Instance.getPeerId()
+            );
+            gd.print(MultiplayerManager.Instance.getPeerId() + "called rpc");
+        }
 
         ((Lobby) getNode("Lobby")).setVisible(false);
 
@@ -168,6 +213,29 @@ public class MatchManager extends Node {
     @RegisterFunction
     public boolean isMatchStarted() {
         return isStarted;
+        gameStarted = true;
+    }
+
+    @Rpc(
+        rpcMode = RpcMode.AUTHORITY,
+        transferMode = TransferMode.RELIABLE,
+        sync = Sync.SYNC
+    )
+    @RegisterFunction
+    public void setupCamera() {
+        Ship playerShip = (Ship) getNode(
+            "Ships/" + getMultiplayer().getUniqueId()
+        );
+        gd.print(
+            MultiplayerManager.Instance.getPeerId() + "received camera rpc"
+        );
+        if (playerShip != null) {
+            gameCamera.setShip(playerShip);
+            gameCamera.setPlayerMode();
+            gd.print(
+                MultiplayerManager.Instance.getPeerId() + "setting up camera"
+            );
+        }
     }
 
     /**
@@ -193,5 +261,10 @@ public class MatchManager extends Node {
         bulletNode.setPosition(position);
         getNode("Bullets").addChild(bulletNode, true);
         bulletNode.applyImpulse(direction.times(25.0));
+    }
+
+    @RegisterFunction
+    public ArrayList<Vector2> getSpawnPoints() {
+        return spawnLocations;
     }
 }

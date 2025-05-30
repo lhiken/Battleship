@@ -101,9 +101,10 @@ public class Bullet extends RigidBody3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
-
-        explosionSound = (AudioStreamPlayer) getParent().getParent().getNode("Explosion");
-//        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
+        explosionSound = (AudioStreamPlayer) getParent()
+            .getParent()
+            .getNode("Explosion");
+        //        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
         explosionSound.setVolumeDb((float) (-15));
         explosionSound.play();
 

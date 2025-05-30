@@ -57,7 +57,6 @@ z_index = 4
 match_manager = NodePath("..")
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_wgkvx")]
-z_index = -2
 mouse_filter = 2
 texture = SubResource("ViewportTexture_wgkvx")
 camera = NodePath("GameCamera")
@@ -187,5 +186,6 @@ offset_bottom = 40.0
 stream = ExtResource("14_2s1nh")
 
 [connection signal="pressed" from="Lobby/LobbyMenu/Header/StartGame" to="." method="_on_start_game_pressed"]
+[node name="SeaMines" type="Node3D" parent="."]
 
 [editable path="Lobby"]

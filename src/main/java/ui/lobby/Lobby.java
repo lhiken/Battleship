@@ -5,6 +5,7 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
+import godot.annotation.RpcMode;
 import godot.api.Button;
 import godot.api.Control;
 import godot.api.Node;
@@ -61,6 +62,7 @@ public class Lobby extends Control {
         if (MultiplayerManager.Instance.isServer()) {
             String addr = "Hosting...";
             try {
+                // fix this vro
                 addr = Inet4Address.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
                 gd.print(e.toString());
@@ -112,6 +114,7 @@ public class Lobby extends Control {
         }
     }
 
+    @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
         gd.print("start match");
@@ -121,18 +124,8 @@ public class Lobby extends Control {
     @Rpc
     @RegisterFunction
     public void refreshPlayerList() {
-        gd.print("Refreshing player list");
-
         ArrayList<PlayerData> allPlayers =
             MultiplayerManager.Instance.getSortedPlayerList();
-        gd.print(
-            "Current player count in MultiplayerManager: " + allPlayers.size()
-        );
-        for (PlayerData p : allPlayers) {
-            gd.print(
-                "  Player ID: " + p.getPeerId() + " Points: " + p.getPoints()
-            );
-        }
 
         for (int i = playerListNode.getChildCount() - 1; i >= 0; i--) {
             Node child = playerListNode.getChild(i);
@@ -141,7 +134,6 @@ public class Lobby extends Control {
 
         int i = 0;
         for (PlayerData playerData : allPlayers) {
-            gd.print("Adding player entry for ID: " + playerData.getPeerId());
             PlayerEntry newPlayer =
                 (PlayerEntry) playerEntryScene.instantiate();
             newPlayer.setPeerId(playerData.getPeerId());
