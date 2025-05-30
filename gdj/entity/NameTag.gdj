@@ -6,7 +6,7 @@ fqName = entity.NameTag
 relativeSourcePath = src/main/java/entity/NameTag.java
 baseType = Label3D
 supertypes = [
-    godot.api.Label3D,
+	godot.api.Label3D,
 	godot.api.GeometryInstance3D,
 	godot.api.VisualInstance3D,
 	godot.api.Node3D,
@@ -18,11 +18,11 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    
+	
 ]
 functions = [
-    _ready
+	_ready
 ]
