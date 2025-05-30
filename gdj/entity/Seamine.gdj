@@ -24,5 +24,9 @@ properties = [
     explosion
 ]
 functions = [
-    
+    _process,
+	_ready,
+	body_entered,
+	on_collision,
+	spawn_explosion
 ]
