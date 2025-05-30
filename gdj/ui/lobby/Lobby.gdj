@@ -6,7 +6,7 @@ fqName = ui.lobby.Lobby
 relativeSourcePath = src/main/java/ui/lobby/Lobby.java
 baseType = Control
 supertypes = [
-	godot.api.Control,
+    godot.api.Control,
 	godot.api.CanvasItem,
 	godot.api.Node,
 	godot.api.Object,
@@ -16,13 +16,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	match_manager
+    match_manager
 ]
 functions = [
-	_ready,
+    _ready,
 	register_client_with_server,
 	on_player_connected,
 	on_player_disconnected,
