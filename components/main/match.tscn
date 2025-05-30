@@ -57,7 +57,6 @@ z_index = 4
 match_manager = NodePath("..")
 
 [node name="RenderTarget" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_wgkvx")]
-z_index = -2
 mouse_filter = 2
 texture = SubResource("ViewportTexture_wgkvx")
 camera = NodePath("GameCamera")

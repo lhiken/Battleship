@@ -85,8 +85,6 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        long startTimeNano = System.nanoTime();
-
         timeToNextPoint += delta;
         myShip = (Ship) getParent();
 
@@ -109,11 +107,6 @@ public class BotProvider extends InputProvider {
 
             updateState();
         }
-
-        long endTimeNano = System.nanoTime();
-        long durationNano = endTimeNano - startTimeNano;
-
-        gd.print(durationNano / 1000000.0 + "ms");
     }
 
     /**

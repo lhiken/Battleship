@@ -39,6 +39,7 @@ public class HealthBar extends TextureProgressBar {
         if (ourShip != null) {
             health = gd.lerp(health, ourShip.getHealth(), 0.1);
             setValue(health);
+            if (ourShip.isSinking()) ourShip = null;
         }
     }
 }
