@@ -92,8 +92,7 @@ transform = Transform3D(0.749865, 0, 0.646376, 0, 0.99, 0, -0.646376, 0, 0.74986
 
 [node name="Ocean" parent="Props" instance=ExtResource("2_4t43m")]
 transform = Transform3D(0.999904, 0.0100586, 0.00955487, -0.0103206, 0.999561, 0.0277832, -0.00927121, -0.0278792, 0.999568, 8.41029, 0, 0)
-tile_x = 1
-tile_y = 1
+script = null
 
 [node name="MatchEnvironment" parent="Props" instance=ExtResource("4_ymw2v")]
 

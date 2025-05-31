@@ -16,7 +16,7 @@ import multiplayer.MultiplayerManager;
 
 /**
  * The class for the main scene of the game, which
- * includes
+ * includes a method to start the game
  */
 @RegisterClass
 public class Game extends Node3D {

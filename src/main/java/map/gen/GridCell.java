@@ -1,5 +1,8 @@
 package map.gen;
 
+/**
+ *
+ */
 public class GridCell {
 
     private Coordinate center;

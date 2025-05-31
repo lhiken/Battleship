@@ -76,7 +76,7 @@ public class StartMenu extends Control {
 
 	/**
 	 * If escape key is pressed, quits IP input screen
-	 * @param event
+	 * @param event is the keyboard input
 	 */
 	@RegisterFunction
 	@Override
