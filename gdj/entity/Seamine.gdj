@@ -4,11 +4,8 @@
 registeredName = Seamine
 fqName = entity.Seamine
 relativeSourcePath = src/main/java/entity/Seamine.java
-baseType = MeshInstance3D
+baseType = Node3D
 supertypes = [
-    godot.api.MeshInstance3D,
-	godot.api.GeometryInstance3D,
-	godot.api.VisualInstance3D,
 	godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
@@ -18,15 +15,14 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    explosion
+	
 ]
 functions = [
-    _process,
+	_process,
 	_ready,
 	body_entered,
-	on_collision,
 	spawn_explosion
 ]
