@@ -16,7 +16,7 @@ import multiplayer.MultiplayerManager;
 
 /**
  * The class for the main scene of the game, which
- * includes
+ * includes a method to start the game
  */
 @RegisterClass
 public class Game extends Node3D {
@@ -24,6 +24,11 @@ public class Game extends Node3D {
     // include this line everywhere bc godot's methods use it
     private static final GD gd = GD.INSTANCE;
 
+    /**
+     * Overrides Godot's built-in _ready function
+     * Acts as a constructor
+     * Loads scenes and prepares for whatever is necessary to start game
+     */
     // ready runs when this object is loaded
     @RegisterFunction
     @Override
@@ -43,6 +48,12 @@ public class Game extends Node3D {
         );
     }
 
+    /**
+     * Starts a new match
+     * Prepares for whatever ready to spawn a match
+     * Such as loading scenes and removing the lobby screen
+     * @param success if a match can successfully be started
+     */
     @RegisterFunction
     public void spawnMatch(boolean success) {
         if (getNode("Match") != null || !success) return;

@@ -7,11 +7,18 @@ import godot.api.Label3D;
 import godot.global.GD;
 import multiplayer.MultiplayerManager;
 
+/**
+ * The name tag of each ship
+ */
 @RegisterClass
 public class NameTag extends Label3D {
 
     private GD gd = GD.INSTANCE;
 
+    /**
+     * When game starts, finds randomly generated name
+     * of each ship and sets text of name tag's label to the name
+     */
     @RegisterFunction
     @Override
     public void _ready() {

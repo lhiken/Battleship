@@ -92,18 +92,38 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.506, 0)
 
 [node name="Ocean" parent="Static" instance=ExtResource("1_4nox8")]
 transform = Transform3D(1, -8.00296e-05, 0.000904318, 8.07317e-05, 1, -0.000764395, -0.000904255, 0.000764469, 0.999999, 0, 0, 0)
+tile_x = null
+tile_y = null
+tile_size = null
 
 [node name="BulletSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://dpxrjkp2sqdp")
 spawn_path = NodePath("../Bullets")
 
 [node name="MapSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt", "uid://c10vkkyxni84h")
+_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt")
 spawn_path = NodePath("../MapTiles")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://bo7hcc6it8x4n")
 spawn_path = NodePath("../Ships")
+
+[node name="ipDisplay" type="Label" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -302.0
+offset_top = -94.0
+offset_right = -50.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("13_eqq1t")
+text = "goon"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("9_eqq1t")
@@ -186,7 +206,5 @@ offset_bottom = 40.0
 stream = ExtResource("14_2s1nh")
 
 [node name="SeaMines" type="Node3D" parent="."]
-
-[connection signal="pressed" from="Lobby/LobbyMenu/Header/StartGame" to="." method="_on_start_game_pressed"]
 
 [editable path="Lobby"]

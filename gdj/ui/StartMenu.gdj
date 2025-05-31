@@ -26,6 +26,5 @@ functions = [
 	_input,
 	_on_host_clicked,
 	_on_join_clicked,
-	_on_ip_submit,
-	on_multiplayer_connect
+	_on_ip_submit
 ]

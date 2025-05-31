@@ -12,6 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import multiplayer.MultiplayerManager;
 
+/**
+ * The start menu at the beginning of the game
+ */
 @RegisterClass
 public class StartMenu extends Control {
 
@@ -19,6 +22,9 @@ public class StartMenu extends Control {
 	private Control ipInput;
 	private Control Options;
 
+	/**
+	 * Sets joining game menu invisible
+	 */
 	@RegisterFunction
 	@Override
 	public void _ready() {
@@ -33,16 +39,26 @@ public class StartMenu extends Control {
 		);
 	}
 
+	/**
+	 * Becomes host for multiplayer game
+	 */
 	@RegisterFunction
 	public void _onHostClicked() {
 		MultiplayerManager.Instance.initiateHost();
 	}
 
+	/**
+	 * Makes join game screen visible
+	 */
 	@RegisterFunction
 	public void _onJoinClicked() {
 		ipInput.setVisible(true);
 	}
 
+	/**
+	 * Checks if the inputted IP is valid and then initializes a client if it is
+	 * @param text is the ip address of the host
+	 */
 	@RegisterFunction
 	public void _onIpSubmit(String text) {
 		Pattern pat = Pattern.compile(
@@ -58,25 +74,16 @@ public class StartMenu extends Control {
 		MultiplayerManager.Instance.initiateClient(text);
 	}
 
+	/**
+	 * If escape key is pressed, quits IP input screen
+	 * @param event is the keyboard input
+	 */
 	@RegisterFunction
 	@Override
 	public void _input(InputEvent event) {
 		if (
 			event.isActionPressed("ui_cancel") && ipInput.isVisible()
 		) ipInput.setVisible(false);
-	}
-
-	@RegisterFunction
-	public void onMultiplayerConnect(Boolean success) {
-		MultiplayerAPI multiplayer = getMultiplayer();
-		gd.print(
-			"connected: " +
-			success +
-			" with peer id " +
-			multiplayer.getUniqueId() +
-			" as server: " +
-			multiplayer.isServer()
-		);
 	}
 	
 }

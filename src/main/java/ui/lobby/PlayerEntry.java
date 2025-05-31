@@ -19,30 +19,48 @@ public class PlayerEntry extends Panel {
 
     private boolean isPlayer = false;
 
+    /**
+     * Calls update when it spawns in
+     */
     @RegisterFunction
     @Override
     public void _enterTree() {
         update();
     }
 
+    /**
+     * Sets peerId to input parameter, and calls update
+     * @param peerId is the parameter to set current peerId to
+     */
     @RegisterFunction
     public void setPeerId(int peerId) {
         this.peerId = peerId;
         update();
     }
 
+    /**
+     * Sets index to input parameter, and calls update
+     * @param index is the parameter to set current index to
+     */
     @RegisterFunction
     public void setIndex(int index) {
         this.index = index;
         update();
     }
 
+    /**
+     * Sets points to input parameter, and calls update
+     * @param points is the parameter to set current points to
+     */
     @RegisterFunction
     public void setPoints(int points) {
         this.points = points;
         update();
     }
 
+    /**
+     * Labels Id depending on if player is host or others
+     */
     @RegisterFunction
     public void update() {
         int realId = MultiplayerManager.Instance.getPeerId();
