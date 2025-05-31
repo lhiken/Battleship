@@ -17,19 +17,32 @@ import main.MatchManager;
 import multiplayer.MultiplayerManager;
 import multiplayer.PlayerData;
 
+/**
+ * The class for Lobby
+ * Handles all information regarding the lobby class
+ * Includes helper methods to connect players, disconnect players, refresh player screen, and more
+ * And whatever in order to make Lobby work properly
+ * The lobby right before the match starts
+ */
 @RegisterClass
 public class Lobby extends Control {
-
+    
     private final GD gd = GD.INSTANCE;
     private PackedScene playerEntryScene;
     private Node playerListNode;
 
+    /**
+     * An instance of the matchManager class which gives us information about match manager
+     */
     @Export
     @RegisterProperty
     public MatchManager matchManager;
 
-    /** _ready
-     * initializes the lobby
+    /**
+     * Overrides Godot's built in _ready function
+     * Initializes the lobby
+     * Acts as a constructor
+     * Loads necessary scenes and connects players, sets up labels
      */
     @RegisterFunction
     @Override
@@ -80,6 +93,11 @@ public class Lobby extends Control {
         ((Label) getParent().getNode("ipDisplay")).setVisible(false);
     }
 
+    /**
+     * Function that registers client to the server or lobby
+     * Refreshes player list to include the new client
+     * @param clientId The id of the client being registered
+     */
     @Rpc
     @RegisterFunction
     public void registerClientWithServer(int clientId) {
@@ -91,6 +109,11 @@ public class Lobby extends Control {
         }
     }
 
+    /**
+     * Connects a player and adds them to the player list
+     * Refreshes player list to include the new client
+     * @param peerId The id of the client being registered
+     */
     @RegisterFunction
     public void onPlayerConnected(int peerId) {
         if (MultiplayerManager.Instance.isServer()) {
@@ -104,6 +127,11 @@ public class Lobby extends Control {
         refreshPlayerList();
     }
 
+    /**
+     * Function that acts when a player disconnects
+     * Refreshes player list to remove them
+     * @param peerId the peer id that disconnected
+     */
     @RegisterFunction
     public void onPlayerDisconnected(int peerId) {
         refreshPlayerList();
@@ -113,6 +141,10 @@ public class Lobby extends Control {
         }
     }
 
+    /**
+     * Function that starts the match
+     * Prepares to start the match
+     */
     @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
@@ -128,6 +160,10 @@ public class Lobby extends Control {
         }
     }
 
+    /**
+     * Refreshes the player list
+     * Finds all instances of players in the arraylist and then adds them to the player entry scene
+     */
     @Rpc
     @RegisterFunction
     public void refreshPlayerList() {
