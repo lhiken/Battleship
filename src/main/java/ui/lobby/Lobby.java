@@ -42,6 +42,7 @@ public class Lobby extends Control {
         MultiplayerManager.Instance.playerConnected.connect(
             Callable.create(this, StringNames.toGodotName("onPlayerConnected")),
             0
+
         );
 
         MultiplayerManager.Instance.playerDisconnected.connect(
@@ -75,6 +76,8 @@ public class Lobby extends Control {
         }
 
         refreshPlayerList();
+
+        ((Label) getParent().getNode("ipDisplay")).setVisible(false);
     }
 
     @Rpc
@@ -113,10 +116,15 @@ public class Lobby extends Control {
     @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
-        CanvasLayer layer = (CanvasLayer) getParent().getNode("Hud");
-        layer.setVisible(true);
         gd.print("start match");
         matchManager.startMatch();
+
+        CanvasLayer layer = (CanvasLayer) getParent().getNode("Hud");
+        layer.setVisible(true);
+
+        if (MultiplayerManager.Instance.isServer()) {
+            ((Label) getParent().getNode("ipDisplay")).setVisible(true);
+        }
     }
 
     @Rpc
