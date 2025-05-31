@@ -9,3 +9,4 @@ builds
 jvm
 bin
 .settings
+.log
