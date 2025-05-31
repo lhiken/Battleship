@@ -102,7 +102,6 @@ public class BotProvider extends InputProvider {
             timeToNextPoint = 0;
         }
 
-
         if (myShip.isSinking()) {
             path.clear();
         } else {
@@ -119,8 +118,6 @@ public class BotProvider extends InputProvider {
 
             updateState();
         }
-
-        gen.visualizePath(path);
     }
 
     /**
