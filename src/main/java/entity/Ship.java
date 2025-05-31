@@ -18,6 +18,7 @@ import main.Game;
 import main.GameCameraFrame;
 import main.MatchManager;
 import map.gen.Generator;
+import multiplayer.MultiplayerManager;
 
 /**
  * Base ship class!!!!
@@ -51,6 +52,10 @@ public class Ship extends CharacterBody3D {
 
     private double maxVelocity = 5.0;
 
+    @Export
+    @RegisterProperty
+    public Vector3 spawnPosition;
+
     /**
      * The respective input provider of each ship
      */
@@ -79,28 +84,17 @@ public class Ship extends CharacterBody3D {
 
     private boolean sinking = false;
 
-    private Vector3 spawnPosition;
-
     /**
      * Sets up multiplayer id and gives ship full health when program runs
      */
     @RegisterFunction
     @Override
     public void _ready() {
-        gd.print(
-            "_ready called for " +
-            getName() +
-            " by peer " +
-            getMultiplayer().getUniqueId()
-        );
+        setMultiplayerAuthority(1);
 
-        if (!getName().toString().startsWith("Bot")) {
-            setMultiplayerAuthority(Integer.parseInt(getName().toString()));
-        }
-        health = 100;
-        gd.print(getName() + ": " + spawnPosition);
         setGlobalPosition(spawnPosition);
-        gd.print("Real Position: " + getGlobalPosition());
+
+        health = 100;
         // instantiateNewCannon();
     }
 
@@ -110,7 +104,6 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     public void setSpawn(Vector3 spawn) {
         this.spawnPosition = spawn;
-        setGlobalPosition(spawn);
     }
 
     /**
@@ -124,6 +117,9 @@ public class Ship extends CharacterBody3D {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (!getName().toString().startsWith("Bot")) {
+            setMultiplayerAuthority(Integer.parseInt(getName().toString()));
+        }
         frameCounter++;
 
         cooldownPercent += delta / cooldownTime;

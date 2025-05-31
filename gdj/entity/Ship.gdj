@@ -21,6 +21,7 @@ signals = [
 	
 ]
 properties = [
+	spawn_position,
 	provider,
 	gen
 ]

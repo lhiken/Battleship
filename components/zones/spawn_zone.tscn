@@ -28,8 +28,8 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_71ket"]
 render_priority = 1
 shader = SubResource("Shader_pmcir")
-shader_parameter/emission_color = Color(0.49005, 0.359006, 0.215573, 1)
-shader_parameter/zone_color = Color(0.435417, 0.34086, 0.299177, 1)
+shader_parameter/emission_color = Color(0.519405, 0.745968, 0.716977, 1)
+shader_parameter/zone_color = Color(0.394861, 0.493648, 0.457175, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_3dyyb"]
 material = SubResource("ShaderMaterial_71ket")
@@ -43,7 +43,7 @@ render_priority = 0
 shader = ExtResource("6_e3mu5")
 shader_parameter/specular_smoothness = 0.0
 shader_parameter/fresnel_smoothness = 0.0
-shader_parameter/color = Color(0.605126, 0.476002, 0.267335, 1)
+shader_parameter/color = Color(0.352365, 0.539296, 0.535267, 1)
 shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
 shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
 shader_parameter/uv_scale = Vector2(1, 1)

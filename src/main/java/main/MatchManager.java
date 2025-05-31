@@ -127,8 +127,9 @@ public class MatchManager extends Node {
 
         shipNode.addChild(provider);
         shipNode.setProvider(provider);
-        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.spawnPosition = new Vector3(spawn.getX(), 0, spawn.getY());
         shipNode.setName(playerId + "");
+        shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode, true);
 
@@ -163,7 +164,7 @@ public class MatchManager extends Node {
         shipNode.addChild(provider);
         shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
-        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
+        shipNode.spawnPosition = new Vector3(spawn.getX(), 0, spawn.getY());
 
         getNode("Ships").addChild(shipNode);
 
@@ -201,6 +202,10 @@ public class MatchManager extends Node {
 
             rpc(StringNames.toGodotName("startMatch"));
         }
+
+        gameStarted = true;
+
+        gd.print(MultiplayerManager.Instance.getPeerId() + "starting game");
 
         ((Button) getNode("Lobby/LobbyMenu/Header/StartGame")).setVisible(true);
 

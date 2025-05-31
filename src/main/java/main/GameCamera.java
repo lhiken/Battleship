@@ -141,7 +141,7 @@ public class GameCamera extends Camera3D {
                     ((Lobby) getParent() // tung
                             .getParent() // tung
                             .getParent() // tung
-                            .getNode("Lobby"));
+                            .getNode("Lobby")); // sahur
                 lobby.setZIndex(1);
                 panel.setZIndex(-100);
                 return;
@@ -171,7 +171,7 @@ public class GameCamera extends Camera3D {
         Vector3 focusPoint = shipPosition.plus(
             new Vector3(0, cameraVerticalOffset, 0)
         );
-        
+
         Basis rotationBasis = Basis.Companion.fromEuler(
             new Vector3(pitch, yaw, 0.0),
             EulerOrder.YXZ
