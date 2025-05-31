@@ -6,7 +6,7 @@ fqName = ui.Settings
 relativeSourcePath = src/main/java/ui/Settings.java
 baseType = Control
 supertypes = [
-    godot.api.Control,
+	godot.api.Control,
 	godot.api.CanvasItem,
 	godot.api.Node,
 	godot.api.Object,
@@ -16,13 +16,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    multiplayer_manager
+	multiplayer_manager
 ]
 functions = [
-    _ready,
+	_ready,
 	_on_settings_clicked,
 	_on_return_clicked
 ]
