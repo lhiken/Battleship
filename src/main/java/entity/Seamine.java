@@ -18,6 +18,7 @@ public class Seamine extends Node3D {
     private Area3D area;
     private CollisionShape3D collision;
     private boolean justExploded;
+    private AudioStreamPlayer explosionSound;
 
     private double cooldown;
     double globalPosition;
@@ -71,6 +72,13 @@ public class Seamine extends Node3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
+
+        explosionSound = (AudioStreamPlayer)
+                getNode("Explosion");
+        //        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
+        explosionSound.setVolumeDb((float) (0));
+        explosionSound.play();
+
         gd.print("Explosion spawned");
 
         PackedScene explosion = (PackedScene) gd.load("res://shaders/particles/Prefab.tscn");
@@ -83,27 +91,22 @@ public class Seamine extends Node3D {
 
 
 
-//        GameCamera camera = (GameCamera) getParent()
-//                .getParent()
-//                .getNode("RenderTarget/Viewport/GameCamera");
-//        camera.invokeShake(
-//                // inverse square falloff
-//                (1 /
-//                        Math.pow(
-//                                positionProperty().distanceTo(camera.getPosition()),
-//                                2
-//                        )) *
-//                        100
-//        );
+        GameCamera camera = (GameCamera) getParent()
+                .getParent()
+                .getNode("RenderTarget/Viewport/GameCamera");
+        camera.invokeShake(
+                // inverse square falloff
+                (1 /
+                        Math.pow(
+                                positionProperty().distanceTo(camera.getPosition()),
+                                2
+                        )) *
+                        500
+        );
 
         rpc(StringNames.toGodotName("spawnExplosion"));
 
     }
-
-
-
-
-
 
 
 }
