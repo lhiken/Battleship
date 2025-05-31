@@ -123,6 +123,7 @@ public class Lobby extends Control {
         layer.setVisible(true);
 
         if (MultiplayerManager.Instance.isServer()) {
+            ((Label) getParent().getNode("ipDisplay")).setText(MultiplayerManager.Instance.getHostIP());
             ((Label) getParent().getNode("ipDisplay")).setVisible(true);
         }
     }
