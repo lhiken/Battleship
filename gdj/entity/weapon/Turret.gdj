@@ -6,7 +6,7 @@ fqName = entity.weapon.Turret
 relativeSourcePath = src/main/java/entity/weapon/Turret.java
 baseType = MeshInstance3D
 supertypes = [
-    godot.api.MeshInstance3D,
+	godot.api.MeshInstance3D,
 	godot.api.GeometryInstance3D,
 	godot.api.VisualInstance3D,
 	godot.api.Node3D,
@@ -18,12 +18,12 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-    
+	
 ]
 properties = [
-    
+	
 ]
 functions = [
-    _process,
+	_process,
 	_ready
 ]

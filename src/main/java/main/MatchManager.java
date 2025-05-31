@@ -1,5 +1,6 @@
 package main;
 
+import entity.Seamine;
 import entity.Ship;
 import entity.providers.BotProvider;
 import entity.providers.PlayerProvider;
@@ -101,7 +102,10 @@ public class MatchManager extends Node {
             addChild(spawnComponent);
         }
 
+
         if (!manager.isServer()) return;
+
+
     }
 
     /**
@@ -195,9 +199,9 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
-            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
-                instantiateNewBot();
-            }
+//            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
+//                instantiateNewBot();
+//            }
 
             rpc(StringNames.toGodotName("startMatch"));
         }
@@ -207,6 +211,11 @@ public class MatchManager extends Node {
         Ship playerShip = (Ship) getNode(
             "Ships/" + getMultiplayer().getUniqueId()
         );
+
+        PackedScene node = gd.load("res://components/objects/props/naval_mine.tscn");
+        Seamine NavalMine = (Seamine) node.instantiate();
+        NavalMine.setPosition(new Vector3(5, -1, 5));
+        getNode("SeaMines").addChild(NavalMine, true);
 
         if (gameStarted && playerShip == null) {
             rpcId(
