@@ -64,6 +64,9 @@ public class MatchManager extends Node {
 
     private boolean gameStarted = false;
 
+    /**
+     * Constructor for match manager
+     */
     public MatchManager() {
         int spawns = 6;
         int spawnRadius = 50;
@@ -246,6 +249,10 @@ public class MatchManager extends Node {
         transferMode = TransferMode.RELIABLE,
         sync = Sync.SYNC
     )
+
+    /**
+     * Sets up the camera depending on what type of player or who it is
+     */
     @RegisterFunction
     public void setupCamera() {
         Ship playerShip = (Ship) getNode(
@@ -288,6 +295,10 @@ public class MatchManager extends Node {
         bulletNode.applyImpulse(direction.times(25.0));
     }
 
+    /**
+     * Gets the spawn points of a match
+     * @return The spawn points of a match in an ArrayList
+     */
     @RegisterFunction
     public ArrayList<Vector2> getSpawnPoints() {
         return spawnLocations;
