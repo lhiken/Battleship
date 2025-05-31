@@ -91,13 +91,15 @@ public class BotProvider extends InputProvider {
         MultiplayerManager manager = MultiplayerManager.Instance;
         if (!manager.isServer()) return;
 
-        if (path.get(0) != null && path.get(0) != nextPoint) {
-            timeToNextPoint = 0;
-            nextPoint = path.get(0);
+        if (!path.isEmpty()) {
+            if (path.get(0) != nextPoint) {
+                timeToNextPoint = 0;
+                nextPoint = path.get(0);
+            }
         }
-
         if (timeToNextPoint > 1) {
             path.clear();
+            timeToNextPoint = 0;
         }
 
 
@@ -117,6 +119,8 @@ public class BotProvider extends InputProvider {
 
             updateState();
         }
+
+        gen.visualizePath(path);
     }
 
     /**
@@ -342,7 +346,7 @@ public class BotProvider extends InputProvider {
                     getRandomPosition(
                         this.getGlobalPosition(),
                         trackedShip.getGlobalPosition(),
-                        5
+                        8
                     )
                 );
                 smoothOutPath(path);
@@ -382,7 +386,7 @@ public class BotProvider extends InputProvider {
 
         while (position == null) {
             double direction = Math.random() * 2 * Math.PI;
-            double distance = Math.random() * 2 + radius - 1;
+            double distance = Math.random() * 4 + radius - 2;
 
             Vector3 pos = new Vector3(
                 Math.cos(direction),
