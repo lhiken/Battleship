@@ -139,8 +139,8 @@ public class Generator extends Node3D {
                 Tile tileType = getTileType(x, z);
 
                 GridCell cell = new GridCell(coord, tileType, height);
-                if (height < 0.2) cell.setTile(Tile.Empty);
-                cell.setHeight(height * 10 - 1.5);
+                if (height < 0.25) cell.setTile(Tile.Empty);
+                cell.setHeight(height * 10 - 2.0);
                 grid[x][z] = cell;
             }
         }
