@@ -9,19 +9,27 @@ import godot.core.VariantArray;
 import godot.global.GD;
 import multiplayer.MultiplayerManager;
 
+/**
+ * The health bar of each player
+ */
 @RegisterClass
 public class HealthBar extends TextureProgressBar {
 
     private static final GD gd = GD.INSTANCE;
     private double health = 0;
 
-    VariantArray<Node> ships;
+    private VariantArray<Node> ships;
 
     // finding our own ship
-    Ship ourShip;
+    private Ship ourShip;
 
-    MultiplayerManager manager = MultiplayerManager.Instance;
+    private MultiplayerManager manager = MultiplayerManager.Instance;
 
+    /**
+     * Finds the ship of the person playing
+     * and sets value of health bar to health of ship
+     * @param delta is time passed since last time process is called
+     */
     @RegisterFunction
     @Override
     public void _process(double delta) {

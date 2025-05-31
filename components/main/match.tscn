@@ -187,6 +187,4 @@ stream = ExtResource("14_2s1nh")
 
 [node name="SeaMines" type="Node3D" parent="."]
 
-[connection signal="pressed" from="Lobby/LobbyMenu/Header/StartGame" to="." method="_on_start_game_pressed"]
-
 [editable path="Lobby"]

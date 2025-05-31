@@ -6,11 +6,7 @@ import godot.annotation.RegisterFunction;
 import godot.annotation.RegisterProperty;
 import godot.annotation.Rpc;
 import godot.annotation.RpcMode;
-import godot.api.Button;
-import godot.api.Control;
-import godot.api.Node;
-import godot.api.PackedScene;
-import godot.api.RichTextLabel;
+import godot.api.*;
 import godot.core.Callable;
 import godot.core.StringNames;
 import godot.global.GD;
@@ -117,6 +113,8 @@ public class Lobby extends Control {
     @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
+        CanvasLayer layer = (CanvasLayer) getParent().getNode("Hud");
+        layer.setVisible(true);
         gd.print("start match");
         matchManager.startMatch();
     }
