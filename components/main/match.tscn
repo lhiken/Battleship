@@ -92,6 +92,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.506, 0)
 
 [node name="Ocean" parent="Static" instance=ExtResource("1_4nox8")]
 transform = Transform3D(1, -8.00296e-05, 0.000904318, 8.07317e-05, 1, -0.000764395, -0.000904255, 0.000764469, 0.999999, 0, 0, 0)
+tile_x = null
+tile_y = null
+tile_size = null
 
 [node name="BulletSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://dpxrjkp2sqdp")
