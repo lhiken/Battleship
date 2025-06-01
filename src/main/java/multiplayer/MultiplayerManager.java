@@ -15,7 +15,12 @@ import godot.core.Callable;
 import godot.core.Signal1;
 import godot.core.StringNames;
 import godot.global.GD;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 /**
@@ -270,10 +275,32 @@ public class MultiplayerManager extends Node {
     )
     @RegisterFunction
     public String getHostIP() {
-        if (peer != null && peer.getPeer(1) != null) {
-            return peer.getPeer(1).getRemoteAddress();
+        if (isServer()) {
+            try {
+                Enumeration<NetworkInterface> interfaces =
+                    NetworkInterface.getNetworkInterfaces();
+
+                while (interfaces.hasMoreElements()) {
+                    NetworkInterface iface = interfaces.nextElement();
+                    if (
+                        iface.isLoopback() || !iface.isUp() || iface.isVirtual()
+                    ) continue;
+
+                    Enumeration<InetAddress> addresses =
+                        iface.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        InetAddress addr = addresses.nextElement();
+                        if (addr instanceof Inet4Address) {
+                            return addr.getHostAddress();
+                        }
+                    }
+                }
+                System.out.println("No LAN IP found");
+            } catch (SocketException e) {
+                return "Unknown";
+            }
         }
-        return "Unknown";
+        return "Connected";
     }
 
     /**
