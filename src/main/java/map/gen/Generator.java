@@ -469,45 +469,6 @@ public class Generator extends Node3D {
     }
 
     /**
-     * debug function for visualizing a generated path, used by bots in
-     * visualization
-     */
-    public void visualizePath(ArrayList<Coordinate> path) {
-        if (debugMesh != null) {
-            debugMesh.queueFree();
-            debugMesh = null;
-        }
-
-        if (path.size() < 2) return;
-
-        MeshInstance3D meshInstance = new MeshInstance3D();
-        SurfaceTool surfaceTool = new SurfaceTool();
-
-        surfaceTool.begin(PrimitiveType.LINES);
-
-        for (int i = 0; i < path.size() - 1; i++) {
-            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-            surfaceTool.addVertex(path.get(i).toVec3());
-
-            surfaceTool.setColor(new Color(0.5, 0.5, 0.5, 0.8));
-            surfaceTool.addVertex(path.get(i + 1).toVec3());
-        }
-
-        ArrayMesh mesh = surfaceTool.commit();
-
-        ORMMaterial3D material = new ORMMaterial3D();
-        material.setShadingMode(ShadingMode.UNSHADED);
-        material.setAlbedo(new Color(0.0, 1.0, 0.0, 1.0));
-
-        meshInstance.setMesh(mesh);
-        meshInstance.setMaterialOverride(material);
-        meshInstance.setCastShadowsSetting(ShadowCastingSetting.OFF);
-
-        debugMesh = meshInstance;
-        addChild(debugMesh);
-    }
-
-    /**
      * checks if a certain position is walkable or has a low cost
      * @param pos position in world space
      * @return whether the tile is walkable/has a low cost or not

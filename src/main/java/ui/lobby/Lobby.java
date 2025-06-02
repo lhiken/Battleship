@@ -26,7 +26,7 @@ import multiplayer.PlayerData;
  */
 @RegisterClass
 public class Lobby extends Control {
-    
+
     private final GD gd = GD.INSTANCE;
     private PackedScene playerEntryScene;
     private Node playerListNode;
@@ -55,7 +55,6 @@ public class Lobby extends Control {
         MultiplayerManager.Instance.playerConnected.connect(
             Callable.create(this, StringNames.toGodotName("onPlayerConnected")),
             0
-
         );
 
         MultiplayerManager.Instance.playerDisconnected.connect(
@@ -70,14 +69,7 @@ public class Lobby extends Control {
             "LobbyMenu/Header/BattleshipLabel"
         );
         if (MultiplayerManager.Instance.isServer()) {
-            String addr = "Hosting...";
-            try {
-                // fix this vro
-                addr = Inet4Address.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                gd.print(e.toString());
-            }
-            label.setText(addr);
+            label.setText(MultiplayerManager.Instance.getHostIP());
         } else {
             label.setText("Connected");
 
@@ -155,8 +147,22 @@ public class Lobby extends Control {
         layer.setVisible(true);
 
         if (MultiplayerManager.Instance.isServer()) {
-            ((Label) getParent().getNode("ipDisplay")).setText(MultiplayerManager.Instance.getHostIP());
+            ((Label) getParent().getNode("ipDisplay")).setText(
+                    MultiplayerManager.Instance.getHostIP()
+                );
             ((Label) getParent().getNode("ipDisplay")).setVisible(true);
+        }
+    }
+
+    @RegisterFunction
+    @Override
+    public void _input(InputEvent event) {
+        if (event.isActionPressed("hide_lobby")) {
+            if (isVisible()) {
+                setVisible(false);
+            } else {
+                setVisible(true);
+            }
         }
     }
 

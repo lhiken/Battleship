@@ -23,6 +23,7 @@ properties = [
 ]
 functions = [
 	_ready,
+	_input,
 	register_client_with_server,
 	on_player_connected,
 	on_player_disconnected,

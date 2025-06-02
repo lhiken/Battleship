@@ -5,8 +5,16 @@ import entity.InputState;
 import entity.Ship;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
+import godot.api.ArrayMesh;
+import godot.api.BaseMaterial3D.ShadingMode;
+import godot.api.GeometryInstance3D.ShadowCastingSetting;
+import godot.api.Mesh.PrimitiveType;
+import godot.api.MeshInstance3D;
 import godot.api.Node;
 import godot.api.Node3D;
+import godot.api.ORMMaterial3D;
+import godot.api.SurfaceTool;
+import godot.core.Color;
 import godot.core.VariantArray;
 import godot.core.Vector3;
 import godot.global.GD;
@@ -54,6 +62,8 @@ public class BotProvider extends InputProvider {
     private Coordinate nextPoint;
     private boolean scared;
 
+    private boolean initialPathGenerated = false;
+
     /**
      * Overrides Godot's internal built-in _ready function
      * Runs upon being instantiated in the game world
@@ -67,10 +77,6 @@ public class BotProvider extends InputProvider {
         currentState = new InputState();
         rotation = 0;
         velocity = 0;
-        targetPos = getRandomPosition();
-        startPos = this.getGlobalPosition();
-        path = gen.navigate(startPos, targetPos);
-        smoothOutPath(path);
         emitAction = false;
         selectedAction = 1;
         setMultiplayerAuthority(1);
@@ -85,6 +91,16 @@ public class BotProvider extends InputProvider {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (!initialPathGenerated) {
+            // Generate initial path now that we're properly positioned
+            targetPos = getRandomPosition();
+            startPos = this.getGlobalPosition();
+            path = gen.navigate(startPos, targetPos);
+            smoothOutPath(path);
+            initialPathGenerated = true;
+            return; // Skip rest of processing this frame
+        }
+
         timeToNextPoint += delta;
         myShip = (Ship) getParent();
 
@@ -97,7 +113,7 @@ public class BotProvider extends InputProvider {
                 nextPoint = path.get(0);
             }
         }
-        if (timeToNextPoint > 1) {
+        if (timeToNextPoint > 5.0) {
             path.clear();
             timeToNextPoint = 0;
         }
