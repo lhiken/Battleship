@@ -130,22 +130,22 @@ public class Ship extends CharacterBody3D {
 		cooldownPercent += delta / cooldownTime;
 		cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 
-        if (health <= 0 && !sinking) {
-            if (
-                getName().toString().startsWith("Bot") &&
-                MultiplayerManager.Instance.isServer()
-            ) {
-                gd.print("instantiating new bot");
-                ((MatchManager) getParent().getParent()).instantiateNewBot();
-            }
-            getNode("ShipMesh/Sails").queueFree();
-            setName("S" + Math.random() * 100000 + getName());
-            ((CollisionShape3D) getNode("ShipCollider")).setDisabled(true); // i
-            ((CollisionShape3D) getNode("ShipCollider2")).setDisabled(true); // know
-            ((CollisionShape3D) getNode("ShipCollider3")).setDisabled(true); // but!
-            ((Label3D) getNode("NameTag")).setVisible(false);
-            sinking = true;
-        }
+		if (health <= 0 && !sinking) {
+			if (
+				getName().toString().startsWith("Bot") &&
+				MultiplayerManager.Instance.isServer()
+			) {
+				gd.print("instantiating new bot");
+				((MatchManager) getParent().getParent()).instantiateNewBot();
+			}
+			getNode("ShipMesh/Sails").queueFree();
+			setName("S" + Math.random() * 100000 + getName());
+			((CollisionShape3D) getNode("ShipCollider")).setDisabled(true); // i
+			((CollisionShape3D) getNode("ShipCollider2")).setDisabled(true); // know
+			((CollisionShape3D) getNode("ShipCollider3")).setDisabled(true); // but!
+			((Label3D) getNode("NameTag")).setVisible(false);
+			sinking = true;
+		}
 
 		if (sinking) {
 			globalTranslate(
@@ -164,10 +164,10 @@ public class Ship extends CharacterBody3D {
 
 			sinking = true;
 
-            return;
-        }
+			return;
+		}
 
-        if (health < 100) health += delta * 1;
+		if (health < 100) health += delta * 1;
 
 		if (state == null) return;
 
@@ -190,10 +190,10 @@ public class Ship extends CharacterBody3D {
 
 				int id = getMultiplayer().getUniqueId();
 
-                if (
-                    getName().toString().length() > 4 &&
-                    getName().toString().startsWith("Bot")
-                ) id = Integer.parseInt(getName().toString().substring(3)) * -1;
+				if (
+					getName().toString().length() > 4 &&
+					getName().toString().startsWith("Bot")
+				) id = Integer.parseInt(getName().toString().substring(3)) * -1;
 
 				matchManager.rpc(
 					StringNames.toGodotName("spawnBullet"),

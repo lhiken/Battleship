@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl3p8hbrsu2pd"
 path.s3tc="res://.godot/imported/cup_texture.png-248b9ddc88aa7c0fd85bab1be0a04e72.s3tc.ctex"
+path.etc2="res://.godot/imported/cup_texture.png-248b9ddc88aa7c0fd85bab1be0a04e72.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://addons/flexible_toon_shader/example/cup_texture.png"
-dest_files=["res://.godot/imported/cup_texture.png-248b9ddc88aa7c0fd85bab1be0a04e72.s3tc.ctex"]
+dest_files=["res://.godot/imported/cup_texture.png-248b9ddc88aa7c0fd85bab1be0a04e72.s3tc.ctex", "res://.godot/imported/cup_texture.png-248b9ddc88aa7c0fd85bab1be0a04e72.etc2.ctex"]
 
 [params]
 

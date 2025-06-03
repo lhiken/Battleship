@@ -5,22 +5,28 @@ import entity.providers.BotProvider;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.*;
+import godot.core.Basis;
 import godot.core.StringName;
+import godot.core.Transform3D;
 import godot.core.Vector3;
 import godot.global.GD;
 import multiplayer.MultiplayerManager;
+
+import java.awt.*;
 
 @RegisterClass
 public class CenterZone extends StaticBody3D {
 
     private static final GD gd = GD.INSTANCE;
 
+    private GPUParticles3D particles;
     private double intensity;
     private boolean entered;
     private double time;
     private double pointTimer;
     private Vector3 whiteness;
-    private double peerId;
+    private int peerId;
+    private Ship myShip;
     private AudioStreamPlayer soundEffect;
 
     @RegisterFunction
@@ -37,7 +43,11 @@ public class CenterZone extends StaticBody3D {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        gd.print(entered);
+        if (myShip.isSinking()) {
+            entered = false;
+            time = 0;
+            pointTimer = 0;
+        }
         if (entered) {
             pointTimer += delta;
             time += delta;
@@ -57,20 +67,22 @@ public class CenterZone extends StaticBody3D {
                 whiteness.setZ(gd.lerp(whiteness.getZ(), 0, 0.05));
             }
             if (pointTimer > 1) {
-                MultiplayerManager multiplayerManager = MultiplayerManager.Instance.updatePoints();
+                MultiplayerManager.Instance.updatePoints(peerId, MultiplayerManager.Instance.getPlayerData(peerId).getPoints() + 10);
                 pointTimer = 0;
             }
             material.set("shader_parameter/intensity", intensity);
             material.set("shader_parameter/whiteness", whiteness);
-        }
-        else if (!entered) {
-            pointTimer = 0;
         }
         else if (intensity != 1) {
             MeshInstance3D area = (MeshInstance3D) getNode("MeshInstance3D2");
             Material material = area.getActiveMaterial(0);
             intensity = gd.lerp(intensity, 1, 0.005);
             material.set("shader_parameter/intensity", intensity);
+            time = 0;
+            pointTimer = 0;
+        }
+
+        if (intensity == 1) {
             time = 0;
         }
     }
@@ -82,10 +94,16 @@ public class CenterZone extends StaticBody3D {
             String name = ((Ship) body).getName().toString();
             if (!(((Ship) body).getProvider() instanceof BotProvider)) {
                 if (Integer.parseInt(name) == ((Ship) body).getMultiplayer().getUniqueId()) {
+                    if (entered) {
+                        time = 0;
+                    }
+                    myShip = (Ship) body;
                     peerId = Integer.parseInt(name);
                     entered = true;
                     soundEffect = (AudioStreamPlayer) getNode("EnterSound");
                     soundEffect.play();
+                    particles = (GPUParticles3D) getNode("GPUParticles3D");
+                    particles.emitParticle(new Transform3D(), new Vector3(0, 1, 0), new godot.core.Color(), new godot.core.Color(), 4);
                 }
             }
         }
@@ -97,7 +115,7 @@ public class CenterZone extends StaticBody3D {
         if (body instanceof Ship) {
             String name = ((Ship) body).getName().toString();
             if (!(((Ship) body).getProvider() instanceof BotProvider)) {
-                if (Integer.parseInt(name) == peerId) {
+                if (Integer.parseInt(name) == ((Ship) body).getMultiplayer().getUniqueId()) {
                     entered = false;
                 }
             }
