@@ -131,7 +131,10 @@ public class Ship extends CharacterBody3D {
         cooldownPercent = gd.clamp(cooldownPercent, 0, 1);
 
         if (health <= 0 && !sinking) {
-            if (getName().toString().startsWith("Bot")) {
+            if (
+                getName().toString().startsWith("Bot") &&
+                MultiplayerManager.Instance.isServer()
+            ) {
                 gd.print("instantiating new bot");
                 ((MatchManager) getParent().getParent()).instantiateNewBot();
             }
