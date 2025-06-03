@@ -16,6 +16,7 @@ import godot.core.Color;
 import godot.core.EulerOrder;
 import godot.core.Vector3;
 import godot.global.GD;
+import ui.Hud;
 import ui.lobby.Lobby;
 
 /**
@@ -131,6 +132,13 @@ public class GameCamera extends Camera3D {
                             .getParent() // tung
                             .getNode("Lobby")); // i hate this and id love to use signals but unfortunately we dont have time
                 lobby.setVisible(true);
+                lobby.refreshPlayerList();
+                Hud hud =
+                    ((Hud) getParent() // tung
+                            .getParent() // tung
+                            .getParent()
+                            .getNode("Hud"));
+                hud.setVisible(false);
                 shipNode = null;
                 Input.setMouseMode(MouseMode.VISIBLE);
 
