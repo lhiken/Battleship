@@ -4,6 +4,7 @@ import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.Panel;
 import godot.api.RichTextLabel;
+import godot.global.GD;
 import multiplayer.MultiplayerManager;
 
 /** PlayerEntry
@@ -11,6 +12,8 @@ import multiplayer.MultiplayerManager;
  */
 @RegisterClass
 public class PlayerEntry extends Panel {
+
+    private GD gd = GD.INSTANCE;
 
     private int peerId;
     private int index;
@@ -81,7 +84,8 @@ public class PlayerEntry extends Panel {
                 label = "Host";
             }
         }
-        points = 0;
+        points = MultiplayerManager.Instance.getPlayerData(peerId).getPoints();
+        gd.print("id: " + peerId + " points: " + points);
 
         RichTextLabel playerLabel = (RichTextLabel) getNode("PlayerLabel");
         RichTextLabel pointsLabel = (RichTextLabel) getNode("PointsLabel");

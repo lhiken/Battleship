@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import main.MatchManager;
 import multiplayer.MultiplayerManager;
 import multiplayer.PlayerData;
+import ui.Hud;
 
 /**
  * The class for Lobby
@@ -152,6 +153,8 @@ public class Lobby extends Control {
                 );
             ((Label) getParent().getNode("ipDisplay")).setVisible(true);
         }
+        Hud hud = ((Hud) getParent().getNode("Hud"));
+        hud.setVisible(true);
     }
 
     @RegisterFunction

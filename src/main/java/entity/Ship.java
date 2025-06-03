@@ -164,6 +164,8 @@ public class Ship extends CharacterBody3D {
             return;
         }
 
+        if (health < 100) health += delta * 1;
+
         if (state == null) return;
 
         turretYaw = gd.lerpAngle(turretYaw, state.getYaw(), 0.1);
@@ -188,7 +190,7 @@ public class Ship extends CharacterBody3D {
                 if (
                     getName().toString().length() > 4 &&
                     getName().toString().startsWith("Bot")
-                ) id = Integer.parseInt(getName().toString().substring(3));
+                ) id = Integer.parseInt(getName().toString().substring(3)) * -1;
 
                 matchManager.rpc(
                     StringNames.toGodotName("spawnBullet"),

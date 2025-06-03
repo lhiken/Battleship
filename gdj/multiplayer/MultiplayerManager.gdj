@@ -36,5 +36,6 @@ functions = [
 	is_server,
 	cleanup,
 	has_player,
-	invoke_bullet_damage
+	invoke_bullet_damage,
+	update_points
 ]

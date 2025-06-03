@@ -3,7 +3,10 @@ package ui;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.CanvasLayer;
+import godot.api.Label;
 import godot.api.Panel;
+import godot.global.GD;
+import multiplayer.MultiplayerManager;
 
 /**
  * Heads-up display that player sees
@@ -11,23 +14,34 @@ import godot.api.Panel;
 @RegisterClass
 public class Hud extends CanvasLayer {
 
-	/**
-	 * Hides HUD at the start of the game
-	 */
-	@RegisterFunction
-	@Override
-	public void _ready() {
-		this.setVisible(false);
-	}
+    private GD gd = GD.INSTANCE;
+    private double realPoints = 0;
 
-	/**
-	 * Does nothing
-	 * @param delta is time passed since last time process is called
-	 */
-	@RegisterFunction
-	@Override
-	public void _process(double delta) {
-		// Per-frame logic
-	}
-	// Other functions like getCooldown() etc.
+    /**
+     * Hides HUD at the start of the game
+     */
+    @RegisterFunction
+    @Override
+    public void _ready() {
+        this.setVisible(false);
+    }
+
+    /**
+     * Does nothing
+     * @param delta is time passed since last time process is called
+     */
+    @RegisterFunction
+    @Override
+    public void _process(double delta) {
+        realPoints = gd.lerp(
+            (double) realPoints,
+            (double) MultiplayerManager.Instance.getPlayerData(
+                getMultiplayer().getUniqueId()
+            ).getPoints(),
+            2.0 * delta
+        );
+        gd.print(realPoints);
+        ((Label) getNode("Points")).setText(Math.round(realPoints) + " Pts");
+    }
+    // Other functions like getCooldown() etc.
 }

@@ -13,6 +13,7 @@ import godot.api.MultiplayerAPI;
 import godot.api.Node;
 import godot.core.Callable;
 import godot.core.Signal1;
+import godot.core.StringName;
 import godot.core.StringNames;
 import godot.global.GD;
 import java.net.Inet4Address;
@@ -356,10 +357,34 @@ public class MultiplayerManager extends Node {
     ) {
         if (multiplayer.isServer()) {
             targetShip.setHealth(targetShip.getHealth() - damage);
-            PlayerData data = playerData.get(ownerId);
-            if (data != null) {
-                data.setPoints(data.getPoints() + 50);
+            if (ownerId > 0) {
+                PlayerData data = playerData.get(ownerId);
+                if (targetShip.getHealth() < 0) {
+                    updatePoints(ownerId, data.getPoints() + 100);
+                } else {
+                    updatePoints(ownerId, data.getPoints() + 10);
+                }
             }
         }
+    }
+
+    /**
+     * call this for setting a players points
+     * @param ownerId the peerId (like getUniqueId or MultiplayerManager.Instance.getPeerId())
+     * @param points the new number of points, to add some points just call MultiplayerManager.Instance.getPlayerData(peerId).getPoints() + some number bc my code is stupid
+     */
+    @Rpc(
+        rpcMode = RpcMode.AUTHORITY,
+        sync = Sync.NO_SYNC,
+        transferMode = TransferMode.RELIABLE
+    )
+    @RegisterFunction
+    public void updatePoints(int ownerId, int points) {
+        PlayerData data = playerData.get(ownerId);
+        if (data == null) {
+            playerData.put(ownerId, new PlayerData(ownerId));
+        }
+        data.setPoints(points);
+        rpc(StringNames.toGodotName("updatePoints"), ownerId, points);
     }
 }
