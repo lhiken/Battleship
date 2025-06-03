@@ -1,11 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://cnbmkpv8baiyy"]
+[gd_scene load_steps=20 format=3 uid="uid://cnbmkpv8baiyy"]
 
+[ext_resource type="Script" uid="uid://bfxrrc3sgmr10" path="res://gdj/map/CenterZone.gdj" id="1_dj2w7"]
 [ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/outline.gdshader" id="2_pmcir"]
 [ext_resource type="Script" uid="uid://g0ib717xbso4" path="res://components/zones/crystal_center.gd" id="3_pmcir"]
 [ext_resource type="Shader" uid="uid://c0jxnecm5tmru" path="res://shaders/toon/cel-shader-base.gdshader" id="3_treyv"]
 [ext_resource type="ArrayMesh" uid="uid://bd8yrc7tn42nw" path="res://assets/zones/center/crystalCenter.res" id="4_dj2w7"]
 [ext_resource type="ArrayMesh" uid="uid://bfqa5ssp7ybta" path="res://assets/zones/center/crystalStand.res" id="5_pmcir"]
 [ext_resource type="Shader" uid="uid://gw37dr3x5oit" path="res://shaders/toon/cel-shader-base-nocull.gdshader" id="6_treyv"]
+[ext_resource type="AudioStream" uid="uid://cql1rlykvsg3f" path="res://audio/Magical.mp3" id="8_71ket"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_aqns1"]
 render_priority = 0
@@ -44,7 +46,7 @@ radius = 0.918
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_treyv"]
 height = 7.021
-radius = 6.0
+radius = 10.0
 
 [sub_resource type="Shader" id="Shader_pmcir"]
 code = "shader_type spatial;
@@ -52,15 +54,17 @@ render_mode cull_disabled;
 
 uniform vec3 emission_color : source_color;
 uniform vec3 zone_color : source_color;
+uniform float intensity = 1;
+uniform vec3 whiteness;
 
 void fragment() {
 	float height = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).y;
-	
-	if (height > 1.0 || height < 0.0) discard;
-	
-	ALBEDO = zone_color;
-	EMISSION = vec3(1.0 - height) * emission_color;
-	ALPHA = 1.0 - height;
+
+	if (height > 1.0 * intensity || height < 0.0) discard;
+
+	ALBEDO = zone_color + whiteness;
+	EMISSION = vec3(1.0 * intensity - height) * emission_color;
+	ALPHA = max(0, 1.0 - height/(1.0 * intensity) - 1.0/(1.0 + intensity) + 0.25);
 }
 
 //void light() {
@@ -74,11 +78,14 @@ render_priority = 1
 shader = SubResource("Shader_pmcir")
 shader_parameter/emission_color = Color(0.160456, 0.428714, 0.488635, 1)
 shader_parameter/zone_color = Color(0.314603, 0.806068, 1, 1)
+shader_parameter/intensity = 0.0
+shader_parameter/whiteness = Vector3(0, 0, 0)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_3dyyb"]
 material = SubResource("ShaderMaterial_71ket")
-top_radius = 6.0
-bottom_radius = 6.0
+top_radius = 10.0
+bottom_radius = 10.0
+height = 10.0
 cap_top = false
 cap_bottom = false
 
@@ -95,13 +102,14 @@ shader_parameter/uv_offset = Vector2(0, 0)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_i8utg"]
 material = SubResource("ShaderMaterial_3dyyb")
-top_radius = 6.0
-bottom_radius = 6.0
+top_radius = 10.0
+bottom_radius = 10.0
 height = 9.792
 cap_top = false
 cap_bottom = false
 
 [node name="CenterZone" type="StaticBody3D"]
+script = ExtResource("1_dj2w7")
 
 [node name="Crystal" type="MeshInstance3D" parent="."]
 
@@ -115,6 +123,7 @@ script = ExtResource("3_pmcir")
 light_color = Color(0.288319, 0.536993, 0.634472, 1)
 light_energy = 8.86
 shadow_enabled = true
+omni_range = 9.003
 
 [node name="CrystalStand" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.645, 0, 0, 0, 0.645, 0, 0, 0, 0.645, 0, 0.461933, 0)
@@ -139,3 +148,10 @@ mesh = SubResource("CylinderMesh_3dyyb")
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.87146, 0)
 mesh = SubResource("CylinderMesh_i8utg")
+
+[node name="EnterSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_71ket")
+volume_db = 6.559
+
+[connection signal="body_entered" from="ZoneArea" to="." method="body_entered"]
+[connection signal="body_exited" from="ZoneArea" to="." method="body_exited"]
