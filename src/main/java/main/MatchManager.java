@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import map.gen.Generator;
 import multiplayer.MultiplayerManager;
 import multiplayer.PlayerData;
+import ui.Hud;
 import ui.lobby.Lobby;
 
 /**
@@ -127,11 +128,10 @@ public class MatchManager extends Node {
             (PlayerProvider) (playerProvider.instantiate());
 
         Vector2 spawn = spawnLocations.get(spawnIndex % spawnLocations.size());
-        gd.print(spawn);
 
         shipNode.addChild(provider);
         shipNode.setProvider(provider);
-        shipNode.spawnPosition = new Vector3(spawn.getX(), 0, spawn.getY());
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
         shipNode.setName(playerId + "");
         shipNode.setGlobalPosition(new Vector3(spawn.getX(), 0, spawn.getY()));
 
@@ -168,7 +168,7 @@ public class MatchManager extends Node {
         shipNode.addChild(provider);
         shipNode.setName("Bot" + (1000 + botId));
         shipNode.setProvider(provider);
-        shipNode.spawnPosition = new Vector3(spawn.getX(), 0, spawn.getY());
+        shipNode.setSpawn(new Vector3(spawn.getX(), 0, spawn.getY()));
 
         getNode("Ships").addChild(shipNode);
 
@@ -200,12 +200,15 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
-//            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
-//                instantiateNewBot();
-//            }
+            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
+                instantiateNewBot();
+            }
 
             rpc(StringNames.toGodotName("startMatch"));
         }
+
+        Hud hud = ((Hud) getNode("Hud"));
+        hud.setVisible(true);
 
         gameStarted = true;
 
@@ -216,13 +219,6 @@ public class MatchManager extends Node {
         Ship playerShip = (Ship) getNode(
             "Ships/" + getMultiplayer().getUniqueId()
         );
-
-        PackedScene node = gd.load(
-            "res://components/objects/props/naval_mine.tscn"
-        );
-        Seamine NavalMine = (Seamine) node.instantiate();
-        NavalMine.setPosition(new Vector3(5, -1, 5));
-        getNode("SeaMines").addChild(NavalMine, true);
 
         if (gameStarted && playerShip == null) {
             rpcId(
@@ -249,7 +245,6 @@ public class MatchManager extends Node {
         transferMode = TransferMode.RELIABLE,
         sync = Sync.SYNC
     )
-
     /**
      * Sets up the camera depending on what type of player or who it is
      */
@@ -264,9 +259,6 @@ public class MatchManager extends Node {
         if (playerShip != null) {
             gameCamera.setShip(playerShip);
             gameCamera.setPlayerMode();
-            gd.print(
-                MultiplayerManager.Instance.getPeerId() + "setting up camera"
-            );
         }
     }
 
