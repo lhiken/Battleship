@@ -6,7 +6,7 @@ fqName = map.CenterZone
 relativeSourcePath = src/main/java/map/CenterZone.java
 baseType = StaticBody3D
 supertypes = [
-	godot.api.StaticBody3D,
+    godot.api.StaticBody3D,
 	godot.api.PhysicsBody3D,
 	godot.api.CollisionObject3D,
 	godot.api.Node3D,
@@ -18,13 +18,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	
+    
 ]
 functions = [
-	_process,
+    _process,
 	_ready,
 	body_entered,
 	body_exited
