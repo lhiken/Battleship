@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bktut2nbxim2r"]
+[gd_scene load_steps=11 format=3 uid="uid://bktut2nbxim2r"]
 
 [ext_resource type="Script" uid="uid://b32np3npdvqpy" path="res://gdj/main/Game.gdj" id="1_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://dh5bw48qnu17u" path="res://components/objects/ocean.tscn" id="2_4t43m"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="4_ymw2v"]
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="5_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_ymw2v"]
-[ext_resource type="PackedScene" uid="uid://i7gv2m3tsjhe" path="res://components/tiles/SeaMine.tscn" id="6_4t43m"]
 [ext_resource type="PackedScene" uid="uid://c0f37vllg1frk" path="res://components/tiles/GrassTile1.tscn" id="10_y7uxv"]
 [ext_resource type="PackedScene" uid="uid://5kc4imd7mjml" path="res://assets/ships/pirate/model.tscn" id="11_mvprt"]
 
@@ -60,11 +59,31 @@ transform = Transform3D(-0.559794, 0, -0.420275, 0, 0.7, 0, 0.420275, 0, -0.5597
 [node name="MineProps" type="Node3D" parent="Props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8809, -0.657497, -6.91762)
 
-[node name="NavalMine2" parent="Props/MineProps" instance=ExtResource("6_4t43m")]
+[node name="NavalMine2" parent="Props/MineProps"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.653817, -0.254694, -0.206986)
+script = null
 
-[node name="NavalMine" parent="Props/MineProps" instance=ExtResource("6_4t43m")]
+[node name="NavalMine" parent="Props/MineProps"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.60918, -0.473038, 1.90327)
+script = null
 
 [node name="GrassTile1" parent="Props" instance=ExtResource("10_y7uxv")]
 transform = Transform3D(0.56808, 0, 0.489679, 0, 0.75, 0, -0.489679, 0, 0.56808, 2.91104, 2.77224, -0.837715)

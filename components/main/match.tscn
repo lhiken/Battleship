@@ -98,7 +98,7 @@ _spawnable_scenes = PackedStringArray("uid://dpxrjkp2sqdp")
 spawn_path = NodePath("../Bullets")
 
 [node name="MapSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt", "uid://i7gv2m3tsjhe")
+_spawnable_scenes = PackedStringArray("uid://c0f37vllg1frk", "uid://cjci2jsdys4rt")
 spawn_path = NodePath("../MapTiles")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]

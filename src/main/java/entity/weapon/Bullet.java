@@ -120,10 +120,10 @@ public class Bullet extends RigidBody3D {
         }
         if (MultiplayerManager.Instance.getPeerId() != ownerId) {
             if (distance > 30) {
-                explosionSound.setVolumeDb(-30);
+                explosionSound.setVolumeDb(-45);
                 explosionSound.play();
             } else {
-                explosionSoundSecondary.setVolumeDb(-15);
+                explosionSoundSecondary.setVolumeDb(-25);
                 explosionSoundSecondary.play();
             }
         }

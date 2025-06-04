@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://i7gv2m3tsjhe"]
+[gd_scene load_steps=6 format=3 uid="uid://l3m2810rgbl"]
 
 [ext_resource type="Script" uid="uid://de6e3oocjsqig" path="res://gdj/entity/Seamine.gdj" id="1_2cwan"]
 [ext_resource type="ArrayMesh" uid="uid://cc6vts7c7rx56" path="res://assets/props/naval_mine.res" id="1_5xnb4"]

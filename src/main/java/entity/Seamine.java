@@ -78,11 +78,21 @@ public class Seamine extends Node3D {
     @RegisterFunction
     public void bodyEntered(Node3D body) {
         if (cooldown > 20) {
-            spawnExplosion();
             if (body instanceof Ship) {
                 MultiplayerManager manager = MultiplayerManager.Instance;
                 manager.invokeBulletDamage(ownerId, (Ship) body, 30);
+                if (!((this.getMultiplayer().getUniqueId()+"").equals(((Ship) body).getName().toString()))) {
+                    explosionSound = (AudioStreamPlayer) getNode("Explosion");
+                    explosionSound.setVolumeDb(-30);
+                    explosionSound.play();
+                }
+                else {
+                    explosionSound = (AudioStreamPlayer) getNode("Explosion");
+                    explosionSound.setVolumeDb(0);
+                    explosionSound.play();
+                }
             }
+            spawnExplosion();
             cooldown = 0;
             justExploded = true;
         }
@@ -94,10 +104,6 @@ public class Seamine extends Node3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
-        explosionSound = (AudioStreamPlayer) getNode("Explosion");
-        //        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
-        explosionSound.setVolumeDb((float) (0));
-        explosionSound.play();
 
         PackedScene explosion = (PackedScene) gd.load(
             "res://shaders/particles/Prefab.tscn"
