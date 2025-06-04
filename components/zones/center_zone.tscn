@@ -175,13 +175,12 @@ volume_db = 6.559
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -34, 0)
+cast_shadow = 0
 amount = 35
 lifetime = 30.0
 fixed_fps = 60
 visibility_aabb = AABB(-30, 0, -30, 60, 50, 60)
 transform_align = 2
-trail_enabled = true
-trail_lifetime = 1.0
 process_material = SubResource("ParticleProcessMaterial_71ket")
 draw_pass_1 = SubResource("SphereMesh_yt834")
 

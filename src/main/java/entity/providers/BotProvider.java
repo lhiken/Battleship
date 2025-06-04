@@ -613,9 +613,12 @@ public class BotProvider extends InputProvider {
         ).normalized();
 
         // convert direction into yaw and pitch input
-        turretPitch = Math.asin(direction.getY() / direction.length());
-        double yaw = Math.atan2(direction.getX(), direction.getZ());
-        turretYaw = yaw;
+        turretPitch =
+            Math.asin(direction.getY() / direction.length()) +
+            gd.degToRad(Math.random() * 8);
+        turretYaw =
+            Math.atan2(direction.getX(), direction.getZ()) +
+            gd.degToRad(Math.random() * 16 - 8);
     }
 
     private Vector3 getProjectileVelocity(
