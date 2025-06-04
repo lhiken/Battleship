@@ -33,6 +33,12 @@ public class Hud extends CanvasLayer {
     @RegisterFunction
     @Override
     public void _process(double delta) {
+        if (
+            MultiplayerManager.Instance.getPlayerData(
+                getMultiplayer().getUniqueId()
+            ) ==
+            null
+        ) return;
         realPoints = gd.lerp(
             (double) realPoints,
             (double) MultiplayerManager.Instance.getPlayerData(
