@@ -2,10 +2,12 @@ package map;
 
 import entity.Ship;
 import entity.providers.BotProvider;
+import godot.annotation.EnumFlag;
 import godot.annotation.RegisterClass;
 import godot.annotation.RegisterFunction;
 import godot.api.*;
 import godot.core.Basis;
+import godot.core.Color;
 import godot.core.StringName;
 import godot.core.Transform3D;
 import godot.core.Vector3;
@@ -43,10 +45,13 @@ public class CenterZone extends StaticBody3D {
     @RegisterFunction
     @Override
     public void _process(double delta) {
-        if (myShip.isSinking()) {
-            entered = false;
-            time = 0;
-            pointTimer = 0;
+        emitParticles();
+        if (myShip != null) {
+            if (myShip.isSinking()) {
+                entered = false;
+                time = 0;
+                pointTimer = 0;
+            }
         }
         if (entered) {
             pointTimer += delta;
@@ -102,8 +107,7 @@ public class CenterZone extends StaticBody3D {
                     entered = true;
                     soundEffect = (AudioStreamPlayer) getNode("EnterSound");
                     soundEffect.play();
-                    particles = (GPUParticles3D) getNode("GPUParticles3D");
-                    particles.emitParticle(new Transform3D(), new Vector3(0, 1, 0), new godot.core.Color(), new godot.core.Color(), 4);
+
                 }
             }
         }
@@ -117,8 +121,22 @@ public class CenterZone extends StaticBody3D {
             if (!(((Ship) body).getProvider() instanceof BotProvider)) {
                 if (Integer.parseInt(name) == ((Ship) body).getMultiplayer().getUniqueId()) {
                     entered = false;
+                    particles.restart(true);
                 }
             }
         }
+    }
+
+    @RegisterFunction
+    public void emitParticles() {
+        particles = (GPUParticles3D) getNode("GPUParticles3D");
+//        for (int i = 0; i < 60; i++) {
+//            Transform3D temp = new Transform3D();
+//            double angle = Math.random() * 2 * Math.PI;
+//            double distance = Math.random() * 10;
+//            temp.setOrigin(new Vector3(distance * Math.sin(angle), 0, distance * Math.cos(angle)));
+////                        particles.oneShotProperty(true);
+//            particles.emitParticle(temp, new Vector3(0, 2, 0), Color.Companion.getWhite(), Color.Companion.getBlue(), 7);
+//        }
     }
 }

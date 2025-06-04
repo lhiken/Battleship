@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cnbmkpv8baiyy"]
+[gd_scene load_steps=23 format=3 uid="uid://cnbmkpv8baiyy"]
 
 [ext_resource type="Script" uid="uid://bfxrrc3sgmr10" path="res://gdj/map/CenterZone.gdj" id="1_dj2w7"]
 [ext_resource type="Shader" uid="uid://c5vkyivtqh7js" path="res://shaders/outline.gdshader" id="2_pmcir"]
@@ -108,7 +108,25 @@ height = 9.792
 cap_top = false
 cap_bottom = false
 
-[sub_resource type="BoxMesh" id="BoxMesh_71ket"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_71ket"]
+velocity_pivot = Vector3(0, 1, 0)
+direction = Vector3(0, 1, 0)
+spread = 10.0
+initial_velocity_min = 3.0
+initial_velocity_max = 6.0
+gravity = Vector3(0, -0.1, 0)
+tangential_accel_min = -2.23517e-06
+tangential_accel_max = -2.23517e-06
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_71ket"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 5000.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_yt834"]
+material = SubResource("StandardMaterial3D_71ket")
+radius = 0.05
+height = 0.1
 
 [node name="CenterZone" type="StaticBody3D"]
 script = ExtResource("1_dj2w7")
@@ -156,14 +174,16 @@ stream = ExtResource("8_71ket")
 volume_db = 6.559
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="GPUParticles3D"]
-mesh = SubResource("BoxMesh_71ket")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="GPUParticles3D/MeshInstance3D"]
-omni_range = 1.649
-omni_attenuation = 1.285
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -34, 0)
+amount = 35
+lifetime = 30.0
+fixed_fps = 60
+visibility_aabb = AABB(-30, 0, -30, 60, 50, 60)
+transform_align = 2
+trail_enabled = true
+trail_lifetime = 1.0
+process_material = SubResource("ParticleProcessMaterial_71ket")
+draw_pass_1 = SubResource("SphereMesh_yt834")
 
 [connection signal="body_entered" from="ZoneArea" to="." method="body_entered"]
 [connection signal="body_exited" from="ZoneArea" to="." method="body_exited"]
