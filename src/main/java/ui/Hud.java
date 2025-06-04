@@ -40,7 +40,7 @@ public class Hud extends CanvasLayer {
 			).getPoints(),
 			2.0 * delta
 		);
-		gd.print(realPoints);
+		// gd.print(realPoints);
 		((Label) getNode("Points")).setText(Math.round(realPoints) + " Pts");
 	}
 	// Other functions like getCooldown() etc.

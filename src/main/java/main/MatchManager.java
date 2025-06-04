@@ -200,9 +200,9 @@ public class MatchManager extends Node {
                 instantiateNewPlayer(player.getPeerId());
             }
 
-//            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
-//                instantiateNewBot();
-//            }
+            for (int i = 0; i < spawnLocations.size() - players.size(); i++) {
+                instantiateNewBot();
+            }
 
             rpc(StringNames.toGodotName("startMatch"));
         }

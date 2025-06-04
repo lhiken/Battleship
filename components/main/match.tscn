@@ -215,7 +215,16 @@ offset_bottom = 40.0
 
 [node name="Explosion" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_2s1nh")
+max_polyphony = 20
 
 [node name="SeaMines" type="Node3D" parent="."]
+
+[node name="ExplosionMain" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_2s1nh")
+max_polyphony = 10
+
+[node name="ExplosionSecondary" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_2s1nh")
+max_polyphony = 10
 
 [editable path="Lobby"]
