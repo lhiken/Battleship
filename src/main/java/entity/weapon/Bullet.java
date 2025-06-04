@@ -41,6 +41,8 @@ public class Bullet extends RigidBody3D {
 
     private double maxLifetime = 6;
     private AudioStreamPlayer explosionSound;
+    private AudioStreamPlayer explosionSoundMain;
+    private AudioStreamPlayer explosionSoundSecondary;
 
     private Node collisionBody;
 
@@ -106,9 +108,29 @@ public class Bullet extends RigidBody3D {
         explosionSound = (AudioStreamPlayer) getParent()
             .getParent()
             .getNode("Explosion");
-        //        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
-        explosionSound.setVolumeDb((float) (-15));
-        explosionSound.play();
+        explosionSoundSecondary = (AudioStreamPlayer) getParent().getParent().getNode("ExplosionSecondary");
+        explosionSoundMain = (AudioStreamPlayer) getParent()
+                .getParent()
+                .getNode("ExplosionMain");
+
+        double distance = 100;
+        Ship myShip = (Ship) (getParent().getParent().getNode("Ships").getNode(this.getMultiplayer().getUniqueId() + ""));
+        if (myShip != null) {
+            distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
+        }
+        if (MultiplayerManager.Instance.getPeerId() != ownerId) {
+            if (distance > 30) {
+                explosionSound.setVolumeDb(-30);
+                explosionSound.play();
+            } else {
+                explosionSoundSecondary.setVolumeDb(-15);
+                explosionSoundSecondary.play();
+            }
+        }
+        else {
+            explosionSoundMain.setVolumeDb((float) (0));
+            explosionSoundMain.play();
+        }
 
         Node3D explosionNode = (Node3D) explosion.instantiate();
         getParent().addChild(explosionNode);

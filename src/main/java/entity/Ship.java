@@ -214,23 +214,25 @@ public class Ship extends CharacterBody3D {
                 //     velocity + state.getPower()
                 // );
 
-                // uncommenting this before fixing it will cause process to terminate early
-                // resulting in cooldown never being reset and firing forever!!
-                cooldownPercent = 0;
-                boom = (AudioStreamPlayer) getNode("CannonFire");
-                if (provider instanceof BotProvider) boom.setVolumeDb(-15);
-                boom.play();
-            } else if (
-                state.getEmittedAction() != -1 &&
-                cooldownPercent < 1 &&
-                provider instanceof PlayerProvider
-            ) {
-                emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
-                emptyCannon.play();
-            }
-        }
-        // drawProjectilePath();
-    }
+				// uncommenting this before fixing it will cause process to terminate early
+				// resulting in cooldown never being reset and firing forever!!
+				cooldownPercent = 0;
+				boom = (AudioStreamPlayer) getNode("CannonFire");
+				// if (Integer.parseInt((this).getName().toString()) != this.getMultiplayer().getUniqueId()) boom.setVolumeDb(-10);
+				if (provider instanceof PlayerProvider && this.getMultiplayer().getUniqueId() == Integer.parseInt((this).getName().toString())) boom.play();
+			} else if (
+				state.getEmittedAction() != -1 &&
+				cooldownPercent < 1 &&
+				provider instanceof PlayerProvider
+			) {
+				if (this.getMultiplayer().getUniqueId() == Integer.parseInt((this).getName().toString())) {
+					emptyCannon = (AudioStreamPlayer) getNode("EmptyCannon");
+					emptyCannon.play();
+				}
+			}
+		}
+		// drawProjectilePath();
+	}
 
     /**
      * Setter method that sets health of ship
