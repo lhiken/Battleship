@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://ee6xcxwh4u6b" path="res://components/main/MatchEnvironment.tscn" id="4_ymw2v"]
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="5_w8ifq"]
 [ext_resource type="PackedScene" uid="uid://bo64a46tufuvx" path="res://components/main/camera.tscn" id="5_ymw2v"]
-[ext_resource type="PackedScene" uid="uid://i7gv2m3tsjhe" path="res://components/objects/props/naval_mine.tscn" id="6_4t43m"]
+[ext_resource type="PackedScene" uid="uid://i7gv2m3tsjhe" path="res://components/tiles/SeaMine.tscn" id="6_4t43m"]
 [ext_resource type="PackedScene" uid="uid://c0f37vllg1frk" path="res://components/tiles/GrassTile1.tscn" id="10_y7uxv"]
 [ext_resource type="PackedScene" uid="uid://5kc4imd7mjml" path="res://assets/ships/pirate/model.tscn" id="11_mvprt"]
 

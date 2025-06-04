@@ -355,14 +355,31 @@ public class MultiplayerManager extends Node {
         Ship targetShip,
         double damage
     ) {
+        gd.print(ownerId + " supposedly hit " + targetShip);
         if (multiplayer.isServer()) {
             targetShip.setHealth(targetShip.getHealth() - damage);
             if (ownerId > 0) {
                 PlayerData data = playerData.get(ownerId);
+                if (targetShip.getName().toString().startsWith("S")) return;
+                if (
+                    targetShip.getName().toString().equals(ownerId + "")
+                ) return;
                 if (targetShip.getHealth() < 0) {
                     updatePoints(ownerId, data.getPoints() + 100);
+                    gd.print(
+                        "giving kill points to " +
+                        ownerId +
+                        " for killing " +
+                        targetShip.getName()
+                    );
                 } else {
-                    updatePoints(ownerId, data.getPoints() + 10);
+                    updatePoints(ownerId, data.getPoints() + 40);
+                    gd.print(
+                        "giving hit points to " +
+                        ownerId +
+                        " for hitting " +
+                        targetShip.getName()
+                    );
                 }
             }
         }
@@ -385,6 +402,10 @@ public class MultiplayerManager extends Node {
             playerData.put(ownerId, new PlayerData(ownerId));
         }
         data.setPoints(points);
-        rpc(StringNames.toGodotName("updatePoints"), ownerId, points);
+        if (isServer()) rpc(
+            StringNames.toGodotName("updatePoints"),
+            ownerId,
+            points
+        );
     }
 }

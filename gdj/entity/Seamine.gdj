@@ -6,7 +6,7 @@ fqName = entity.Seamine
 relativeSourcePath = src/main/java/entity/Seamine.java
 baseType = Node3D
 supertypes = [
-	godot.api.Node3D,
+    godot.api.Node3D,
 	godot.api.Node,
 	godot.api.Object,
 	godot.core.KtObject,
@@ -15,13 +15,13 @@ supertypes = [
 	kotlin.Any
 ]
 signals = [
-	
+    
 ]
 properties = [
-	
+    
 ]
 functions = [
-	_process,
+    _process,
 	_ready,
 	body_entered,
 	spawn_explosion

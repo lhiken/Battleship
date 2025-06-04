@@ -30,6 +30,8 @@ import multiplayer.MultiplayerManager;
 @RegisterClass
 public class Bullet extends RigidBody3D {
 
+    private boolean used = false;
+
     private static final GD gd = GD.INSTANCE;
 
     private int ownerId = 1;
@@ -81,7 +83,8 @@ public class Bullet extends RigidBody3D {
         if (!getMultiplayer().isServer()) return;
         collisionBody = body;
         spawnExplosion();
-        if (body instanceof Ship) {
+        if (body instanceof Ship && !used) {
+            used = true;
             MultiplayerManager manager = MultiplayerManager.Instance;
             manager.invokeBulletDamage(ownerId, (Ship) body, 15);
         }

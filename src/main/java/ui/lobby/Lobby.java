@@ -141,6 +141,7 @@ public class Lobby extends Control {
     @Rpc(rpcMode = RpcMode.AUTHORITY)
     @RegisterFunction
     public void startMatch() {
+
         gd.print("start match");
         matchManager.startMatch();
 
@@ -153,8 +154,6 @@ public class Lobby extends Control {
                 );
             ((Label) getParent().getNode("ipDisplay")).setVisible(true);
         }
-        Hud hud = ((Hud) getParent().getNode("Hud"));
-        hud.setVisible(true);
     }
 
     @RegisterFunction

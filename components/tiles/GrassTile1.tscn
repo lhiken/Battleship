@@ -9,13 +9,13 @@ size = Vector3(2.25, 13.9034, 2.25)
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ikg7c"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/replication_mode = 2
+properties/0/replication_mode = 0
 properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
-properties/1/replication_mode = 2
+properties/1/replication_mode = 0
 properties/2/path = NodePath(".:scale")
 properties/2/spawn = true
-properties/2/replication_mode = 2
+properties/2/replication_mode = 0
 
 [node name="GrassTile1" type="Node3D"]
 
@@ -32,4 +32,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.71475, 0)
 shape = SubResource("BoxShape3D_ikg7c")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_interval = 5.0
+delta_interval = 5.0
 replication_config = SubResource("SceneReplicationConfig_ikg7c")

@@ -1,8 +1,24 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjci2jsdys4rt"]
+[gd_scene load_steps=3 format=3 uid="uid://cjci2jsdys4rt"]
 
 [ext_resource type="PackedScene" uid="uid://bj4rvngo3if0c" path="res://assets/props/seaweed.glb" id="1_xuvis"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xuvis"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 0
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 0
+properties/2/path = NodePath(".:scale")
+properties/2/spawn = true
+properties/2/replication_mode = 0
 
 [node name="Seaweed" type="Node3D"]
 
 [node name="seaweed" parent="." instance=ExtResource("1_xuvis")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -7.19935, 0)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_interval = 5.0
+delta_interval = 5.0
+replication_config = SubResource("SceneReplicationConfig_xuvis")

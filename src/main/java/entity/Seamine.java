@@ -19,7 +19,7 @@ public class Seamine extends Node3D {
 
     private GD gd = GD.INSTANCE;
     private Node collisionBody;
-    private int ownerId = 1;
+    private int ownerId = -100000; // rayming this is all ur fault
     private Area3D area;
     private CollisionShape3D collision;
     private boolean justExploded;
@@ -28,8 +28,8 @@ public class Seamine extends Node3D {
     private double cooldown;
     private double globalPosition;
 
-//    @RegisterProperty
-//    @Export
+    //    @RegisterProperty
+    //    @Export
 
     /**
      * Overriding Godot's Built-in _ready function
@@ -41,7 +41,9 @@ public class Seamine extends Node3D {
     public void _ready() {
         area = (Area3D) getNode("Area3D");
         cooldown = 0;
-        collision = (CollisionShape3D) getNode("Area3D").getNode("CollisionShape3D");
+        collision = (CollisionShape3D) getNode("Area3D").getNode(
+            "CollisionShape3D"
+        );
         justExploded = true;
         globalPosition = -1;
     }
@@ -92,39 +94,32 @@ public class Seamine extends Node3D {
     @Rpc(rpcMode = RpcMode.AUTHORITY, sync = Sync.NO_SYNC)
     @RegisterFunction
     public void spawnExplosion() {
-
-        explosionSound = (AudioStreamPlayer)
-                getNode("Explosion");
+        explosionSound = (AudioStreamPlayer) getNode("Explosion");
         //        double distance = myShip.getGlobalPosition().minus(this.getGlobalPosition()).length();
         explosionSound.setVolumeDb((float) (0));
         explosionSound.play();
 
-        PackedScene explosion = (PackedScene) gd.load("res://shaders/particles/Prefab.tscn");
+        PackedScene explosion = (PackedScene) gd.load(
+            "res://shaders/particles/Prefab.tscn"
+        );
         Node3D explosionNode = (Node3D) explosion.instantiate();
         getParent().addChild(explosionNode);
-        explosionNode.setRotation(new Vector3(0, Math.PI/2, 0));
+        explosionNode.setRotation(new Vector3(0, Math.PI / 2, 0));
         explosionNode.setGlobalPosition(getGlobalPosition());
 
-
-
-
-
         GameCamera camera = (GameCamera) getParent()
-                .getParent()
-                .getNode("RenderTarget/Viewport/GameCamera");
+            .getParent()
+            .getNode("RenderTarget/Viewport/GameCamera");
         camera.invokeShake(
-                // inverse square falloff
-                (1 /
-                        Math.pow(
-                                positionProperty().distanceTo(camera.getPosition()),
-                                2
-                        )) *
-                        500
+            // inverse square falloff
+            (1 /
+                Math.pow(
+                    positionProperty().distanceTo(camera.getPosition()),
+                    2
+                )) *
+            500
         );
 
         rpc(StringNames.toGodotName("spawnExplosion"));
-
     }
-
-
 }

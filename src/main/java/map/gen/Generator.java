@@ -177,6 +177,17 @@ public class Generator extends Node3D {
             }
         }
 
+        int spawned = 0;
+        while (spawned < 40) {
+            int x = (int) Math.round(Math.random() * (mapWidth - 1));
+            int z = (int) Math.round(Math.random() * (mapHeight - 1));
+            if (grid[x][z].getTile().walkable) {
+                grid[x][z].setTile(Tile.SeaMine);
+                grid[x][z].setHeight(-0.4);
+                spawned++;
+            }
+        }
+
         for (int x = 0; x < mapWidth; x++) {
             for (int z = 0; z < mapHeight; z++) {
                 spawnTile(grid[x][z]);
